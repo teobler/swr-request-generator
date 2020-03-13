@@ -142,7 +142,7 @@ export class PathResolver {
     pathParams.reduce(
       (results, param) => ({
         ...results,
-        [`${param.name}${param.required ? "" : "?"}`]: param.type,
+        [`${param.name}${param.required ? "" : "?"}`]: param.type === "integer" ? "number" : param.type,
       }),
       {},
     );
