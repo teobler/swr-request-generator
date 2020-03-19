@@ -1,6 +1,6 @@
 {
   "name": "redux-action-generator",
-  "version": "0.7.8",
+  "version": "0.0.1",
   "description": "A tool for generating redux action and interface ts code from swagger.",
   "main": "lib/index.js",
   "module": "module/index.js",
@@ -58,7 +58,7 @@
     "typescript": "3.7.x"
   },
   "dependencies": {
-    "@types/swagger-schema-official": "2.0.x",
+    "@openapi-integration/openapi-schema": "0.0.6",
     "prettier": "1.19.x",
     "axios": "0.19.x"
   },

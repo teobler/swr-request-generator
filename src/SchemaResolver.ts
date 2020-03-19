@@ -1,6 +1,6 @@
-import { Schema } from "swagger-schema-official";
 import { addPrefixForInterface, isArray, isNumber, toCapitalCase } from "./utils";
 import { get, indexOf, map, reduce, some } from "lodash";
+import { Schema } from "@openapi-integration/openapi-schema";
 
 type TDictionary<T> = { [key: string]: T };
 

@@ -1,53 +1,50 @@
 import {
-  BodyParameter,
-  FormDataParameter,
   Operation,
   Parameter,
   Path,
-  PathParameter,
-  QueryParameter,
+  Paths,
   Reference,
   Response,
   Schema,
-} from "swagger-schema-official";
+  Server,
+} from "@openapi-integration/openapi-schema";
 import { SchemaResolver } from "./SchemaResolver";
 import { generateEnums } from "./DefinitionsResolver";
-import { chain, Dictionary, filter, get, isEmpty, map, pick, reduce, sortBy } from "lodash";
+import { chain, Dictionary, drop, filter, get, isEmpty, map, pick, reduce, sortBy } from "lodash";
 import { toTypes } from "./utils";
-
-type TPaths = { [pathName: string]: Path };
+import { HTTP_METHODS, SLASH } from "./constants";
 
 // TODO: Should handle `deprecated` and `security` in Operation?
 
-interface IResolvedPath extends IParams {
+type IResolvedPath = IParameters & {
   url: string;
   method: string;
   TResp: any;
   TReq: any;
   operationId?: string;
-}
+};
 
-interface IParams {
-  pathParams: PathParameter[];
-  queryParams: QueryParameter[];
-  bodyParams: BodyParameter[];
-  formDataParams: FormDataParameter[];
+interface IParameters {
+  pathParams: Parameter[];
+  queryParams: Parameter[];
+  bodyParams: Parameter[];
+  formDataParams: Parameter[];
 }
 
 export class PathResolver {
   resolvedPaths: IResolvedPath[] = [];
   extraDefinitions = {};
 
-  static of(paths: TPaths, basePath: string = "") {
-    return new PathResolver(paths, basePath);
+  static of(paths: Paths, servers: Server[] = []) {
+    return new PathResolver(paths, servers);
   }
 
-  constructor(private paths: TPaths, private basePath: string) {}
+  constructor(private paths: Paths, private servers: Server[]) {}
 
   resolve = () => {
     this.resolvedPaths = reduce(
       this.paths,
-      (results: IResolvedPath[], p: Path, k: string) => [...results, ...this.resolvePath(p, k)],
+      (results: IResolvedPath[], path: Path, pathName: string) => [...results, ...this.resolvePath(path, pathName)],
       [],
     );
     return this;
@@ -82,46 +79,51 @@ export class PathResolver {
       : undefined;
 
   resolvePath(path: Path, pathName: string) {
-    const operations = pick(path, ["get", "post", "put", "delete", "patch", "options", "head"]);
-    return Object.keys(operations).map((method) => {
-      const path = this.getRequestURL(pathName);
+    const operations = pick(path, HTTP_METHODS);
+
+    // TODO: need to do refactor
+    const basePath = SLASH.concat(drop(this.servers[0].url.split(SLASH), 3).join(SLASH));
+
+    return Object.keys(operations).map((httpMethod) => {
+      const requestPath = this.getRequestURL(pathName);
+
       return {
-        url: `${this.basePath}${path === "/" && !!this.basePath ? "" : path}`,
-        method,
-        ...this.resolveOperation((operations as Dictionary<any>)[method]),
+        url: `${basePath}${requestPath === SLASH && !!basePath ? "" : requestPath}`,
+        method: httpMethod,
+        ...this.resolveOperation((operations as Dictionary<any>)[httpMethod]),
       };
     });
   }
 
   getRequestURL = (pathName: string) => {
     return chain(pathName)
-      .split("/")
+      .split(SLASH)
       .map((p) => (this.isPathParam(p) ? `$${p}` : p))
-      .join("/")
+      .join(SLASH)
       .value();
   };
 
   isPathParam = (str: string) => str.startsWith("{");
 
   // TODO: handle the case when v.parameters = Reference
-  resolveOperation = (v: Operation) => {
-    const pickParamsByType = this.pickParams(v.parameters as Parameter[]);
+  resolveOperation = (operation: Operation) => {
+    const pickParamsByType = this.pickParams(operation.parameters as Parameter[]);
     const params = {
-      pathParams: pickParamsByType("path") as PathParameter[],
-      queryParams: pickParamsByType("query") as QueryParameter[],
-      bodyParams: pickParamsByType("body") as BodyParameter[],
-      formDataParams: pickParamsByType("formData") as FormDataParameter[],
+      pathParams: pickParamsByType("path"),
+      queryParams: pickParamsByType("query"),
+      bodyParams: pickParamsByType("body"),
+      formDataParams: pickParamsByType("cookie"),
     };
 
     return {
-      operationId: v.operationId,
-      TResp: this.getResponseTypes(v.responses),
+      operationId: operation.operationId,
+      TResp: this.getResponseTypes(operation.responses),
       TReq: this.getRequestTypes(params),
       ...this.getParamsNames(params),
     };
   };
 
-  getParamsNames = (params: IParams) => {
+  getParamsNames = (params: IParameters) => {
     const getNames = (list: any[]) => (isEmpty(list) ? [] : map(list, (item) => item.name));
     return {
       pathParams: getNames(params.pathParams),
@@ -131,14 +133,14 @@ export class PathResolver {
     };
   };
 
-  getRequestTypes = (params: IParams) => ({
+  getRequestTypes = (params: IParameters) => ({
     ...this.getPathParamsTypes(params.pathParams),
     ...this.getQueryParamsTypes(params.queryParams),
     ...this.getBodyParamsTypes(params.bodyParams),
     ...this.getFormDataParamsTypes(params.formDataParams),
   });
 
-  getPathParamsTypes = (pathParams: PathParameter[]) =>
+  getPathParamsTypes = (pathParams: Parameter[]) =>
     pathParams.reduce(
       (results, param) => ({
         ...results,
@@ -147,7 +149,7 @@ export class PathResolver {
       {},
     );
 
-  getBodyParamsTypes = (bodyParams: BodyParameter[]) =>
+  getBodyParamsTypes = (bodyParams: Parameter[]) =>
     bodyParams.reduce(
       (o, v) => ({
         ...o,
@@ -161,7 +163,7 @@ export class PathResolver {
       {},
     );
 
-  getQueryParamsTypes = (queryParams: QueryParameter[]) =>
+  getQueryParamsTypes = (queryParams: Parameter[]) =>
     queryParams.reduce(
       (o, v) => ({
         ...o,
@@ -204,6 +206,6 @@ export class PathResolver {
     }).resolve();
 
   // TODO: when parameters has enum
-  pickParams = (parameters: Parameter[]) => (type: "path" | "query" | "body" | "formData") =>
+  pickParams = (parameters: Parameter[]) => (type: "path" | "query" | "body" | "cookie") =>
     filter(parameters, (param) => param.in === type);
 }

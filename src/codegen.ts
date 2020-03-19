@@ -5,8 +5,8 @@ import { prettifyCode, testJSON } from "./utils";
 import { PathResolver } from "./PathResolver";
 import axios from "axios";
 import { map } from "lodash";
-import { Spec } from "swagger-schema-official";
 import { ERROR_MESSAGES } from "./constants";
+import { Spec } from "@openapi-integration/openapi-schema";
 
 const codegenConfigPath = path.resolve("ts-codegen.config.json");
 
@@ -34,7 +34,7 @@ const codegen = (schema: Spec | string) => {
   const fileStr =
     actionCreatorImport +
     [
-      ...PathResolver.of(schema.paths, schema.basePath)
+      ...PathResolver.of(schema.paths, schema.servers)
         .resolve()
         .toRequest(),
       ...DefinitionsResolver.of(schema.definitions)
