@@ -4,13 +4,14 @@ import {
   Path,
   Paths,
   Reference,
+  RequestBody,
   Response,
   Schema,
   Server,
 } from "@openapi-integration/openapi-schema";
 import { SchemaResolver } from "./SchemaResolver";
 import { generateEnums } from "./DefinitionsResolver";
-import { chain, Dictionary, drop, filter, get, isEmpty, map, pick, reduce, sortBy } from "lodash";
+import { chain, Dictionary, drop, filter, get, has, isEmpty, map, pick, reduce, sortBy, values } from "lodash";
 import { toTypes } from "./utils";
 import { HTTP_METHODS, SLASH } from "./constants";
 
@@ -52,19 +53,26 @@ export class PathResolver {
 
   toRequest = (): string[] => {
     const data = sortBy(this.resolvedPaths, (o) => o.operationId);
-    const requests = data.map((v: IResolvedPath) => {
-      const TReq = !isEmpty(v.TReq) ? toTypes(v.TReq) : undefined;
-      const requestParamList = [...v.pathParams, ...v.queryParams, ...v.bodyParams, ...v.formDataParams];
-      const bodyData = get(v.bodyParams, "[0]");
-      const formData = get(v.formDataParams, "[0]");
-      const body = bodyData || formData;
-      const params = this.toRequestParams(get(v, "queryParams"));
+    const requests = data.map((resolvedPath: IResolvedPath) => {
+      const TReq = !isEmpty(resolvedPath.TReq) ? toTypes(resolvedPath.TReq) : undefined;
+      const requestParamList = [
+        ...resolvedPath.pathParams,
+        ...resolvedPath.queryParams,
+        ...resolvedPath.bodyParams,
+        ...resolvedPath.formDataParams,
+      ];
+      const bodyData = get(resolvedPath.bodyParams, "[0]");
+      const cookie = get(resolvedPath.formDataParams, "[0]");
+      const body = bodyData || cookie;
+      const params = this.toRequestParams(get(resolvedPath, "queryParams"));
 
-      return `export const ${v.operationId} = createRequestAction<${TReq}, ${v.TResp}>('${v.operationId}', (${
-        !isEmpty(requestParamList) ? `${this.toRequestParams(requestParamList)}` : ""
-      }) => ({url: \`${v.url}\`, method: "${v.method}", ${body ? `data: ${body},` : ""}${
-        params ? `params: ${params},` : ""
-      }${body ? `headers: {'Content-Type': ${formData ? "'multipart/form-data'" : "'application/json'"}}` : ""}}));`;
+      return `export const ${resolvedPath.operationId} = createRequestAction<${TReq}, ${resolvedPath.TResp}>('${
+        resolvedPath.operationId
+      }', (${!isEmpty(requestParamList) ? `${this.toRequestParams(requestParamList)}` : ""}) => ({url: \`${
+        resolvedPath.url
+      }\`, method: "${resolvedPath.method}", ${body ? `data: ${body},` : ""}${params ? `params: ${params},` : ""}${
+        body ? `headers: {'Content-Type': ${cookie ? "'multipart/form-data'" : "'application/json'"}}` : ""
+      }}));`;
     });
 
     const enums = Object.keys(this.extraDefinitions).map((k) => generateEnums(this.extraDefinitions, k));
@@ -118,7 +126,7 @@ export class PathResolver {
     return {
       operationId: operation.operationId,
       TResp: this.getResponseTypes(operation.responses),
-      TReq: this.getRequestTypes(params),
+      TReq: this.getRequestTypes(params, operation.requestBody),
       ...this.getParamsNames(params),
     };
   };
@@ -133,49 +141,56 @@ export class PathResolver {
     };
   };
 
-  getRequestTypes = (params: IParameters) => ({
-    ...this.getPathParamsTypes(params.pathParams),
-    ...this.getQueryParamsTypes(params.queryParams),
-    ...this.getBodyParamsTypes(params.bodyParams),
+  isNotReference = (value: any): value is Schema => !has(value, "$ref");
+
+  getRequestTypes = (params: IParameters, requestBody?: RequestBody | Reference) => ({
+    ...this.getBaseParamsTypes(params.pathParams, requestBody),
+    ...this.getBaseParamsTypes(params.queryParams, requestBody),
+    ...this.getBaseParamsTypes(params.bodyParams, requestBody),
     ...this.getFormDataParamsTypes(params.formDataParams),
   });
 
-  getPathParamsTypes = (pathParams: Parameter[]) =>
-    pathParams.reduce(
-      (results, param) => ({
-        ...results,
-        [`${param.name}${param.required ? "" : "?"}`]: param.type === "integer" ? "number" : param.type,
-      }),
-      {},
-    );
+  getBaseParamsTypes = (pathParams: Parameter[], requestBody?: RequestBody | Reference) => {
+    if (this.isNotReference(requestBody)) {
+      return {
+        ...pathParams.reduce((results, param) => {
+          const schema = param.schema;
 
-  getBodyParamsTypes = (bodyParams: Parameter[]) =>
-    bodyParams.reduce(
-      (o, v) => ({
-        ...o,
-        [`${v.name}${v.required ? "" : "?"}`]: SchemaResolver.of({
-          results: this.extraDefinitions,
-          schema: v.schema,
-          key: v.name,
-          parentKey: v.name,
-        }).resolve(),
-      }),
-      {},
-    );
+          if (this.isNotReference(schema)) {
+            return {
+              ...results,
+              [`${param.name}${param.required ? "" : "?"}`]: schema.type === "integer" ? "number" : schema.type,
+            };
+          }
 
-  getQueryParamsTypes = (queryParams: Parameter[]) =>
-    queryParams.reduce(
-      (o, v) => ({
-        ...o,
-        [`${v.name}${v.required ? "" : "?"}`]: SchemaResolver.of({
-          results: this.extraDefinitions,
-          schema: v as Schema,
-          key: v.name,
-          parentKey: v.name,
-        }).resolve(),
-      }),
-      {},
-    );
+          // TODO: handle Reference type here
+          return { ...results };
+        }, {}),
+        [`request`]:
+          requestBody &&
+          SchemaResolver.of({
+            results: this.extraDefinitions,
+            schema: values((requestBody as RequestBody).content)[0].schema ?? {},
+            key: `request`,
+            parentKey: `request`,
+          }).resolve(),
+      };
+    }
+
+    // TODO: handle Reference type here (schema and requestBody)
+    return pathParams.reduce((results, param) => {
+      const schema = param.schema;
+
+      if (this.isNotReference(schema)) {
+        return {
+          ...results,
+          [`${param.name}${param.required ? "" : "?"}`]: schema.type === "integer" ? "number" : schema.type,
+        };
+      }
+
+      return { ...results };
+    }, {});
+  };
 
   // TODO: handle other params here?
   getFormDataParamsTypes = (formDataParams: any[]) => {
