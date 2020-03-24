@@ -200,7 +200,8 @@ export class PathResolver {
     SchemaResolver.of({
       results: this.extraDefinitions,
       // TODO: handle other content type here
-      schema: get(responses, "200.content.application/json.schema") || get(responses, "201.content.application/json.schema"),
+      schema:
+        get(responses, "200.content.application/json.schema") || get(responses, "201.content.application/json.schema"),
     }).resolve();
 
   // TODO: when parameters has enum
@@ -210,7 +211,7 @@ export class PathResolver {
   getRequestBodyTypes(operationId: string, requestBody?: RequestBody | Reference) {
     if (this.isNotReference(requestBody)) {
       return reduce(
-        values(requestBody),
+        values(requestBody?.content),
         (results, content) => ({
           ...results,
           [`${operationId}Request`]: SchemaResolver.of({
