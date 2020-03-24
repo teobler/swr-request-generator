@@ -152,13 +152,20 @@ export class PathResolver {
   });
 
   getPathParamsTypes = (pathParams: Parameter[]) =>
-    pathParams.reduce(
-      (results, param) => ({
+    pathParams.reduce((results, param) => {
+      const schema = get(param, "schema");
+
+      if (this.isNotReference(schema)) {
+        return {
+          ...results,
+          [`${param.name}${param.required ? "" : "?"}`]: schema.type === "integer" ? "number" : schema.type,
+        };
+      }
+
+      return {
         ...results,
-        [`${param.name}${param.required ? "" : "?"}`]: param.type === "integer" ? "number" : param.type,
-      }),
-      {},
-    );
+      };
+    }, {});
 
   getBodyAndQueryParamsTypes = (bodyParams: Parameter[]) =>
     bodyParams.reduce(
