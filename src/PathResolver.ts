@@ -126,7 +126,7 @@ export class PathResolver {
     return {
       operationId: operation.operationId,
       TResp: this.getResponseTypes(operation.responses),
-      TReq: this.getRequestTypes(params, operation.requestBody),
+      TReq: this.getRequestTypes(params, operation.operationId as string, get(operation, "requestBody")),
       ...this.getParamsNames(params),
     };
   };
@@ -143,54 +143,36 @@ export class PathResolver {
 
   isNotReference = (value: any): value is Schema => !has(value, "$ref");
 
-  getRequestTypes = (params: IParameters, requestBody?: RequestBody | Reference) => ({
-    ...this.getBaseParamsTypes(params.pathParams, requestBody),
-    ...this.getBaseParamsTypes(params.queryParams, requestBody),
-    ...this.getBaseParamsTypes(params.bodyParams, requestBody),
+  getRequestTypes = (params: IParameters, operationId: string, requestBody?: RequestBody | Reference) => ({
+    ...this.getPathParamsTypes(params.pathParams),
+    ...this.getBodyAndQueryParamsTypes(params.bodyParams),
+    ...this.getBodyAndQueryParamsTypes(params.queryParams),
     ...this.getFormDataParamsTypes(params.formDataParams),
+    ...this.getRequestBodyTypes(operationId, requestBody),
   });
 
-  getBaseParamsTypes = (pathParams: Parameter[], requestBody?: RequestBody | Reference) => {
-    if (this.isNotReference(requestBody)) {
-      return {
-        ...pathParams.reduce((results, param) => {
-          const schema = param.schema;
+  getPathParamsTypes = (pathParams: Parameter[]) =>
+    pathParams.reduce(
+      (results, param) => ({
+        ...results,
+        [`${param.name}${param.required ? "" : "?"}`]: param.type === "integer" ? "number" : param.type,
+      }),
+      {},
+    );
 
-          if (this.isNotReference(schema)) {
-            return {
-              ...results,
-              [`${param.name}${param.required ? "" : "?"}`]: schema.type === "integer" ? "number" : schema.type,
-            };
-          }
-
-          // TODO: handle Reference type here
-          return { ...results };
-        }, {}),
-        [`request`]:
-          requestBody &&
-          SchemaResolver.of({
-            results: this.extraDefinitions,
-            schema: values((requestBody as RequestBody).content)[0].schema ?? {},
-            key: `request`,
-            parentKey: `request`,
-          }).resolve(),
-      };
-    }
-
-    // TODO: handle Reference type here (schema and requestBody)
-    return pathParams.reduce((results, param) => {
-      const schema = param.schema;
-
-      if (this.isNotReference(schema)) {
-        return {
-          ...results,
-          [`${param.name}${param.required ? "" : "?"}`]: schema.type === "integer" ? "number" : schema.type,
-        };
-      }
-
-      return { ...results };
-    }, {});
-  };
+  getBodyAndQueryParamsTypes = (bodyParams: Parameter[]) =>
+    bodyParams.reduce(
+      (results, param) => ({
+        ...results,
+        [`${param.name}${param.required ? "" : "?"}`]: SchemaResolver.of({
+          results: this.extraDefinitions,
+          schema: param.schema,
+          key: param.name,
+          parentKey: param.name,
+        }).resolve(),
+      }),
+      {},
+    );
 
   // TODO: handle other params here?
   getFormDataParamsTypes = (formDataParams: any[]) => {
@@ -223,4 +205,31 @@ export class PathResolver {
   // TODO: when parameters has enum
   pickParams = (parameters: Parameter[]) => (type: "path" | "query" | "body" | "cookie") =>
     filter(parameters, (param) => param.in === type);
+
+  getRequestBodyTypes(operationId: string, requestBody?: RequestBody | Reference) {
+    if (this.isNotReference(requestBody)) {
+      return reduce(
+        values(requestBody),
+        (results, content) => ({
+          ...results,
+          [`${operationId}Request`]: SchemaResolver.of({
+            results: this.extraDefinitions,
+            schema: content.schema,
+            key: `${operationId}Request`,
+            parentKey: `${operationId}Request`,
+          }).resolve(),
+        }),
+        {},
+      );
+    }
+
+    return {
+      [`${operationId}Request`]: SchemaResolver.of({
+        results: this.extraDefinitions,
+        schema: requestBody as Schema,
+        key: `${operationId}Request`,
+        parentKey: `${operationId}Request`,
+      }).resolve(),
+    };
+  }
 }
