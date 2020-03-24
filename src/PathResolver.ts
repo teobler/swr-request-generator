@@ -199,7 +199,8 @@ export class PathResolver {
   getResponseTypes = (responses: { [responseName: string]: Response | Reference }) =>
     SchemaResolver.of({
       results: this.extraDefinitions,
-      schema: get(responses, "200.schema") || get(responses, "201.schema"),
+      // TODO: handle other content type here
+      schema: get(responses, "200.content.application/json.schema") || get(responses, "201.content.application/json.schema"),
     }).resolve();
 
   // TODO: when parameters has enum
