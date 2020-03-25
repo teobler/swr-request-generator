@@ -90,7 +90,7 @@ export class PathResolver {
     const operations = pick(path, HTTP_METHODS);
 
     // TODO: need to do refactor
-    const basePath = SLASH.concat(drop(this.servers[0].url.split(SLASH), 3).join(SLASH));
+    const basePath = this.getBasePath();
 
     return Object.keys(operations).map((httpMethod) => {
       const requestPath = this.getRequestURL(pathName);
@@ -101,6 +101,12 @@ export class PathResolver {
         ...this.resolveOperation((operations as Dictionary<any>)[httpMethod]),
       };
     });
+  }
+
+  getBasePath() {
+    const basePath = SLASH.concat(drop(this.servers[0].url.split(SLASH), 3).join(SLASH));
+
+    return basePath === SLASH ? "" : basePath;
   }
 
   getRequestURL = (pathName: string) => {
