@@ -208,7 +208,9 @@ export class PathResolver {
       results: this.extraDefinitions,
       // TODO: handle other content type here
       schema:
-        get(responses, "200.content.application/json.schema") || get(responses, "201.content.application/json.schema"),
+        get(responses, "200.content.application/json.schema") ||
+        get(responses, "200.content.*/*.schema") ||
+        get(responses, "201.content.application/json.schema"),
     }).resolve();
 
   // TODO: when parameters has enum
