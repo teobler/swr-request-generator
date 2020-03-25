@@ -45,17 +45,17 @@
     "@types/rollup": "0.54.x",
     "axios": "0.19.x",
     "babel-core": "6.26.x",
-    "babel-jest": "24.9.x",
+    "babel-jest": "25.1.x",
     "babel-plugin-pure-calls-annotation": "0.3.x",
-    "jest": "24.9.x",
+    "jest": "25.1.x",
     "lodash": "4.17.x",
     "rollup": "1.32.x",
     "rollup-plugin-babel": "4.4.x",
     "rollup-plugin-typescript": "1.0.1",
     "ts-jest": "25.2.x",
-    "ts-node": "8.6.x",
+    "ts-node": "8.8.x",
     "tslib": "1.11.x",
-    "typescript": "3.7.x"
+    "typescript": "3.8.x"
   },
   "dependencies": {
     "@openapi-integration/openapi-schema": "0.0.6",
