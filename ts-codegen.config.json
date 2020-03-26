@@ -2,5 +2,5 @@
   "output": ".output",
   "actionCreatorImport": "import { createRequestAction } from 'examples/requestActionCreators';\n\n",
   "clients": [],
-  "data": ["./examples/swagger.json"]
+  "data": ["./examples/openAPI.json"]
 }

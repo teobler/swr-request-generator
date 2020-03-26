@@ -1,9 +1,9 @@
 import { DefinitionsResolver } from "../DefinitionsResolver";
-import swagger from "./mock-data/swagger.json";
+import openAPI from "./mock-data/openAPI.json";
 
 describe("DefinitionsResolver", () => {
   it("should generate correct definitions", () => {
-    expect(DefinitionsResolver.of((swagger as any).definitions).scanDefinitions().resolvedDefinitions).toEqual(
+    expect(DefinitionsResolver.of((openAPI as any).components).scanDefinitions().resolvedDefinitions).toEqual(
       expected,
     );
   });

@@ -6,7 +6,7 @@ import { Components, Schema } from "@openapi-integration/openapi-schema";
 // TODO: 1. Handle required params.
 // TODO: handle `in: fromData`
 // TODO: handle `in schema`
-// TODO: 确认不同 endpoint 是否都会生成 swagger
+// TODO: 确认不同 endpoint 是否都会生成 openAPI
 
 const ENUM_SUFFIX = `#EnumTypeSuffix`;
 
