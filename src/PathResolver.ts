@@ -11,8 +11,8 @@ import {
 } from "@openapi-integration/openapi-schema";
 import { SchemaResolver } from "./SchemaResolver";
 import { generateEnums } from "./DefinitionsResolver";
-import { chain, Dictionary, drop, filter, get, has, isEmpty, map, pick, reduce, sortBy, values } from "lodash";
-import { toTypes } from "./utils";
+import { chain, Dictionary, drop, filter, get, isEmpty, map, pick, reduce, sortBy, values } from "lodash";
+import { isRequestBody, isSchema, toTypes } from "./utils";
 import { HTTP_METHODS, SLASH } from "./constants";
 
 // TODO: Should handle `deprecated` and `security` in Operation?
@@ -151,8 +151,6 @@ export class PathResolver {
     };
   };
 
-  isNotReference = (value: any): value is Schema => !has(value, "$ref");
-
   getRequestTypes = (params: IParameters, operationId: string, requestBody?: RequestBody | Reference) => ({
     ...this.getPathParamsTypes(params.pathParams),
     ...this.getBodyAndQueryParamsTypes(params.bodyParams),
@@ -165,7 +163,7 @@ export class PathResolver {
     pathParams.reduce((results, param) => {
       const schema = get(param, "schema");
 
-      if (this.isNotReference(schema)) {
+      if (isSchema(schema)) {
         return {
           ...results,
           [`${param.name}${param.required ? "" : "?"}`]: schema.type === "integer" ? "number" : schema.type,
@@ -228,7 +226,7 @@ export class PathResolver {
     filter(parameters, (param) => param.in === type);
 
   getRequestBodyTypes(operationId: string, requestBody?: RequestBody | Reference) {
-    if (this.isNotReference(requestBody)) {
+    if (isRequestBody(requestBody)) {
       return reduce(
         values(requestBody?.content),
         (results, content) => ({

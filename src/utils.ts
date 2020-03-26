@@ -1,6 +1,7 @@
-import { camelCase, Dictionary, forEach, indexOf, map, replace, trimEnd } from "lodash";
+import { camelCase, Dictionary, forEach, has, indexOf, map, replace, trimEnd } from "lodash";
 import prettier from "prettier";
 import { ERROR_MESSAGES } from "./constants";
+import { Reference, RequestBody, Schema } from "@openapi-integration/openapi-schema";
 
 export const toCapitalCase = (str?: string): string => {
   if (!str) {
@@ -74,3 +75,7 @@ export function testJSON(
     return;
   }
 }
+
+export const isSchema = (schema?: Schema | Reference): schema is Schema => !has(schema, "$ref");
+export const isRequestBody = (requestBody?: RequestBody | Reference): requestBody is RequestBody =>
+  !has(requestBody, "$ref");
