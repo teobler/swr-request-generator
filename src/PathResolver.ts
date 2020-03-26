@@ -22,6 +22,7 @@ type IResolvedPath = IParameters & {
   method: string;
   TResp: any;
   TReq: any;
+  requestBody?: string;
   operationId?: string;
 };
 
@@ -60,10 +61,12 @@ export class PathResolver {
         ...resolvedPath.queryParams,
         ...resolvedPath.bodyParams,
         ...resolvedPath.formDataParams,
+        resolvedPath.requestBody,
       ];
       const bodyData = get(resolvedPath.bodyParams, "[0]");
       const cookie = get(resolvedPath.formDataParams, "[0]");
-      const body = bodyData || cookie;
+      const requestBody = get(resolvedPath, "requestBody");
+      const body = requestBody || bodyData || cookie;
       const params = this.toRequestParams(get(resolvedPath, "queryParams"));
 
       return `export const ${resolvedPath.operationId} = createRequestAction<${TReq}, ${resolvedPath.TResp}>('${
@@ -134,6 +137,7 @@ export class PathResolver {
       TResp: this.getResponseTypes(operation.responses),
       TReq: this.getRequestTypes(params, operation.operationId as string, get(operation, "requestBody")),
       ...this.getParamsNames(params),
+      ...this.getRequestBodyName(get(operation, "requestBody"), operation.operationId),
     };
   };
 
@@ -248,5 +252,13 @@ export class PathResolver {
         parentKey: `${operationId}Request`,
       }).resolve(),
     };
+  }
+
+  getRequestBodyName(requestBody?: RequestBody | Reference, operationId?: string) {
+    if (requestBody) {
+      return {
+        requestBody: `${operationId}Request`,
+      };
+    }
   }
 }
