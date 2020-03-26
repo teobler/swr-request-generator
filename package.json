@@ -1,5 +1,5 @@
 {
-  "name": "redux-action-generator",
+  "name": "@openapi-integration/redux-action-generator-v3",
   "version": "0.0.1",
   "description": "A tool for generating redux action and interface ts code from swagger.",
   "main": "lib/index.js",
