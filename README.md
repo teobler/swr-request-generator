@@ -12,7 +12,7 @@ create a new json file named `ts-codegen.config.json` in your project root direc
   "output": ".output",
   "actionCreatorImport": "import { createRequestAction } from 'examples/requestActionCreators';\n\n",
   "clients": ["https://app.swaggerhub.com/apiproxy/registry/teobler/integration-example/1.0.0"],
-  "data": ["./examples/swagger.json"]
+  "data": ["./examples/openAPI.json"]
 }
 ```
 
@@ -28,4 +28,4 @@ create a new json file named `ts-codegen.config.json` in your project root direc
 
 # Note
 1. This repo is forked from [ts-codegen](https://github.com/reeli/ts-codegen) by [@reeli](https://github.com/reeli)
-2. This tool only for swagger v2 now
+2. This tool only for swagger v3 now
