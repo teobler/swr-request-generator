@@ -37,7 +37,7 @@ const codegen = (schema: Spec | string) => {
       ...PathResolver.of(schema.paths, schema.servers)
         .resolve()
         .toRequest(),
-      ...DefinitionsResolver.of(schema.definitions)
+      ...DefinitionsResolver.of(schema.components)
         .scanDefinitions()
         .toDeclarations(),
     ].join("\n\n");

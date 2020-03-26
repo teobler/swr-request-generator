@@ -1,7 +1,7 @@
-import { addPrefixForInterface, arrayToObject, isNumber, toCapitalCase, toTypes } from "./utils";
-import { compact, Dictionary, forEach, includes, replace, some } from "lodash";
+import { addPrefixForInterface, arrayToObject, isNumber, isRequestBody, toCapitalCase, toTypes } from "./utils";
+import { compact, Dictionary, forEach, get, includes, replace, some } from "lodash";
 import { SchemaResolver } from "./SchemaResolver";
-import { Schema } from "@openapi-integration/openapi-schema";
+import { Components, Schema } from "@openapi-integration/openapi-schema";
 
 // TODO: 1. Handle required params.
 // TODO: handle `in: fromData`
@@ -26,24 +26,43 @@ export function generateEnums(data: Dictionary<any>, key: string) {
 export class DefinitionsResolver {
   resolvedDefinitions: any;
 
-  static of(definitions?: { [definitionsName: string]: Schema }) {
-    return new DefinitionsResolver(definitions);
+  static of(components?: Components) {
+    return new DefinitionsResolver(components);
   }
 
-  constructor(private definitions?: { [definitionsName: string]: Schema }) {}
+  constructor(private components?: Components) {}
 
   scanDefinitions = () => {
     const results: Dictionary<any> = {};
-    forEach(
-      this.definitions,
-      (v, k) =>
-        (results[k] = SchemaResolver.of({
+    const requestBodies = get(this.components, "requestBodies");
+    const schemas = get(this.components, "schemas");
+
+    forEach(requestBodies, (requestBody, requestBodyName) => {
+      if (isRequestBody(requestBody)) {
+        return (results[requestBodyName] = SchemaResolver.of({
           results,
-          schema: v,
-          key: k,
-          parentKey: k,
-        }).resolve()),
-    );
+          schema: get(requestBody, "content.application/json.schema"),
+          key: requestBodyName,
+          parentKey: requestBodyName,
+        }).resolve());
+      }
+
+      return (results[requestBodyName] = SchemaResolver.of({
+        results,
+        schema: requestBody as Schema,
+        key: requestBodyName,
+        parentKey: requestBodyName,
+      }).resolve());
+    });
+
+    forEach(schemas, (schema, schemaName) => {
+      return (results[schemaName] = SchemaResolver.of({
+        results,
+        schema: schema,
+        key: schemaName,
+        parentKey: schemaName,
+      }).resolve());
+    });
 
     this.resolvedDefinitions = results;
     return this;
