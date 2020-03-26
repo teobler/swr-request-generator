@@ -11,7 +11,7 @@ import {
 } from "@openapi-integration/openapi-schema";
 import { SchemaResolver } from "./SchemaResolver";
 import { generateEnums } from "./DefinitionsResolver";
-import { chain, Dictionary, drop, filter, get, isEmpty, map, pick, reduce, sortBy, values, compact } from "lodash";
+import { chain, compact, Dictionary, drop, filter, get, isEmpty, map, pick, reduce, sortBy } from "lodash";
 import { isRequestBody, isSchema, toTypes } from "./utils";
 import { HTTP_METHODS, SLASH } from "./constants";
 
@@ -36,6 +36,7 @@ interface IParameters {
 export class PathResolver {
   resolvedPaths: IResolvedPath[] = [];
   extraDefinitions = {};
+  contentType = "";
 
   static of(paths: Paths, servers: Server[] = []) {
     return new PathResolver(paths, servers);
@@ -74,7 +75,7 @@ export class PathResolver {
       }', (${!isEmpty(requestParamList) ? `${this.toRequestParams(requestParamList)}` : ""}) => ({url: \`${
         resolvedPath.url
       }\`, method: "${resolvedPath.method}", ${body ? `data: ${body},` : ""}${params ? `params: ${params},` : ""}${
-        body ? `headers: {'Content-Type': ${cookie ? "'multipart/form-data'" : "'application/json'"}}` : ""
+        body ? `headers: {'Content-Type': "${this.contentType}"}` : ""
       }}));`;
     });
 
@@ -229,16 +230,22 @@ export class PathResolver {
   getRequestBodyTypes(operationId: string, requestBody?: RequestBody | Reference) {
     if (isRequestBody(requestBody)) {
       return reduce(
-        values(requestBody?.content),
-        (results, content) => ({
-          ...results,
-          [`${operationId}Request`]: SchemaResolver.of({
-            results: this.extraDefinitions,
-            schema: content.schema,
-            key: `${operationId}Request`,
-            parentKey: `${operationId}Request`,
-          }).resolve(),
-        }),
+        get(requestBody, "content"),
+        (results, content, key) => {
+          if (this.contentType === "") {
+            this.contentType = key;
+          }
+
+          return {
+            ...results,
+            [`${operationId}Request`]: SchemaResolver.of({
+              results: this.extraDefinitions,
+              schema: content.schema,
+              key: `${operationId}Request`,
+              parentKey: `${operationId}Request`,
+            }).resolve(),
+          };
+        },
         {},
       );
     }

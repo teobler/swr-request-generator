@@ -45,7 +45,14 @@ export const toTypes = (obj: Dictionary<any> | string) => {
   if (!obj) {
     return;
   }
-  const list = map<string, any>(obj, (v: any, k: string) => `${quoteKey(k)}: ${replace(v, ENUM_SUFFIX, "")};`);
+  const list = map<string, any>(obj, (value: any, key: string) => {
+    if (isObject(value)) {
+      return `${quoteKey(key)}: ${JSON.stringify(value)};`;
+    }
+
+    return `${quoteKey(key)}: ${replace(value, ENUM_SUFFIX, "")};`;
+  });
+
   return (
     obj &&
     `{
