@@ -11,7 +11,7 @@ import {
 } from "@openapi-integration/openapi-schema";
 import { SchemaResolver } from "./SchemaResolver";
 import { generateEnums } from "./DefinitionsResolver";
-import { chain, Dictionary, drop, filter, get, isEmpty, map, pick, reduce, sortBy, values } from "lodash";
+import { chain, Dictionary, drop, filter, get, isEmpty, map, pick, reduce, sortBy, values, compact } from "lodash";
 import { isRequestBody, isSchema, toTypes } from "./utils";
 import { HTTP_METHODS, SLASH } from "./constants";
 
@@ -56,13 +56,13 @@ export class PathResolver {
     const data = sortBy(this.resolvedPaths, (o) => o.operationId);
     const requests = data.map((resolvedPath: IResolvedPath) => {
       const TReq = !isEmpty(resolvedPath.TReq) ? toTypes(resolvedPath.TReq) : undefined;
-      const requestParamList = [
+      const requestParamList = compact([
         ...resolvedPath.pathParams,
         ...resolvedPath.queryParams,
         ...resolvedPath.bodyParams,
         ...resolvedPath.formDataParams,
         resolvedPath.requestBody,
-      ];
+      ]);
       const bodyData = get(resolvedPath.bodyParams, "[0]");
       const cookie = get(resolvedPath.formDataParams, "[0]");
       const requestBody = get(resolvedPath, "requestBody");
