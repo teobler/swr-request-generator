@@ -11,7 +11,7 @@ import {
 } from "@openapi-integration/openapi-schema";
 import { SchemaResolver } from "./SchemaResolver";
 import { generateEnums } from "./DefinitionsResolver";
-import { chain, compact, Dictionary, drop, filter, get, isEmpty, map, pick, reduce, sortBy } from "lodash";
+import { chain, compact, Dictionary, drop, filter, get, isEmpty, map, pick, reduce, sortBy, upperFirst } from "lodash";
 import { isRequestBody, isSchema, toTypes } from "./utils";
 import { HTTP_METHODS, SLASH } from "./constants";
 
@@ -69,14 +69,15 @@ export class PathResolver {
       const requestBody = get(resolvedPath, "requestBody");
       const body = requestBody || bodyData || cookie;
       const params = this.toRequestParams(get(resolvedPath, "queryParams"));
+      const operationName = upperFirst(resolvedPath.operationId!.match(/(\S*)Using/)![1]);
 
-      return `export const ${resolvedPath.operationId} = createRequestAction<${TReq}, ${resolvedPath.TResp}>('${
-        resolvedPath.operationId
-      }', (${!isEmpty(requestParamList) ? `${this.toRequestParams(requestParamList)}` : ""}) => ({url: \`${
-        resolvedPath.url
-      }\`, method: "${resolvedPath.method}", ${body ? `data: ${body},` : ""}${params ? `params: ${params},` : ""}${
+      return `export const create${operationName}Request = ({${requestParamList.join(", ")}}: ${TReq}) => 
+                createRequestHook<${resolvedPath.TResp || undefined}>({
+                  url: \`${resolvedPath.url}\`,
+                  method: "${resolvedPath.method}",
+                  ${body ? `data: ${body},` : ""}${params ? `params: ${params},` : ""}${
         body ? `headers: {'Content-Type': "${this.contentType}"}` : ""
-      }}));`;
+      }});`;
     });
 
     const enums = Object.keys(this.extraDefinitions).map((k) => generateEnums(this.extraDefinitions, k));
