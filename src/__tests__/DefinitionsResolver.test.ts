@@ -60,7 +60,7 @@ const expectedDefinitions = {
   },
   URL: {
     "authority?": "string",
-    "content?": "object",
+    "content?": "{[key:string]:any}",
     "defaultPort?": "number",
     "deserializedFields?": "IUrlStreamHandler",
     "file?": "string",
@@ -148,7 +148,7 @@ const expectedDeclarations = [
   "export interface IResource {\n        'description'?: string;\n'file'?: IFile;\n'filename'?: string;\n'inputStream'?: IInputStream;\n'open'?: boolean;\n'readable'?: boolean;\n'uri'?: IUri;\n'url'?: IUrl;\n      }",
   "export interface IScheduleVo {\n        'schedules'?: IBookVo[][];\n'shiftId'?: string;\n'team'?: string;\n      }",
   "export interface IUri {\n        'absolute'?: boolean;\n'authority'?: string;\n'fragment'?: string;\n'host'?: string;\n'opaque'?: boolean;\n'path'?: string;\n'port'?: number;\n'query'?: string;\n'rawAuthority'?: string;\n'rawFragment'?: string;\n'rawPath'?: string;\n'rawQuery'?: string;\n'rawSchemeSpecificPart'?: string;\n'rawUserInfo'?: string;\n'scheme'?: string;\n'schemeSpecificPart'?: string;\n'userInfo'?: string;\n      }",
-  "export interface IUrl {\n        'authority'?: string;\n'content'?: object;\n'defaultPort'?: number;\n'deserializedFields'?: IUrlStreamHandler;\n'file'?: string;\n'host'?: string;\n'path'?: string;\n'port'?: number;\n'protocol'?: string;\n'query'?: string;\n'ref'?: string;\n'serializedHashCode'?: number;\n'userInfo'?: string;\n      }",
+  "export interface IUrl {\n        'authority'?: string;\n'content'?: {[key:string]:any};\n'defaultPort'?: number;\n'deserializedFields'?: IUrlStreamHandler;\n'file'?: string;\n'host'?: string;\n'path'?: string;\n'port'?: number;\n'protocol'?: string;\n'query'?: string;\n'ref'?: string;\n'serializedHashCode'?: number;\n'userInfo'?: string;\n      }",
   "export interface IUrlStreamHandler {[key:string]:any}",
   "export interface IUpdateBookRequest {\n        'birthCountry'?: string;\n'citizenship'?: string;\n'dateOfBirth'?: number;\n'employmentStatus'?: string;\n'ethnicity'?: string;\n'gender'?: string;\n'idNumber'?: string;\n'idType'?: string;\n'roleId'?: string;\n'spokenLanguage'?: string[];\n      }",
 ];
