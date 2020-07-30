@@ -2,5 +2,7 @@
   "output": ".output",
   "actionCreatorImport": "import { createRequestHook } from 'examples/requestActionCreators';\n\n",
   "clients": [],
-  "data": ["./examples/openAPI.json"]
+  "data": ["./examples/openAPI.json"],
+  "fileName": "api",
+  "timeout": 10000
 }
