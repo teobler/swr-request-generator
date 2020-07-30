@@ -12,10 +12,8 @@ export const toCapitalCase = (str?: string): string => {
 };
 
 export const addPrefix = (prefix: string) => (str: string = "") => `${prefix}${str}`;
-export const addSuffix = (suffix: string) => (str: string = "") => `${str}${suffix}`;
 
 export const addPrefixForInterface = addPrefix("I");
-export const addPrefixForType = addPrefix("T");
 
 export const arrayToObject = (arr: any[] = []) => {
   let obj: any = {};
