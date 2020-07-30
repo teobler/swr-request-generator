@@ -1,6 +1,6 @@
 {
   "name": "@openapi-integration/swr-request-generator",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A tool for generating request creator for swr and interface ts code from swagger.",
   "main": "lib/index.js",
   "module": "module/index.js",
