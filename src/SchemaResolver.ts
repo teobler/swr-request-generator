@@ -48,7 +48,15 @@ export class SchemaResolver {
     }
 
     if (schema.type === "object") {
-      return schema.properties ? this.resolveProperties(schema.properties, schema.required) : schema.type;
+      if (schema.properties) {
+        return this.resolveProperties(schema.properties, schema.required);
+      }
+
+      if (schema.title) {
+        return schema.type;
+      }
+
+      return "{[key:string]:any}";
     }
 
     return this.getBasicType(schema.type, advancedType);
