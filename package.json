@@ -1,7 +1,7 @@
 {
-  "name": "@openapi-integration/redux-action-generator-v3",
-  "version": "0.0.1",
-  "description": "A tool for generating redux action and interface ts code from swagger.",
+  "name": "@openapi-integration/swr-request-generator",
+  "version": "0.1.0",
+  "description": "A tool for generating request creator for swr and interface ts code from swagger.",
   "main": "lib/index.js",
   "module": "module/index.js",
   "types": "src/index.ts",
@@ -28,7 +28,7 @@
     "url": "git+https://github.com/teobler/redux-action-generator.git"
   },
   "author": "teobler",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/teobler/redux-action-generator/issues"
   },
