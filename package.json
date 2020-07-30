@@ -37,6 +37,7 @@
     "@babel/core": "7.8.x",
     "@babel/preset-env": "7.8.x",
     "@babel/preset-typescript": "7.8.x",
+    "@openapi-integration/openapi-schema": "0.0.6",
     "@types/axios": "0.14.x",
     "@types/jest": "24.9.x",
     "@types/lodash": "4.14.x",
@@ -52,13 +53,13 @@
     "rollup": "1.32.x",
     "rollup-plugin-babel": "4.4.x",
     "rollup-plugin-typescript": "1.0.1",
+    "swr": "^0.2.3",
     "ts-jest": "25.2.x",
     "ts-node": "8.8.x",
     "tslib": "1.11.x",
     "typescript": "3.8.x"
   },
   "dependencies": {
-    "@openapi-integration/openapi-schema": "0.0.6",
     "prettier": "1.19.x",
     "axios": "0.19.x"
   },
