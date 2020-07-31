@@ -60,8 +60,9 @@
     "typescript": "3.8.x"
   },
   "dependencies": {
-    "prettier": "1.19.x",
-    "axios": "0.19.x"
+    "axios": "0.19.x",
+    "commander": "^6.0.0",
+    "prettier": "1.19.x"
   },
   "peerDependencies": {
     "lodash": ">=4.17.15",
