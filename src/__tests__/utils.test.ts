@@ -1,4 +1,4 @@
-import { generateRequestArguments, testJSON, toCapitalCase } from "../utils";
+import { generateFunctionName, generateRequestArguments, testJSON, toCapitalCase } from "../utils";
 import { IResolvedPath } from "../types";
 
 describe("#toCapitalCase", () => {
@@ -29,7 +29,7 @@ describe("#testJSON", () => {
   });
 });
 
-describe("generateRequestArguments", () => {
+describe("#generateRequestArguments", () => {
   const removeSpaces = (str: string) => str.replace(/[\n \r]/g, "");
 
   it("should return empty string when request argument is empty", () => {
@@ -62,4 +62,11 @@ describe("generateRequestArguments", () => {
     bodyParams: [""],
     formDataParams: [""],
   } as IResolvedPath;
+});
+
+describe("#generateFunctionName", () => {
+  it("should return expected method name", () => {
+    const operationId = "PersonController_findPersonById";
+    expect(generateFunctionName(operationId)).toBe("createPersonControllerFindPersonByIdRequest");
+  });
 });

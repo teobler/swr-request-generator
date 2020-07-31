@@ -98,3 +98,7 @@ export const generateRequestArguments = (resolvedPath: IResolvedPath) => {
 
   return requestParamList.length === 0 ? "" : `{${requestParamList.join(",")}}:${argumentTypes}`;
 };
+
+export const generateFunctionName = (operationId?: string) => {
+  return `create${toCapitalCase(camelCase(operationId))}Request`;
+};

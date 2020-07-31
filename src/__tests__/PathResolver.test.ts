@@ -3,14 +3,12 @@ import openAPI from "./mock-data/openAPI.json";
 
 describe("PathResolver", () => {
   it("should get resolved paths by openAPI schema", () => {
-    expect(PathResolver.of((openAPI as any).paths, openAPI.servers).resolve().resolvedPaths).toEqual(
-      expectedPathResolvedData,
-    );
+    expect(PathResolver.of((openAPI as any).paths).resolve().resolvedPaths).toEqual(expectedPathResolvedData);
   });
 
   it("should get correct action creator by resolved paths", () => {
     expect(
-      PathResolver.of((openAPI as any).paths, openAPI.servers)
+      PathResolver.of((openAPI as any).paths)
         .resolve()
         .toRequest(),
     ).toEqual(expectedRequest);
@@ -32,7 +30,7 @@ const expectedPathResolvedData = [
     pathParams: [],
     queryParams: [],
     requestBody: "uploadAttachmentUsingPOSTRequest",
-    url: "/api/test",
+    url: "/",
   },
   {
     TReq: {
@@ -45,7 +43,7 @@ const expectedPathResolvedData = [
     operationId: "downloadUsingGET",
     pathParams: ["id"],
     queryParams: [],
-    url: "/api/test/${id}",
+    url: "/${id}",
   },
   {
     TReq: {
@@ -58,7 +56,7 @@ const expectedPathResolvedData = [
     operationId: "deleteAttachmentUsingDELETE",
     pathParams: ["id"],
     queryParams: [],
-    url: "/api/test/${id}",
+    url: "/${id}",
   },
   {
     TReq: {
@@ -71,7 +69,7 @@ const expectedPathResolvedData = [
     operationId: "findBookByIdUsingGET",
     pathParams: ["id"],
     queryParams: [],
-    url: "/api/test/book/${id}",
+    url: "/book/${id}",
   },
   {
     TReq: {
@@ -86,7 +84,7 @@ const expectedPathResolvedData = [
     pathParams: ["id"],
     queryParams: [],
     requestBody: "updateBookByIdUsingPUTRequest",
-    url: "/api/test/book/${id}",
+    url: "/book/${id}",
   },
   {
     TReq: {
@@ -100,7 +98,7 @@ const expectedPathResolvedData = [
     operationId: "getScheduleDetailsByDateUsingGET",
     pathParams: [],
     queryParams: ["scheduleDate", "roleId"],
-    url: "/api/test/schedules",
+    url: "/schedules",
   },
   {
     TReq: {
@@ -114,17 +112,17 @@ const expectedPathResolvedData = [
     operationId: "getDocumentByIdUsingGET",
     pathParams: ["documentId"],
     queryParams: ["from"],
-    url: "/api/test/documents/${documentId}/doc",
+    url: "/documents/${documentId}/doc",
   },
 ];
 
 const expectedRequest = [
-  "export const createDeleteAttachmentRequest = ({id}: {\n        'id': string;\n      }) => \n                createRequestHook<undefined>({\n                  url: `/api/test/${id}`,\n                  method: \"delete\",\n                  });",
-  "export const createDownloadRequest = ({id}: {\n        'id': string;\n      }) => \n                createRequestHook<IResource>({\n                  url: `/api/test/${id}`,\n                  method: \"get\",\n                  });",
-  "export const createFindBookByIdRequest = ({id}: {\n        'id': string;\n      }) => \n                createRequestHook<IBookDetailVo>({\n                  url: `/api/test/book/${id}`,\n                  method: \"get\",\n                  });",
-  "export const createGetDocumentByIdRequest = ({documentId, from}: {\n        'documentId': string;\n'from'?: keyof typeof FromFrom;\n      }) => \n                createRequestHook<IDocumentVo>({\n                  url: `/api/test/documents/${documentId}/doc`,\n                  method: \"get\",\n                  params: {\n    from\n    },});",
-  "export const createGetScheduleDetailsByDateRequest = ({scheduleDate, roleId}: {\n        'roleId'?: string;\n'scheduleDate': number;\n      }) => \n                createRequestHook<IScheduleVo[]>({\n                  url: `/api/test/schedules`,\n                  method: \"get\",\n                  params: {\n    scheduleDate,\nroleId\n    },});",
-  "export const createUpdateBookByIdRequest = ({id, updateBookByIdUsingPUTRequest}: {\n        'id': string;\n'updateBookByIdUsingPUTRequest': IUpdateBookRequest;\n      }) => \n                createRequestHook<undefined>({\n                  url: `/api/test/book/${id}`,\n                  method: \"put\",\n                  data: updateBookByIdUsingPUTRequest,headers: {'Content-Type': \"multipart/form-data\"}});",
-  'export const createUploadAttachmentRequest = ({uploadAttachmentUsingPOSTRequest}: {\n        \'uploadAttachmentUsingPOSTRequest\': {"attachment":"string"};\n      }) => \n                createRequestHook<IAttachmentBo>({\n                  url: `/api/test`,\n                  method: "post",\n                  data: uploadAttachmentUsingPOSTRequest,headers: {\'Content-Type\': "multipart/form-data"}});',
+  "export const createDeleteAttachmentUsingDeleteRequest = ({id}:{\n        'id': string;\n      }) => \n        createRequestHook<undefined>({\n        url: `/${id}`,\n        method: \"delete\",\n        });",
+  "export const createDownloadUsingGetRequest = ({id}:{\n        'id': string;\n      }) => \n        createRequestHook<IResource>({\n        url: `/${id}`,\n        method: \"get\",\n        });",
+  "export const createFindBookByIdUsingGetRequest = ({id}:{\n        'id': string;\n      }) => \n        createRequestHook<IBookDetailVo>({\n        url: `/book/${id}`,\n        method: \"get\",\n        });",
+  "export const createGetDocumentByIdUsingGetRequest = ({documentId,from}:{\n        'documentId': string;\n'from'?: keyof typeof FromFrom;\n      }) => \n        createRequestHook<IDocumentVo>({\n        url: `/documents/${documentId}/doc`,\n        method: \"get\",\n        params: {\n    from\n    },});",
+  "export const createGetScheduleDetailsByDateUsingGetRequest = ({scheduleDate,roleId}:{\n        'roleId'?: string;\n'scheduleDate': number;\n      }) => \n        createRequestHook<IScheduleVo[]>({\n        url: `/schedules`,\n        method: \"get\",\n        params: {\n    scheduleDate,\nroleId\n    },});",
+  "export const createUpdateBookByIdUsingPutRequest = ({id,updateBookByIdUsingPUTRequest}:{\n        'id': string;\n'updateBookByIdUsingPUTRequest': IUpdateBookRequest;\n      }) => \n        createRequestHook<undefined>({\n        url: `/book/${id}`,\n        method: \"put\",\n        data: updateBookByIdUsingPUTRequest,headers: {'Content-Type': \"multipart/form-data\"}});",
+  'export const createUploadAttachmentUsingPostRequest = ({uploadAttachmentUsingPOSTRequest}:{\n        \'uploadAttachmentUsingPOSTRequest\': {"attachment":"string"};\n      }) => \n        createRequestHook<IAttachmentBo>({\n        url: `/`,\n        method: "post",\n        data: uploadAttachmentUsingPOSTRequest,headers: {\'Content-Type\': "multipart/form-data"}});',
   'export enum FromFrom {"AAA"="AAA","BBB"="BBB"}',
 ];
