@@ -7,32 +7,15 @@ import {
   RequestBody,
   Response,
   Schema,
-  Server,
 } from "@openapi-integration/openapi-schema";
 import { SchemaResolver } from "./SchemaResolver";
 import { generateEnums } from "./DefinitionsResolver";
-import { chain, compact, Dictionary, drop, filter, get, isEmpty, map, pick, reduce, sortBy, upperFirst } from "lodash";
-import { isRequestBody, isSchema, toTypes } from "./utils";
+import { chain, Dictionary, filter, get, isEmpty, map, pick, reduce, sortBy } from "lodash";
+import { generateRequestArguments, isRequestBody, isSchema } from "./utils";
 import { HTTP_METHODS, SLASH } from "./constants";
+import { IParameters, IResolvedPath } from "./types";
 
 // TODO: Should handle `deprecated` and `security` in Operation?
-
-type IResolvedPath = IParameters & {
-  url: string;
-  method: string;
-  TResp: any;
-  TReq: any;
-  requestBody?: string;
-  operationId?: string;
-};
-
-interface IParameters {
-  pathParams: Parameter[];
-  queryParams: Parameter[];
-  bodyParams: Parameter[];
-  formDataParams: Parameter[];
-}
-
 export class PathResolver {
   resolvedPaths: IResolvedPath[] = [];
   extraDefinitions = {};
@@ -56,22 +39,14 @@ export class PathResolver {
   toRequest = (): string[] => {
     const data = sortBy(this.resolvedPaths, (o) => o.operationId);
     const requests = data.map((resolvedPath: IResolvedPath) => {
-      const TReq = !isEmpty(resolvedPath.TReq) ? toTypes(resolvedPath.TReq) : undefined;
-      const requestParamList = compact([
-        ...resolvedPath.pathParams,
-        ...resolvedPath.queryParams,
-        ...resolvedPath.bodyParams,
-        ...resolvedPath.formDataParams,
-        resolvedPath.requestBody,
-      ]);
       const bodyData = get(resolvedPath.bodyParams, "[0]");
       const cookie = get(resolvedPath.formDataParams, "[0]");
       const requestBody = get(resolvedPath, "requestBody");
       const body = requestBody || bodyData || cookie;
       const params = this.toRequestParams(get(resolvedPath, "queryParams"));
-      const operationName = upperFirst(resolvedPath.operationId!.match(/(\S*)Using/)![1]);
+      const operationName = resolvedPath.operationId;
 
-      return `export const create${operationName}Request = ({${requestParamList.join(", ")}}: ${TReq}) => 
+      return `export const create${operationName}Request = (${generateRequestArguments(resolvedPath)}) => 
                 createRequestHook<${resolvedPath.TResp || undefined}>({
                   url: \`${resolvedPath.url}\`,
                   method: "${resolvedPath.method}",

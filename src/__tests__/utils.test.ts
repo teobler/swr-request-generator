@@ -1,4 +1,5 @@
-import { testJSON, toCapitalCase } from "../utils";
+import { generateRequestArguments, testJSON, toCapitalCase } from "../utils";
+import { IResolvedPath } from "../types";
 
 describe("#toCapitalCase", () => {
   it("when word is undefined, should return empty string", () => {
@@ -26,4 +27,39 @@ describe("#testJSON", () => {
     testJSON("{a: 1}", "some error", mockPrint);
     expect(mockPrint).toHaveBeenCalledWith("some error");
   });
+});
+
+describe("generateRequestArguments", () => {
+  const removeSpaces = (str: string) => str.replace(/[\n \r]/g, "");
+
+  it("should return empty string when request argument is empty", () => {
+    expect(generateRequestArguments(resolvedPath)).toBe("");
+  });
+
+  it("should return arg and it's corresponding type when request only one argument presents", () => {
+    expect(
+      removeSpaces(generateRequestArguments({ ...resolvedPath, pathParams: ["id"], TReq: { id: "string" } })),
+    ).toBe("{id}:{'id':string;}");
+  });
+
+  it("should return args and it's corresponding types when multiple arguments present", () => {
+    expect(
+      removeSpaces(
+        generateRequestArguments({
+          ...resolvedPath,
+          pathParams: ["id"],
+          queryParams: ["name"],
+          TReq: { id: "string", name: "string" },
+        }),
+      ),
+    ).toBe("{id,name}:{'id':string;'name':string;}");
+  });
+
+  const resolvedPath = {
+    TReq: undefined,
+    pathParams: [""],
+    queryParams: [""],
+    bodyParams: [""],
+    formDataParams: [""],
+  } as IResolvedPath;
 });

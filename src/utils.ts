@@ -1,7 +1,8 @@
-import { camelCase, Dictionary, forEach, has, indexOf, map, replace, trimEnd } from "lodash";
+import { camelCase, compact, Dictionary, forEach, has, indexOf, isEmpty, map, replace, trimEnd } from "lodash";
 import prettier from "prettier";
 import { ERROR_MESSAGES } from "./constants";
 import { Reference, RequestBody, Schema } from "@openapi-integration/openapi-schema";
+import { IResolvedPath } from "./types";
 
 export const toCapitalCase = (str?: string): string => {
   if (!str) {
@@ -84,3 +85,16 @@ export function testJSON(
 export const isSchema = (schema?: Schema | Reference): schema is Schema => !has(schema, "$ref");
 export const isRequestBody = (requestBody?: RequestBody | Reference): requestBody is RequestBody =>
   !has(requestBody, "$ref");
+
+export const generateRequestArguments = (resolvedPath: IResolvedPath) => {
+  const argumentTypes = !isEmpty(resolvedPath.TReq) ? toTypes(resolvedPath.TReq) : undefined;
+  const requestParamList = compact([
+    ...resolvedPath.pathParams,
+    ...resolvedPath.queryParams,
+    ...resolvedPath.bodyParams,
+    ...resolvedPath.formDataParams,
+    resolvedPath.requestBody,
+  ]);
+
+  return requestParamList.length === 0 ? "" : `{${requestParamList.join(",")}}:${argumentTypes}`;
+};
