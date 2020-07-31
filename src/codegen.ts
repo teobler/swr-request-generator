@@ -5,11 +5,11 @@ import { prettifyCode, testJSON } from "./utils";
 import { PathResolver } from "./PathResolver";
 import axios from "axios";
 import { map } from "lodash";
-import { ERROR_MESSAGES, LOG_MESSAGE } from "./constants";
+import { ERROR_MESSAGES, FILE_TIP, LOG_MESSAGE } from "./constants";
 import { Spec } from "@openapi-integration/openapi-schema";
 import program from "commander";
 
-program.option("-a, --authorization <value>", "authorization value").parse(process.argv);
+program.option("-a, --authorization <value>", "authorization header value").parse(process.argv);
 
 interface ICodegenConfig {
   output?: string;
@@ -45,6 +45,7 @@ const codegen = (schema: Spec | string) => {
 
   const fileStr =
     actionCreatorImport +
+    FILE_TIP +
     [
       ...PathResolver.of(schema.paths)
         .resolve()
