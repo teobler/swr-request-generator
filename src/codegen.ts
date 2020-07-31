@@ -43,7 +43,7 @@ const codegen = (schema: Spec | string) => {
   const fileStr =
     actionCreatorImport +
     [
-      ...PathResolver.of(schema.paths, schema.servers)
+      ...PathResolver.of(schema.paths)
         .resolve()
         .toRequest(),
       ...DefinitionsResolver.of(schema.components)

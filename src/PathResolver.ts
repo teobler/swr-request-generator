@@ -38,11 +38,11 @@ export class PathResolver {
   extraDefinitions = {};
   contentType = "";
 
-  static of(paths: Paths, servers: Server[] = []) {
-    return new PathResolver(paths, servers);
+  static of(paths: Paths) {
+    return new PathResolver(paths);
   }
 
-  constructor(private paths: Paths, private servers: Server[]) {}
+  constructor(private paths: Paths) {}
 
   resolve = () => {
     this.resolvedPaths = reduce(
@@ -94,24 +94,11 @@ export class PathResolver {
   resolvePath(path: Path, pathName: string) {
     const operations = pick(path, HTTP_METHODS);
 
-    // TODO: need to do refactor
-    const basePath = this.getBasePath();
-
-    return Object.keys(operations).map((httpMethod) => {
-      const requestPath = this.getRequestURL(pathName);
-
-      return {
-        url: `${basePath}${requestPath === SLASH && !!basePath ? "" : requestPath}`,
-        method: httpMethod,
-        ...this.resolveOperation((operations as Dictionary<any>)[httpMethod]),
-      };
-    });
-  }
-
-  getBasePath() {
-    const basePath = SLASH.concat(drop(this.servers[0].url.split(SLASH), 3).join(SLASH));
-
-    return basePath === SLASH ? "" : basePath;
+    return Object.keys(operations).map((httpMethod) => ({
+      url: this.getRequestURL(pathName),
+      method: httpMethod,
+      ...this.resolveOperation((operations as Dictionary<any>)[httpMethod]),
+    }));
   }
 
   getRequestURL = (pathName: string) => {
