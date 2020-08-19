@@ -10,8 +10,15 @@ import {
 } from "@openapi-integration/openapi-schema";
 import { SchemaResolver } from "./SchemaResolver";
 import { generateEnums } from "./DefinitionsResolver";
-import { chain, Dictionary, filter, get, isEmpty, map, pick, reduce, sortBy } from "lodash";
-import { generateClientName, generateFunctionName, generateRequestArguments, isRequestBody, isSchema } from "./utils";
+import { camelCase, chain, Dictionary, filter, get, isEmpty, map, pick, reduce, sortBy } from "lodash";
+import {
+  generateClientName,
+  generateFunctionName,
+  generateRequestArguments,
+  isRequestBody,
+  isSchema,
+  toCapitalCase,
+} from "./utils";
 import { HTTP_METHODS, SLASH } from "./constants";
 import { IParameters, IResolvedPath } from "./types";
 
@@ -42,7 +49,7 @@ export class PathResolver {
       const bodyData = get(resolvedPath.bodyParams, "[0]");
       const cookie = get(resolvedPath.formDataParams, "[0]");
       const requestBody = get(resolvedPath, "requestBody");
-      const body = requestBody || bodyData || cookie;
+      const body = camelCase(toCapitalCase(requestBody || bodyData || cookie));
       const params = this.toRequestParams(get(resolvedPath, "queryParams"));
 
       return `export const ${generateFunctionName(

@@ -46,10 +46,10 @@ export const toTypes = (obj: Dictionary<any> | string) => {
   }
   const list = map<string, any>(obj, (value: any, key: string) => {
     if (isObject(value)) {
-      return `${quoteKey(key)}: ${JSON.stringify(value)};`;
+      return `${quoteKey(camelCase(toCapitalCase(key)))}: ${JSON.stringify(value)};`;
     }
 
-    return `${quoteKey(key)}: ${replace(value, ENUM_SUFFIX, "")};`;
+    return `${quoteKey(camelCase(toCapitalCase(key)))}: ${replace(value, ENUM_SUFFIX, "")};`;
   });
 
   return (
@@ -94,7 +94,7 @@ export const generateRequestArguments = (resolvedPath: IResolvedPath) => {
     ...resolvedPath.bodyParams,
     ...resolvedPath.formDataParams,
     resolvedPath.requestBody,
-  ]);
+  ]).map((param) => camelCase(param));
 
   return requestParamList.length === 0 ? "" : `{${requestParamList.join(",")}}:${argumentTypes}`;
 };

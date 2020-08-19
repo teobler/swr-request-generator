@@ -42,6 +42,12 @@ describe("#generateRequestArguments", () => {
     ).toBe("{id}:{'id':string;}");
   });
 
+  it("should return arg and it's corresponding type with camelCase when request only one argument presents", () => {
+    expect(
+      removeSpaces(generateRequestArguments({ ...resolvedPath, bodyParams: ["BookController_createBookRequest"], TReq: { "BookController_createBookRequest": "ICreateBookRequest" } })),
+    ).toBe("{bookControllerCreateBookRequest}:{'bookControllerCreateBookRequest':ICreateBookRequest;}");
+  });
+
   it("should return args and it's corresponding types when multiple arguments present", () => {
     expect(
       removeSpaces(
