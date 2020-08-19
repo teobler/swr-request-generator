@@ -1,6 +1,6 @@
 {
   "output": ".output",
-  "fileHeader": "//test\n\n",
+  "fileHeaders": ["//test", "//test", "//test"],
   "clients": [],
   "data": ["./examples/openAPI.json"],
   "fileName": "api",

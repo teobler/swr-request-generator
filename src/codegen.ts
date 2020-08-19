@@ -13,7 +13,7 @@ program.option("-a, --authorization <value>", "authorization header value").pars
 
 interface ICodegenConfig {
   output?: string;
-  fileHeader?: string;
+  fileHeaders?: string[];
   timeout?: number;
   data?: string[];
   clients?: string[];
@@ -27,11 +27,11 @@ const getCodegenConfig = (): ICodegenConfig =>
     ? require(codegenConfigPath)
     : {
         output: ".output",
-        fileHeader: "",
+        fileHeaders: [],
         clients: [],
       };
 
-const { output = ".output", fileHeader, timeout, data, clients, fileName } = getCodegenConfig();
+const { output = ".output", fileHeaders, timeout, data, clients, fileName } = getCodegenConfig();
 
 const codegen = (schema: Spec | string) => {
   if (typeof schema === "string") {
@@ -44,7 +44,8 @@ const codegen = (schema: Spec | string) => {
   }
 
   const fileStr =
-    fileHeader +
+    (fileHeaders ? fileHeaders.join("\n") : "") +
+    "\n\n" +
     FILE_TIP +
     [
       ...PathResolver.of(schema.paths)
