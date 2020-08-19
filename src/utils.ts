@@ -46,10 +46,10 @@ export const toTypes = (obj: Dictionary<any> | string) => {
   }
   const list = map<string, any>(obj, (value: any, key: string) => {
     if (isObject(value)) {
-      return `${quoteKey(camelCase(toCapitalCase(key)))}: ${JSON.stringify(value).replace(/"/g, "")};`;
+      return `${convertKeyToCamelCaseAndAddQuote(key)}: ${JSON.stringify(value).replace(/"/g, "")};`;
     }
 
-    return `${quoteKey(camelCase(toCapitalCase(key)))}: ${replace(value, ENUM_SUFFIX, "")};`;
+    return `${convertKeyToCamelCaseAndAddQuote(key)}: ${replace(value, ENUM_SUFFIX, "")};`;
   });
 
   return (
@@ -60,9 +60,9 @@ export const toTypes = (obj: Dictionary<any> | string) => {
   );
 };
 
-export const quoteKey = (k: string) => {
+const convertKeyToCamelCaseAndAddQuote = (k: string) => {
   const isOptional = indexOf(k, "?") > -1;
-  return `'${trimEnd(k, "?")}'${isOptional ? "?" : ""}`;
+  return `'${camelCase(toCapitalCase(trimEnd(k, "?")))}'${isOptional ? "?" : ""}`;
 };
 
 export function testJSON(
