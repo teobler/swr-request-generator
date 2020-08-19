@@ -11,7 +11,7 @@ import {
 import { SchemaResolver } from "./SchemaResolver";
 import { generateEnums } from "./DefinitionsResolver";
 import { chain, Dictionary, filter, get, isEmpty, map, pick, reduce, sortBy } from "lodash";
-import { generateFunctionName, generateRequestArguments, isRequestBody, isSchema } from "./utils";
+import { generateClientName, generateFunctionName, generateRequestArguments, isRequestBody, isSchema } from "./utils";
 import { HTTP_METHODS, SLASH } from "./constants";
 import { IParameters, IResolvedPath } from "./types";
 
@@ -45,10 +45,11 @@ export class PathResolver {
       const body = requestBody || bodyData || cookie;
       const params = this.toRequestParams(get(resolvedPath, "queryParams"));
 
-      return `export const ${generateFunctionName(resolvedPath.operationId)} = (${generateRequestArguments(
-        resolvedPath,
-      )}) => 
-        createRequestHook<${resolvedPath.TResp || undefined}>({
+      return `export const ${generateFunctionName(
+        resolvedPath.method,
+        resolvedPath.operationId,
+      )} = (${generateRequestArguments(resolvedPath)}) => 
+        ${generateClientName(resolvedPath.method, resolvedPath.TResp)}({
         url: \`${resolvedPath.url}\`,
         method: "${resolvedPath.method}",
         ${body ? `data: ${body},` : ""}${params ? `params: ${params},` : ""}${

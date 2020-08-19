@@ -99,6 +99,14 @@ export const generateRequestArguments = (resolvedPath: IResolvedPath) => {
   return requestParamList.length === 0 ? "" : `{${requestParamList.join(",")}}:${argumentTypes}`;
 };
 
-export const generateFunctionName = (operationId?: string) => {
-  return `create${toCapitalCase(camelCase(operationId))}Request`;
+export const generateFunctionName = (method: string, operationId?: string) => {
+  return method === "get"
+    ? `${camelCase(operationId)}Request`
+    : `create${toCapitalCase(camelCase(operationId))}Request`;
+};
+
+export const generateClientName = (method: string, responseType: any) => {
+  return method === "get"
+    ? `createRequestHook<${responseType || undefined}, IResponseError>`
+    : `client.request<${responseType || undefined}>`;
 };

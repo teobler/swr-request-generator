@@ -1,4 +1,4 @@
-import { generateFunctionName, generateRequestArguments, testJSON, toCapitalCase } from "../utils";
+import { generateClientName, generateFunctionName, generateRequestArguments, testJSON, toCapitalCase } from "../utils";
 import { IResolvedPath } from "../types";
 
 describe("#toCapitalCase", () => {
@@ -65,8 +65,27 @@ describe("#generateRequestArguments", () => {
 });
 
 describe("#generateFunctionName", () => {
-  it("should return expected method name", () => {
+  it("should return expected method name for get request", () => {
     const operationId = "PersonController_findPersonById";
-    expect(generateFunctionName(operationId)).toBe("createPersonControllerFindPersonByIdRequest");
+    expect(generateFunctionName("get", operationId)).toBe("personControllerFindPersonByIdRequest");
+  });
+
+  it("should return expected method name for other requests", () => {
+    const operationId = "PersonController_findPersonById";
+    expect(generateFunctionName("post", operationId)).toBe("createPersonControllerFindPersonByIdRequest");
+    expect(generateFunctionName("put", operationId)).toBe("createPersonControllerFindPersonByIdRequest");
+    expect(generateFunctionName("delete", operationId)).toBe("createPersonControllerFindPersonByIdRequest");
+  });
+});
+
+describe("#generateClientName", () => {
+  it("should return createRequestHook client given request method is get", () => {
+    expect(generateClientName("get", "IResponse")).toBe("createRequestHook<IResponse, IResponseError>")
+  });
+
+  it("should return normal client given request method is others", () => {
+    expect(generateClientName("post", "IResponse")).toBe("client.request<IResponse>")
+    expect(generateClientName("put", "IResponse")).toBe("client.request<IResponse>")
+    expect(generateClientName("delete", "IResponse")).toBe("client.request<IResponse>")
   });
 });
