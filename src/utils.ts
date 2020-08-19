@@ -46,7 +46,7 @@ export const toTypes = (obj: Dictionary<any> | string) => {
   }
   const list = map<string, any>(obj, (value: any, key: string) => {
     if (isObject(value)) {
-      return `${quoteKey(camelCase(toCapitalCase(key)))}: ${JSON.stringify(value)};`;
+      return `${quoteKey(camelCase(toCapitalCase(key)))}: ${JSON.stringify(value).replace(/"/g, "")};`;
     }
 
     return `${quoteKey(camelCase(toCapitalCase(key)))}: ${replace(value, ENUM_SUFFIX, "")};`;
