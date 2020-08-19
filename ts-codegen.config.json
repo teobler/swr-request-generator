@@ -1,6 +1,6 @@
 {
   "output": ".output",
-  "actionCreatorImport": "import { createRequestHook } from 'examples/requestActionCreators';\n\n",
+  "fileHeader": "//test\n\n",
   "clients": [],
   "data": ["./examples/openAPI.json"],
   "fileName": "api",
