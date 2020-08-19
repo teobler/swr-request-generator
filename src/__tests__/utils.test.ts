@@ -73,14 +73,14 @@ describe("#generateRequestArguments", () => {
 describe("#generateFunctionName", () => {
   it("should return expected method name for get request", () => {
     const operationId = "PersonController_findPersonById";
-    expect(generateFunctionName("get", operationId)).toBe("personControllerFindPersonByIdRequest");
+    expect(generateFunctionName("get", operationId)).toBe("createPersonControllerFindPersonByIdRequest");
   });
 
   it("should return expected method name for other requests", () => {
     const operationId = "PersonController_findPersonById";
-    expect(generateFunctionName("post", operationId)).toBe("createPersonControllerFindPersonByIdRequest");
-    expect(generateFunctionName("put", operationId)).toBe("createPersonControllerFindPersonByIdRequest");
-    expect(generateFunctionName("delete", operationId)).toBe("createPersonControllerFindPersonByIdRequest");
+    expect(generateFunctionName("post", operationId)).toBe("personControllerFindPersonByIdRequest");
+    expect(generateFunctionName("put", operationId)).toBe("personControllerFindPersonByIdRequest");
+    expect(generateFunctionName("delete", operationId)).toBe("personControllerFindPersonByIdRequest");
   });
 });
 

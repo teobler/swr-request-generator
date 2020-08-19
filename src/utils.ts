@@ -101,8 +101,8 @@ export const generateRequestArguments = (resolvedPath: IResolvedPath) => {
 
 export const generateFunctionName = (method: string, operationId?: string) => {
   return method === "get"
-    ? `${camelCase(operationId)}Request`
-    : `create${toCapitalCase(camelCase(operationId))}Request`;
+    ? `create${toCapitalCase(camelCase(operationId))}Request`
+    : `${camelCase(operationId)}Request`;
 };
 
 export const generateClientName = (method: string, responseType: any) => {
