@@ -32,33 +32,80 @@ describe("#testJSON", () => {
 describe("#generateRequestArguments", () => {
   const removeSpaces = (str: string) => str.replace(/[\n \r]/g, "");
 
-  it("should return empty string when request argument is empty", () => {
-    expect(generateRequestArguments(resolvedPath)).toBe("");
+  describe("#get method", () => {
+    it("should return empty string when request argument is empty", () => {
+      expect(generateRequestArguments(resolvedPath)).toBe("SWRConfig?: ISWRConfig<IResponse, IResponseError>");
+    });
+
+    it("should return arg and it's corresponding type when request only one argument presents", () => {
+      expect(
+        removeSpaces(generateRequestArguments({ ...resolvedPath, pathParams: ["id"], TReq: { id: "string" } })),
+      ).toBe("{id}:{'id':string;},SWRConfig?:ISWRConfig<IResponse,IResponseError>");
+    });
+
+    it("should return arg and it's corresponding type with camelCase when request only one argument presents", () => {
+      expect(
+        removeSpaces(
+          generateRequestArguments({
+            ...resolvedPath,
+            bodyParams: ["BookController_createBookRequest"],
+            TReq: { BookController_createBookRequest: "ICreateBookRequest" },
+          }),
+        ),
+      ).toBe("{bookControllerCreateBookRequest}:{'bookControllerCreateBookRequest':ICreateBookRequest;},SWRConfig?:ISWRConfig<IResponse,IResponseError>");
+    });
+
+    it("should return args and it's corresponding types when multiple arguments present", () => {
+      expect(
+        removeSpaces(
+          generateRequestArguments({
+            ...resolvedPath,
+            pathParams: ["id"],
+            queryParams: ["name"],
+            TReq: { id: "string", name: "string" },
+          }),
+        ),
+      ).toBe("{id,name}:{'id':string;'name':string;},SWRConfig?:ISWRConfig<IResponse,IResponseError>");
+    });
   });
 
-  it("should return arg and it's corresponding type when request only one argument presents", () => {
-    expect(
-      removeSpaces(generateRequestArguments({ ...resolvedPath, pathParams: ["id"], TReq: { id: "string" } })),
-    ).toBe("{id}:{'id':string;}");
-  });
+  describe("#others methods", () => {
+    it("should return empty string when request argument is empty for POST method", () => {
+      expect(generateRequestArguments({ ...resolvedPath, method: "post" })).toBe("");
+    });
 
-  it("should return arg and it's corresponding type with camelCase when request only one argument presents", () => {
-    expect(
-      removeSpaces(generateRequestArguments({ ...resolvedPath, bodyParams: ["BookController_createBookRequest"], TReq: { "BookController_createBookRequest": "ICreateBookRequest" } })),
-    ).toBe("{bookControllerCreateBookRequest}:{'bookControllerCreateBookRequest':ICreateBookRequest;}");
-  });
+    it("should return arg and it's corresponding type when request only one argument presents", () => {
+      expect(
+        removeSpaces(generateRequestArguments({ ...resolvedPath, method: "put", pathParams: ["id"], TReq: { id: "string" } })),
+      ).toBe("{id}:{'id':string;}");
+    });
 
-  it("should return args and it's corresponding types when multiple arguments present", () => {
-    expect(
-      removeSpaces(
-        generateRequestArguments({
-          ...resolvedPath,
-          pathParams: ["id"],
-          queryParams: ["name"],
-          TReq: { id: "string", name: "string" },
-        }),
-      ),
-    ).toBe("{id,name}:{'id':string;'name':string;}");
+    it("should return arg and it's corresponding type with camelCase when request only one argument presents", () => {
+      expect(
+        removeSpaces(
+          generateRequestArguments({
+            ...resolvedPath,
+            method: "post",
+            bodyParams: ["BookController_createBookRequest"],
+            TReq: { BookController_createBookRequest: "ICreateBookRequest" },
+          }),
+        ),
+      ).toBe("{bookControllerCreateBookRequest}:{'bookControllerCreateBookRequest':ICreateBookRequest;}");
+    });
+
+    it("should return args and it's corresponding types when multiple arguments present", () => {
+      expect(
+        removeSpaces(
+          generateRequestArguments({
+            ...resolvedPath,
+            method: "delete",
+            pathParams: ["id"],
+            queryParams: ["name"],
+            TReq: { id: "string", name: "string" },
+          }),
+        ),
+      ).toBe("{id,name}:{'id':string;'name':string;}");
+    });
   });
 
   const resolvedPath = {
@@ -67,13 +114,15 @@ describe("#generateRequestArguments", () => {
     queryParams: [""],
     bodyParams: [""],
     formDataParams: [""],
+    method: "get",
+    TResp: "IResponse",
   } as IResolvedPath;
 });
 
 describe("#generateFunctionName", () => {
   it("should return expected method name for get request", () => {
     const operationId = "PersonController_findPersonById";
-    expect(generateFunctionName("get", operationId)).toBe("createPersonControllerFindPersonByIdRequest");
+    expect(generateFunctionName("get", operationId)).toBe("usePersonControllerFindPersonByIdRequest");
   });
 
   it("should return expected method name for other requests", () => {
@@ -86,12 +135,12 @@ describe("#generateFunctionName", () => {
 
 describe("#generateClientName", () => {
   it("should return createRequestHook client given request method is get", () => {
-    expect(generateClientName("get", "IResponse")).toBe("createRequestHook<IResponse, IResponseError>")
+    expect(generateClientName("get", "IResponse")).toBe("useRequest<IResponse, IResponseError>");
   });
 
   it("should return normal client given request method is others", () => {
-    expect(generateClientName("post", "IResponse")).toBe("client.request<IResponse>")
-    expect(generateClientName("put", "IResponse")).toBe("client.request<IResponse>")
-    expect(generateClientName("delete", "IResponse")).toBe("client.request<IResponse>")
+    expect(generateClientName("post", "IResponse")).toBe("client.request<IResponse>");
+    expect(generateClientName("put", "IResponse")).toBe("client.request<IResponse>");
+    expect(generateClientName("delete", "IResponse")).toBe("client.request<IResponse>");
   });
 });

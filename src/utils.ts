@@ -96,17 +96,18 @@ export const generateRequestArguments = (resolvedPath: IResolvedPath) => {
     resolvedPath.requestBody,
   ]).map((param) => camelCase(param));
 
-  return requestParamList.length === 0 ? "" : `{${requestParamList.join(",")}}:${argumentTypes}`;
+  const requestParams = requestParamList.length === 0 ? "" : `{${requestParamList.join(",")}}:${argumentTypes}`;
+  return resolvedPath.method === "get"
+    ? `${requestParams ? requestParams + ", " : ""}SWRConfig?: ISWRConfig<${resolvedPath.TResp || undefined}, IResponseError>`
+    : requestParams;
 };
 
 export const generateFunctionName = (method: string, operationId?: string) => {
-  return method === "get"
-    ? `create${toCapitalCase(camelCase(operationId))}Request`
-    : `${camelCase(operationId)}Request`;
+  return method === "get" ? `use${toCapitalCase(camelCase(operationId))}Request` : `${camelCase(operationId)}Request`;
 };
 
 export const generateClientName = (method: string, responseType: any) => {
   return method === "get"
-    ? `createRequestHook<${responseType || undefined}, IResponseError>`
+    ? `useRequest<${responseType || undefined}, IResponseError>`
     : `client.request<${responseType || undefined}>`;
 };
