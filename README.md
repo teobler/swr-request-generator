@@ -1,31 +1,83 @@
-# Redux Action Generator
+# SWR request generator
 
-This tool can generate redux request actions and related interface from swagger.
+This tool can generate [SWR](https://swr.vercel.app/) request and related request and response interface from swagger.
 
-it can avoid duplicate of template code for redux request actions.
+it will generate all get request via SWR and others will be [axios](https://www.axios.com/).
 
-# Configuration
-create a new json file named `ts-codegen.config.json` in your project root directory
+# Dependencies
+
+if you want to use this tool, your project should be:
+
+1. your back end API should use swagger and OpenAPI 3.0 standard
+2. your front end client should be axios
+3. use SWR as data fetching lib for your front end web app
+
+# How to use
+## install
+
+```bash
+npm install -D @openapi-integration/swr-request-generator
+```
+
+or
+
+```bash
+yarn add -D @openapi-integration/swr-request-generator
+```
+
+## Configuration
+### script
+
+add a npm script to your package.json file:
 
 ```json
 {
-  "output": ".output",
-  "actionCreatorImport": "import { createRequestAction } from 'examples/requestActionCreators';\n\n",
+  ...,
+  "scripts": {
+    ...,
+    "codegen": "ts-codegen",
+    ...,
+  }
+  ...,
+}
+```
+
+### config file
+
+create a new json file named `ts-codegen.config.json` in your project root directory like this
+
+```json
+{
+  "output": "src/request",
+  "fileHeaders": [
+    "/* eslint-disable @typescript-eslint/explicit-module-boundary-types */",
+    "/* eslint-disable @typescript-eslint/no-explicit-any */",
+    "import { ISWRConfig, useRequest } from './useRequest';",
+    "import { IResponseError } from \"../../constants/error\";",
+    "import { client } from \"./client\";"
+  ],
   "clients": ["https://app.swaggerhub.com/apiproxy/registry/teobler/integration-example/1.0.0"],
+  "fileName": "api",
   "data": ["./examples/openAPI.json"]
 }
 ```
 
-- output: your output directory
-- actionCreatorImport: import your own requestActionCreator
-- clients: your project swagger online address
-- data: swagger offline file path
+fields meaning:
+ - output(string): output file dir
+ - fileName(string): output filename
+ - fileHeaders(string[]): strings in this array will be placed in output file beginning
+ - clients(string[]): your swagger urls
+ - data(string[]): your local swagger json file dirs
 
-# Start
-1. `npm install`
-2. Configure your own ts-codegen.config.json
-3. Run cli `ts-codegen`
+### Run it!
 
-# Note
-1. This repo is forked from [ts-codegen](https://github.com/reeli/ts-codegen) by [@reeli](https://github.com/reeli)
-2. This tool only for swagger v3 now
+1. Find an address where you can get your back-end API swagger json file (either online or local), it should be an url can get swagger json response
+2. Fill this address into the `clients array` of the above configuration file. If you have multiple addresses, fill in multiple string addresses.
+3. If you can only download the swagger json file, that's fine, just put the json file into your project and fill in your file path in the data field of the config file.
+4. Run `npm run codegen` then you can find output file in your output dir
+
+> if your swagger url need basic auth, just run `npm run codegen -- -a "Basic #basicAuthHeader"`
+
+## example
+
+all the details can be found in example folder
