@@ -1,8 +1,13 @@
 {
-  "output": ".output",
-  "fileHeaders": ["//test", "//test", "//test"],
+  "output": "example/request",
+  "fileHeaders": [
+    "/* eslint-disable @typescript-eslint/explicit-module-boundary-types */",
+    "/* eslint-disable @typescript-eslint/no-explicit-any */",
+    "import { ISWRConfig, useRequest } from './useRequest';",
+    "import { IResponseError } from '../types';",
+    "import { client } from './client';"
+  ],
   "clients": [],
-  "data": ["./examples/openAPI.json"],
-  "fileName": "api",
-  "timeout": 10000
+  "data": ["./example/swagger/openAPI.json"],
+  "fileName": "api"
 }
