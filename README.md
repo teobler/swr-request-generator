@@ -80,4 +80,12 @@ fields meaning:
 
 ## example
 
-all the details can be found in example folder
+all the details can be found in example folder.
+
+clone this repo(please checkout on `swr-openapi-gen` branch)
+
+run `npm i` to install all dependency
+
+then run `bin/ts-codegen.js` can generate api file in `example/request/api.ts`
+
+how to use this file can be found in page.tsx 
