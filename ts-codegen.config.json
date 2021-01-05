@@ -5,7 +5,8 @@
     "/* eslint-disable @typescript-eslint/no-explicit-any */",
     "import { ISWRConfig, useRequest } from './useRequest';",
     "import { IResponseError } from '../types';",
-    "import { client } from './client';"
+    "import { client } from './client';",
+    "import { AxiosResponse } from 'axios';"
   ],
   "clients": [],
   "data": ["./example/swagger/openAPI.json"],

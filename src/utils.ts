@@ -109,5 +109,5 @@ export const generateFunctionName = (method: string, operationId?: string) => {
 export const generateClientName = (method: string, responseType: any) => {
   return method === "get"
     ? `useRequest<${responseType || undefined}, IResponseError>`
-    : `client.request<${responseType || undefined}>`;
+    : `client.request<${responseType || undefined}, AxiosResponse<${responseType || undefined}>>`;
 };

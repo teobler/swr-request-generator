@@ -52,7 +52,9 @@ describe("#generateRequestArguments", () => {
             TReq: { BookController_createBookRequest: "ICreateBookRequest" },
           }),
         ),
-      ).toBe("{bookControllerCreateBookRequest}:{'bookControllerCreateBookRequest':ICreateBookRequest;},SWRConfig?:ISWRConfig<IResponse,IResponseError>");
+      ).toBe(
+        "{bookControllerCreateBookRequest}:{'bookControllerCreateBookRequest':ICreateBookRequest;},SWRConfig?:ISWRConfig<IResponse,IResponseError>",
+      );
     });
 
     it("should return args and it's corresponding types when multiple arguments present", () => {
@@ -76,7 +78,9 @@ describe("#generateRequestArguments", () => {
 
     it("should return arg and it's corresponding type when request only one argument presents", () => {
       expect(
-        removeSpaces(generateRequestArguments({ ...resolvedPath, method: "put", pathParams: ["id"], TReq: { id: "string" } })),
+        removeSpaces(
+          generateRequestArguments({ ...resolvedPath, method: "put", pathParams: ["id"], TReq: { id: "string" } }),
+        ),
       ).toBe("{id}:{'id':string;}");
     });
 
@@ -139,8 +143,8 @@ describe("#generateClientName", () => {
   });
 
   it("should return normal client given request method is others", () => {
-    expect(generateClientName("post", "IResponse")).toBe("client.request<IResponse>");
-    expect(generateClientName("put", "IResponse")).toBe("client.request<IResponse>");
-    expect(generateClientName("delete", "IResponse")).toBe("client.request<IResponse>");
+    expect(generateClientName("post", "IResponse")).toBe("client.request<IResponse, AxiosResponse<IResponse>>");
+    expect(generateClientName("put", "IResponse")).toBe("client.request<IResponse, AxiosResponse<IResponse>>");
+    expect(generateClientName("delete", "IResponse")).toBe("client.request<IResponse, AxiosResponse<IResponse>>");
   });
 });
