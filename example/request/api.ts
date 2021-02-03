@@ -129,7 +129,7 @@ export const uploadAttachmentUsingPostRequest = (
   {
     uploadAttachmentUsingPostRequest,
   }: {
-    uploadAttachmentUsingPostRequest: { attachment: string };
+    uploadAttachmentUsingPostRequest: { attachment: FormData };
   },
   axiosConfig?: AxiosRequestConfig,
 ) =>
@@ -137,6 +137,22 @@ export const uploadAttachmentUsingPostRequest = (
     url: `/`,
     method: "post",
     data: uploadAttachmentUsingPostRequest,
+    headers: { "Content-Type": "multipart/form-data" },
+    ...axiosConfig,
+  });
+
+export const uploadDocumentUsingPostRequest = (
+  {
+    uploadDocumentUsingPostRequest,
+  }: {
+    uploadDocumentUsingPostRequest: IFileUploadReq;
+  },
+  axiosConfig?: AxiosRequestConfig,
+) =>
+  client.request<undefined, AxiosResponse<undefined>>({
+    url: `/documents`,
+    method: "post",
+    data: uploadDocumentUsingPostRequest,
     headers: { "Content-Type": "multipart/form-data" },
     ...axiosConfig,
   });
@@ -208,6 +224,10 @@ export interface IFile {
   totalSpace?: number;
   usableSpace?: number;
   writable?: boolean;
+}
+
+export interface IFileUploadReq {
+  file: FormData;
 }
 
 export interface IInputStream {
