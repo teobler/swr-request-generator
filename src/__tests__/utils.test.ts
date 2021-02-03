@@ -33,14 +33,16 @@ describe("#generateRequestArguments", () => {
   const removeSpaces = (str: string) => str.replace(/[\n \r]/g, "");
 
   describe("#get method", () => {
-    it("should return empty string when request argument is empty", () => {
-      expect(generateRequestArguments(resolvedPath)).toBe("SWRConfig?: ISWRConfig<IResponse, IResponseError>");
+    it("should return axios config only when request argument is empty", () => {
+      expect(generateRequestArguments(resolvedPath)).toBe(
+        "SWRConfig?: ISWRConfig<IResponse, IResponseError>, axiosConfig?: AxiosRequestConfig",
+      );
     });
 
     it("should return arg and it's corresponding type when request only one argument presents", () => {
       expect(
         removeSpaces(generateRequestArguments({ ...resolvedPath, pathParams: ["id"], TReq: { id: "string" } })),
-      ).toBe("{id}:{'id':string;},SWRConfig?:ISWRConfig<IResponse,IResponseError>");
+      ).toBe("{id}:{'id':string;},SWRConfig?:ISWRConfig<IResponse,IResponseError>,axiosConfig?:AxiosRequestConfig");
     });
 
     it("should return arg and it's corresponding type with camelCase when request only one argument presents", () => {
@@ -53,7 +55,7 @@ describe("#generateRequestArguments", () => {
           }),
         ),
       ).toBe(
-        "{bookControllerCreateBookRequest}:{'bookControllerCreateBookRequest':ICreateBookRequest;},SWRConfig?:ISWRConfig<IResponse,IResponseError>",
+        "{bookControllerCreateBookRequest}:{'bookControllerCreateBookRequest':ICreateBookRequest;},SWRConfig?:ISWRConfig<IResponse,IResponseError>,axiosConfig?:AxiosRequestConfig",
       );
     });
 
@@ -67,13 +69,30 @@ describe("#generateRequestArguments", () => {
             TReq: { id: "string", name: "string" },
           }),
         ),
-      ).toBe("{id,name}:{'id':string;'name':string;},SWRConfig?:ISWRConfig<IResponse,IResponseError>");
+      ).toBe(
+        "{id,name}:{'id':string;'name':string;},SWRConfig?:ISWRConfig<IResponse,IResponseError>,axiosConfig?:AxiosRequestConfig",
+      );
+    });
+
+    it("should receive last param as axios config", () => {
+      expect(
+        removeSpaces(
+          generateRequestArguments({
+            ...resolvedPath,
+            pathParams: ["id"],
+            queryParams: ["name"],
+            TReq: { id: "string", name: "string" },
+          }),
+        ),
+      ).toBe(
+        "{id,name}:{'id':string;'name':string;},SWRConfig?:ISWRConfig<IResponse,IResponseError>,axiosConfig?:AxiosRequestConfig",
+      );
     });
   });
 
   describe("#others methods", () => {
-    it("should return empty string when request argument is empty for POST method", () => {
-      expect(generateRequestArguments({ ...resolvedPath, method: "post" })).toBe("");
+    it("should return axios config when request argument is empty for POST method", () => {
+      expect(generateRequestArguments({ ...resolvedPath, method: "post" })).toBe("axiosConfig?: AxiosRequestConfig");
     });
 
     it("should return arg and it's corresponding type when request only one argument presents", () => {
@@ -81,7 +100,7 @@ describe("#generateRequestArguments", () => {
         removeSpaces(
           generateRequestArguments({ ...resolvedPath, method: "put", pathParams: ["id"], TReq: { id: "string" } }),
         ),
-      ).toBe("{id}:{'id':string;}");
+      ).toBe("{id}:{'id':string;},axiosConfig?:AxiosRequestConfig");
     });
 
     it("should return arg and it's corresponding type with camelCase when request only one argument presents", () => {
@@ -94,7 +113,9 @@ describe("#generateRequestArguments", () => {
             TReq: { BookController_createBookRequest: "ICreateBookRequest" },
           }),
         ),
-      ).toBe("{bookControllerCreateBookRequest}:{'bookControllerCreateBookRequest':ICreateBookRequest;}");
+      ).toBe(
+        "{bookControllerCreateBookRequest}:{'bookControllerCreateBookRequest':ICreateBookRequest;},axiosConfig?:AxiosRequestConfig",
+      );
     });
 
     it("should return args and it's corresponding types when multiple arguments present", () => {
@@ -108,7 +129,21 @@ describe("#generateRequestArguments", () => {
             TReq: { id: "string", name: "string" },
           }),
         ),
-      ).toBe("{id,name}:{'id':string;'name':string;}");
+      ).toBe("{id,name}:{'id':string;'name':string;},axiosConfig?:AxiosRequestConfig");
+    });
+
+    it("should receive last param as axios config", () => {
+      expect(
+        removeSpaces(
+          generateRequestArguments({
+            ...resolvedPath,
+            method: "post",
+            pathParams: ["id"],
+            queryParams: ["name"],
+            TReq: { id: "string", name: "string" },
+          }),
+        ),
+      ).toBe("{id,name}:{'id':string;'name':string;},axiosConfig?:AxiosRequestConfig");
     });
   });
 

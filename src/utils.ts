@@ -86,6 +86,9 @@ export const isSchema = (schema?: Schema | Reference): schema is Schema => !has(
 export const isRequestBody = (requestBody?: RequestBody | Reference): requestBody is RequestBody =>
   !has(requestBody, "$ref");
 
+// const appendAxiosRequestConfigToTypes = (argumentTypes?: string) =>
+//   argumentTypes?.replace(/}/g, "'axiosConfig'?:AxiosRequestConfig;}");
+
 export const generateRequestArguments = (resolvedPath: IResolvedPath) => {
   const argumentTypes = !isEmpty(resolvedPath.TReq) ? toTypes(resolvedPath.TReq) : undefined;
   const requestParamList = compact([
@@ -98,8 +101,8 @@ export const generateRequestArguments = (resolvedPath: IResolvedPath) => {
 
   const requestParams = requestParamList.length === 0 ? "" : `{${requestParamList.join(",")}}:${argumentTypes}`;
   return resolvedPath.method === "get"
-    ? `${requestParams ? requestParams + ", " : ""}SWRConfig?: ISWRConfig<${resolvedPath.TResp || undefined}, IResponseError>`
-    : requestParams;
+    ? `${requestParams ? requestParams + ", " : ""}SWRConfig?: ISWRConfig<${resolvedPath.TResp || undefined}, IResponseError>, axiosConfig?: AxiosRequestConfig`
+    : `${requestParams ? requestParams + ", " : ""}axiosConfig?: AxiosRequestConfig`;
 };
 
 export const generateFunctionName = (method: string, operationId?: string) => {
