@@ -59,6 +59,10 @@ export class SchemaResolver {
       return "{[key:string]:any}";
     }
 
+    if (schema.type === "string" && schema.format === "binary") {
+      return "FormData";
+    }
+
     return this.getBasicType(schema.type, advancedType);
   };
 

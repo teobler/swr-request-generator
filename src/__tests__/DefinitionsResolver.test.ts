@@ -28,6 +28,9 @@ const expectedDefinitions = {
     "attachment?": "IScheduleVo",
   },
   ScheduleVO: { "team?": "string", "schedules?": "IBookVo[][]", "shiftId?": "string" },
+  FileUploadReq: {
+    file: "FormData",
+  },
   InputStream: "object",
   Resource: {
     "description?": "string",
@@ -144,6 +147,7 @@ const expectedDeclarations = [
   "export interface IDocumentVo {\n        'attachment'?: IBookDetailVo;\n'authorName'?: string;\n'createdDate'?: number;\n'id'?: string;\n'note'?: string;\n'title'?: string;\n      }",
   "export interface IErrorInfo {\n        'errorMessage'?: string;\n      }",
   "export interface IFile {\n        'absolute'?: boolean;\n'absoluteFile'?: IFile;\n'absolutePath'?: string;\n'canonicalFile'?: IFile;\n'canonicalPath'?: string;\n'directory'?: boolean;\n'executable'?: boolean;\n'file'?: boolean;\n'freeSpace'?: number;\n'hidden'?: boolean;\n'lastModified'?: number;\n'name'?: string;\n'parent'?: string;\n'parentFile'?: IFile;\n'path'?: string;\n'readable'?: boolean;\n'totalSpace'?: number;\n'usableSpace'?: number;\n'writable'?: boolean;\n      }",
+  "export interface IFileUploadReq {\n        'file': FormData;\n      }",
   "export interface IInputStream {[key:string]:any}",
   "export interface IResource {\n        'description'?: string;\n'file'?: IFile;\n'filename'?: string;\n'inputStream'?: IInputStream;\n'open'?: boolean;\n'readable'?: boolean;\n'uri'?: IUri;\n'url'?: IUrl;\n      }",
   "export interface IScheduleVo {\n        'schedules'?: IBookVo[][];\n'shiftId'?: string;\n'team'?: string;\n      }",

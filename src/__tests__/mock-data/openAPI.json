@@ -24,9 +24,7 @@
   "paths": {
     "/": {
       "post": {
-        "tags": [
-          "mock-controller"
-        ],
+        "tags": ["mock-controller"],
         "summary": "uploadAttachment",
         "operationId": "uploadAttachmentUsingPOST",
         "parameters": [
@@ -92,9 +90,7 @@
                     "format": "binary"
                   }
                 },
-                "required": [
-                  "attachment"
-                ]
+                "required": ["attachment"]
               }
             }
           }
@@ -103,9 +99,7 @@
     },
     "/{id}": {
       "get": {
-        "tags": [
-          "attachment-controller"
-        ],
+        "tags": ["attachment-controller"],
         "summary": "download",
         "operationId": "downloadUsingGET",
         "parameters": [
@@ -170,9 +164,7 @@
         "deprecated": false
       },
       "delete": {
-        "tags": [
-          "attachment-controller"
-        ],
+        "tags": ["attachment-controller"],
         "summary": "delete attachment by id",
         "operationId": "deleteAttachmentUsingDELETE",
         "parameters": [
@@ -235,9 +227,7 @@
     },
     "/book/{id}": {
       "get": {
-        "tags": [
-          "book-controller"
-        ],
+        "tags": ["book-controller"],
         "summary": "get book by id",
         "operationId": "findBookByIdUsingGET",
         "parameters": [
@@ -302,9 +292,7 @@
         "deprecated": false
       },
       "put": {
-        "tags": [
-          "book-controller"
-        ],
+        "tags": ["book-controller"],
         "summary": "update book by given id",
         "operationId": "updateBookByIdUsingPUT",
         "parameters": [
@@ -378,9 +366,7 @@
     },
     "/schedules": {
       "get": {
-        "tags": [
-          "schedule-controller"
-        ],
+        "tags": ["schedule-controller"],
         "summary": "getScheduleDetailsByDate",
         "operationId": "getScheduleDetailsByDateUsingGET",
         "parameters": [
@@ -460,11 +446,30 @@
         "deprecated": false
       }
     },
+    "/documents": {
+      "post": {
+        "operationId": "uploadDocumentUsingPOST",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/FileUploadReq"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        }
+      }
+    },
     "/documents/{documentId}/doc": {
       "get": {
-        "tags": [
-          "documents-controller"
-        ],
+        "tags": ["documents-controller"],
         "summary": "getDocument",
         "operationId": "getDocumentByIdUsingGET",
         "parameters": [
@@ -502,10 +507,7 @@
             "required": false,
             "schema": {
               "type": "string",
-              "enum": [
-                "AAA",
-                "BBB"
-              ]
+              "enum": ["AAA", "BBB"]
             }
           },
           {
@@ -583,6 +585,16 @@
           }
         },
         "title": "BookDetailVo"
+      },
+      "FileUploadReq": {
+        "type": "object",
+        "properties": {
+          "file": {
+            "type": "string",
+            "format": "binary"
+          }
+        },
+        "required": ["file"]
       },
       "ScheduleVO": {
         "type": "object",
@@ -802,10 +814,7 @@
           },
           "spokenLanguage": {
             "type": "array",
-            "example": [
-              "AH",
-              "AK"
-            ],
+            "example": ["AH", "AK"],
             "items": {
               "type": "string"
             }
@@ -932,9 +941,7 @@
       },
       "BookingResponse": {
         "type": "object",
-        "required": [
-          "data"
-        ],
+        "required": ["data"],
         "properties": {
           "data": {
             "$ref": "#/components/schemas/DocumentVO"
