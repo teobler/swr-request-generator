@@ -21,6 +21,7 @@ export const deleteAttachmentUsingDeleteRequest = (
   client.request<undefined, AxiosResponse<undefined>>({
     url: `/${id}`,
     method: "delete",
+    ...axiosConfig,
   });
 
 export const useDownloadUsingGetRequest = (
@@ -36,6 +37,7 @@ export const useDownloadUsingGetRequest = (
     {
       url: `/${id}`,
       method: "get",
+      ...axiosConfig,
     },
     SWRConfig,
   );
@@ -53,6 +55,7 @@ export const useFindBookByIdUsingGetRequest = (
     {
       url: `/book/${id}`,
       method: "get",
+      ...axiosConfig,
     },
     SWRConfig,
   );
@@ -75,6 +78,7 @@ export const useGetDocumentByIdUsingGetRequest = (
       params: {
         from,
       },
+      ...axiosConfig,
     },
     SWRConfig,
   );
@@ -98,6 +102,7 @@ export const useGetScheduleDetailsByDateUsingGetRequest = (
         scheduleDate,
         roleId,
       },
+      ...axiosConfig,
     },
     SWRConfig,
   );
@@ -117,6 +122,7 @@ export const updateBookByIdUsingPutRequest = (
     method: "put",
     data: updateBookByIdUsingPutRequest,
     headers: { "Content-Type": "multipart/form-data" },
+    ...axiosConfig,
   });
 
 export const uploadAttachmentUsingPostRequest = (
@@ -132,6 +138,7 @@ export const uploadAttachmentUsingPostRequest = (
     method: "post",
     data: uploadAttachmentUsingPostRequest,
     headers: { "Content-Type": "multipart/form-data" },
+    ...axiosConfig,
   });
 
 export enum FromFrom {

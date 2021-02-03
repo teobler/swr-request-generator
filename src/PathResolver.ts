@@ -60,8 +60,8 @@ export class PathResolver {
         url: \`${resolvedPath.url}\`,
         method: "${resolvedPath.method}",
         ${body ? `data: ${body},` : ""}${params ? `params: ${params},` : ""}${
-        body ? `headers: {'Content-Type': "${this.contentType}"}` : ""
-      }}${resolvedPath.method === "get" ? ", SWRConfig" : ""});`;
+        body ? `headers: {'Content-Type': "${this.contentType}"},` : ""
+      }...axiosConfig}${resolvedPath.method === "get" ? ", SWRConfig" : ""});`;
     });
 
     const enums = Object.keys(this.extraDefinitions).map((k) => generateEnums(this.extraDefinitions, k));
