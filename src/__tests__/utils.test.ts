@@ -1,4 +1,5 @@
 import {
+  addPrefixForInterface,
   arrayToObject,
   generateClientName,
   generateFunctionName,
@@ -198,5 +199,16 @@ describe("#arrayToObject", () => {
     [["a", "b"], { a: "a", b: "b" }],
   ])("should convert array to object", (input, result) => {
     expect(arrayToObject(input)).toEqual(result);
+  });
+});
+
+describe("#addPrefixForInterface", () => {
+  it.each([
+    ["xxx", "Ixxx"],
+    ["", "I"],
+    [undefined, "I"],
+    ["undefined", "Iundefined"],
+  ])("should add prefix I for interface", (input, result) => {
+    expect(addPrefixForInterface(input)).toEqual(result);
   });
 });
