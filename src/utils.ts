@@ -88,9 +88,6 @@ export const isSchema = (schema?: Schema | Reference): schema is Schema => !has(
 export const isRequestBody = (requestBody?: RequestBody | Reference): requestBody is RequestBody =>
   !has(requestBody, "$ref");
 
-// const appendAxiosRequestConfigToTypes = (argumentTypes?: string) =>
-//   argumentTypes?.replace(/}/g, "'axiosConfig'?:AxiosRequestConfig;}");
-
 export const generateRequestArguments = (resolvedPath: IResolvedPath) => {
   const argumentTypes = !isEmpty(resolvedPath.TReq) ? toTypes(resolvedPath.TReq) : undefined;
   const requestParamList = compact([
