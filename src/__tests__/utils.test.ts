@@ -1,4 +1,11 @@
-import { generateClientName, generateFunctionName, generateRequestArguments, testJSON, toCapitalCase } from "../utils";
+import {
+  arrayToObject,
+  generateClientName,
+  generateFunctionName,
+  generateRequestArguments,
+  testJSON,
+  toCapitalCase,
+} from "../utils";
 import { IResolvedPath } from "../types";
 
 describe("#toCapitalCase", () => {
@@ -181,5 +188,15 @@ describe("#generateClientName", () => {
     expect(generateClientName("post", "IResponse")).toBe("client.request<IResponse, AxiosResponse<IResponse>>");
     expect(generateClientName("put", "IResponse")).toBe("client.request<IResponse, AxiosResponse<IResponse>>");
     expect(generateClientName("delete", "IResponse")).toBe("client.request<IResponse, AxiosResponse<IResponse>>");
+  });
+});
+
+describe("#arrayToObject", () => {
+  it.each([
+    [[], {}],
+    [["a"], { a: "a" }],
+    [["a", "b"], { a: "a", b: "b" }],
+  ])("should convert array to object", (input, result) => {
+    expect(arrayToObject(input)).toEqual(result);
   });
 });

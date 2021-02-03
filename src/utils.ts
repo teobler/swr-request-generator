@@ -4,6 +4,8 @@ import { ERROR_MESSAGES } from "./constants";
 import { Reference, RequestBody, Schema } from "@openapi-integration/openapi-schema";
 import { IResolvedPath } from "./types";
 
+const ENUM_SUFFIX = `#EnumTypeSuffix`;
+
 export const toCapitalCase = (str?: string): string => {
   if (!str) {
     return "";
@@ -12,15 +14,17 @@ export const toCapitalCase = (str?: string): string => {
   return `${camelStr.charAt(0).toUpperCase()}${camelStr.slice(1)}`;
 };
 
-export const addPrefix = (prefix: string) => (str: string = "") => `${prefix}${str}`;
+const addPrefix = (prefix: string) => (str: string = "") => `${prefix}${str}`;
 
 export const addPrefixForInterface = addPrefix("I");
 
 export const arrayToObject = (arr: any[] = []) => {
   let obj: any = {};
+
   forEach(arr, (item) => {
     obj[item] = item;
   });
+
   return obj;
 };
 
@@ -37,8 +41,6 @@ export const prettifyCode = (code: string) =>
     arrowParens: "always",
     parser: "typescript",
   });
-
-const ENUM_SUFFIX = `#EnumTypeSuffix`;
 
 export const toTypes = (obj: Dictionary<any> | string) => {
   if (!obj) {
