@@ -1,16 +1,15 @@
-import { addPrefixForInterface, toCapitalCase, toTypes } from "./utils";
 import { compact, Dictionary, forEach, get, includes } from "lodash";
 import { SchemaResolver } from "./SchemaResolver";
 import { Components, Schema } from "@openapi-integration/openapi-schema";
 import { isRequestBody } from "./specifications";
 import { generateEnums } from "./generators";
+import { addPrefixForInterface, toCapitalCase, toTypes } from "./formatters";
+import { ENUM_SUFFIX } from "./constants";
 
 // TODO: 1. Handle required params.
 // TODO: handle `in: fromData`
 // TODO: handle `in schema`
 // TODO: 确认不同 endpoint 是否都会生成 openAPI
-
-const ENUM_SUFFIX = `#EnumTypeSuffix`;
 
 export class DefinitionsResolver {
   resolvedDefinitions: any;

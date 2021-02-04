@@ -1,7 +1,7 @@
-import { addPrefixForInterface, toCapitalCase } from "./utils";
 import { get, indexOf, map, reduce, some } from "lodash";
 import { Schema } from "@openapi-integration/openapi-schema";
 import { isArray, isNumber } from "./specifications";
+import { addPrefixForInterface, toCapitalCase } from "./formatters";
 
 type TDictionary<T> = { [key: string]: T };
 
@@ -12,7 +12,7 @@ interface ISchemaResolverInputs {
   parentKey?: string;
 }
 
-const ENUM_SUFFIX = `#EnumTypeSuffix`;
+const ENUM_SUFFIX = "#EnumTypeSuffix";
 
 export class SchemaResolver {
   static of(inputs: ISchemaResolverInputs) {

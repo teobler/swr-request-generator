@@ -1,13 +1,13 @@
 import * as fs from "fs";
 import { DefinitionsResolver } from "./DefinitionsResolver";
 import * as path from "path";
-import { prettifyCode, testJSON } from "./utils";
 import { PathResolver } from "./PathResolver";
 import axios from "axios";
 import { map } from "lodash";
 import { ERROR_MESSAGES, FILE_TIP, LOG_MESSAGE } from "./constants";
 import { Spec } from "@openapi-integration/openapi-schema";
 import program from "commander";
+import { convertJsonToString, prettifyCode } from "./formatters";
 
 program.option("-a, --authorization <value>", "authorization header value").parse(process.argv);
 
@@ -59,7 +59,7 @@ const codegen = (schema: Spec | string) => {
   console.log("reading swagger schema from local file...\n");
 
   const schemaStr = fs.readFileSync(file, "utf8");
-  const schema = testJSON(schemaStr);
+  const schema = convertJsonToString(schemaStr);
 
   if (schema) {
     console.log(LOG_MESSAGE.GENERATING + "\n");

@@ -10,11 +10,11 @@ import {
 } from "@openapi-integration/openapi-schema";
 import { SchemaResolver } from "./SchemaResolver";
 import { camelCase, chain, Dictionary, filter, get, isEmpty, map, pick, reduce, sortBy } from "lodash";
-import { toCapitalCase } from "./utils";
 import { HTTP_METHODS, SLASH } from "./constants";
 import { IParameters, IResolvedPath } from "./types";
 import { isRequestBody, isSchema } from "./specifications";
 import { generateClientName, generateEnums, generateFunctionName, generateRequestArguments } from "./generators";
+import { toCapitalCase } from "./formatters";
 
 // TODO: Should handle `deprecated` and `security` in Operation?
 export class PathResolver {

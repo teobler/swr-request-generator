@@ -1,18 +1,18 @@
 import { camelCase, Dictionary, forEach, indexOf, isEmpty, map, replace, trimEnd } from "lodash";
 import prettier from "prettier";
-import { ENUM_SUFFIX, ERROR_MESSAGES } from "./constants";
 import { isObject } from "./specifications";
+import { ENUM_SUFFIX, ERROR_MESSAGES } from "./constants";
 
 export const toCapitalCase = (str?: string): string => {
   if (!str) {
     return "";
   }
+
   const camelStr = camelCase(str);
   return `${camelStr.charAt(0).toUpperCase()}${camelStr.slice(1)}`;
 };
 
 const addPrefix = (prefix: string) => (str: string = "") => `${prefix}${str}`;
-
 export const addPrefixForInterface = addPrefix("I");
 
 export const arrayToObject = (arr: any[] = []) => {
@@ -38,32 +38,30 @@ export const toTypes = (obj: Dictionary<any> | string) => {
     return;
   }
 
-  const list = map<string, any>(obj, (value: any, key: string) => {
-    if (isObject(value)) {
-      return `${convertKeyToCamelCaseAndAddQuote(key)}: ${JSON.stringify(value).replace(/"/g, "")};`;
-    }
-
-    return `${convertKeyToCamelCaseAndAddQuote(key)}: ${replace(value, ENUM_SUFFIX, "")};`;
-  });
+  const fieldDefinitionList = map<string, any>(obj, (value: any, key: string) =>
+    isObject(value)
+      ? `${convertKeyToCamelCaseAndAddQuote(key)}: ${JSON.stringify(value).replace(/"/g, "")};`
+      : `${convertKeyToCamelCaseAndAddQuote(key)}: ${replace(value, ENUM_SUFFIX, "")};`,
+  );
 
   return (
     obj &&
     `{
-        ${list.sort().join("\n")}
+        ${fieldDefinitionList.sort().join("\n")}
       }`
   );
 };
 
-const convertKeyToCamelCaseAndAddQuote = (k: string) => {
-  const isOptional = indexOf(k, "?") > -1;
-  return `'${camelCase(toCapitalCase(trimEnd(k, "?")))}'${isOptional ? "?" : ""}`;
+const convertKeyToCamelCaseAndAddQuote = (key: string) => {
+  const isOptional = indexOf(key, "?") > -1;
+  return `'${camelCase(toCapitalCase(trimEnd(key, "?")))}'${isOptional ? "?" : ""}`;
 };
 
-export function testJSON(
+export const convertJsonToString = (
   str: unknown,
   errorMsg: string = ERROR_MESSAGES.INVALID_JSON_FILE_ERROR,
   output: (message: string) => void = console.error,
-) {
+) => {
   if (typeof str !== "string") {
     return;
   }
@@ -74,4 +72,4 @@ export function testJSON(
     output(errorMsg);
     return;
   }
-}
+};
