@@ -1,8 +1,8 @@
-import { camelCase, compact, Dictionary, forEach, has, indexOf, isEmpty, map, replace, some, trimEnd } from "lodash";
+import { camelCase, compact, Dictionary, forEach, indexOf, isEmpty, map, replace, some, trimEnd } from "lodash";
 import prettier from "prettier";
 import { ERROR_MESSAGES } from "./constants";
-import { Reference, RequestBody, Schema } from "@openapi-integration/openapi-schema";
 import { IResolvedPath } from "./types";
+import { isNumber, isObject } from "./specifications";
 
 const ENUM_SUFFIX = `#EnumTypeSuffix`;
 
@@ -26,12 +26,6 @@ export const arrayToObject = (arr: any[] = []) => {
   });
 
   return obj;
-};
-
-export const isArray = (data: any) => Object.prototype.toString.call(data) === "[object Array]";
-export const isObject = (data: any) => Object.prototype.toString.call(data) === "[object Object]";
-export const isNumber = (n: any) => {
-  return !isNaN(parseFloat(n)) && isFinite(n);
 };
 
 export const prettifyCode = (code: string) =>
@@ -84,10 +78,6 @@ export function testJSON(
     return;
   }
 }
-
-export const isSchema = (schema?: Schema | Reference): schema is Schema => !has(schema, "$ref");
-export const isRequestBody = (requestBody?: RequestBody | Reference): requestBody is RequestBody =>
-  !has(requestBody, "$ref");
 
 export const generateRequestArguments = (resolvedPath: IResolvedPath) => {
   const argumentTypes = !isEmpty(resolvedPath.TReq) ? toTypes(resolvedPath.TReq) : undefined;

@@ -1,7 +1,8 @@
-import { addPrefixForInterface, generateEnums, isRequestBody, toCapitalCase, toTypes } from "./utils";
+import { addPrefixForInterface, generateEnums, toCapitalCase, toTypes } from "./utils";
 import { compact, Dictionary, forEach, get, includes } from "lodash";
 import { SchemaResolver } from "./SchemaResolver";
 import { Components, Schema } from "@openapi-integration/openapi-schema";
+import { isRequestBody } from "./specifications";
 
 // TODO: 1. Handle required params.
 // TODO: handle `in: fromData`

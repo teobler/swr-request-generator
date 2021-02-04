@@ -15,12 +15,11 @@ import {
   generateEnums,
   generateFunctionName,
   generateRequestArguments,
-  isRequestBody,
-  isSchema,
   toCapitalCase,
 } from "./utils";
 import { HTTP_METHODS, SLASH } from "./constants";
 import { IParameters, IResolvedPath } from "./types";
+import { isRequestBody, isSchema } from "./specifications";
 
 // TODO: Should handle `deprecated` and `security` in Operation?
 export class PathResolver {
