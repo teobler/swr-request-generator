@@ -1,5 +1,5 @@
-import { addPrefixForInterface, arrayToObject, isNumber, isRequestBody, toCapitalCase, toTypes } from "./utils";
-import { compact, Dictionary, forEach, get, includes, replace, some } from "lodash";
+import { addPrefixForInterface, generateEnums, isRequestBody, toCapitalCase, toTypes } from "./utils";
+import { compact, Dictionary, forEach, get, includes } from "lodash";
 import { SchemaResolver } from "./SchemaResolver";
 import { Components, Schema } from "@openapi-integration/openapi-schema";
 
@@ -9,19 +9,6 @@ import { Components, Schema } from "@openapi-integration/openapi-schema";
 // TODO: 确认不同 endpoint 是否都会生成 openAPI
 
 const ENUM_SUFFIX = `#EnumTypeSuffix`;
-
-export function generateEnums(data: Dictionary<any>, key: string) {
-  if (!data) {
-    return "";
-  }
-
-  const enums = data[key];
-  const hasNumber = some(enums, (v) => isNumber(v));
-  const enumName = replace(key, ENUM_SUFFIX, "");
-  return hasNumber
-    ? `export type ${enumName} = ${enums.map((item: string | number) => JSON.stringify(item)).join("|")}`
-    : `export enum ${enumName} ${JSON.stringify(arrayToObject(enums)).replace(/:/gi, "=")}`;
-}
 
 export class DefinitionsResolver {
   resolvedDefinitions: any;

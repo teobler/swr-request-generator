@@ -9,10 +9,10 @@ import {
   Schema,
 } from "@openapi-integration/openapi-schema";
 import { SchemaResolver } from "./SchemaResolver";
-import { generateEnums } from "./DefinitionsResolver";
 import { camelCase, chain, Dictionary, filter, get, isEmpty, map, pick, reduce, sortBy } from "lodash";
 import {
   generateClientName,
+  generateEnums,
   generateFunctionName,
   generateRequestArguments,
   isRequestBody,

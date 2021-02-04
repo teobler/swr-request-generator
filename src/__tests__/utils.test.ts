@@ -2,6 +2,7 @@ import {
   addPrefixForInterface,
   arrayToObject,
   generateClientName,
+  generateEnums,
   generateFunctionName,
   generateRequestArguments,
   testJSON,
@@ -210,5 +211,19 @@ describe("#addPrefixForInterface", () => {
     ["undefined", "Iundefined"],
   ])("should add prefix I for interface", (input, result) => {
     expect(addPrefixForInterface(input)).toEqual(result);
+  });
+});
+
+describe("#generateEnums", () => {
+  it.each([
+    [
+      { "FromFrom#EnumTypeSuffix": ["AAA", "BBB"] },
+      "FromFrom#EnumTypeSuffix",
+      'export enum FromFrom {"AAA"="AAA","BBB"="BBB"}',
+    ],
+    [{ "FromFrom#EnumTypeSuffix": [1, 2] }, "FromFrom#EnumTypeSuffix", "export type FromFrom = 1|2"],
+    [{}, "", ""],
+  ])("should generate enums from definitions", (definitions, key, result) => {
+    expect(generateEnums(definitions, key)).toBe(result);
   });
 });

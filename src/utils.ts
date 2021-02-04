@@ -1,4 +1,4 @@
-import { camelCase, compact, Dictionary, forEach, has, indexOf, isEmpty, map, replace, trimEnd } from "lodash";
+import { camelCase, compact, Dictionary, forEach, has, indexOf, isEmpty, map, replace, some, trimEnd } from "lodash";
 import prettier from "prettier";
 import { ERROR_MESSAGES } from "./constants";
 import { Reference, RequestBody, Schema } from "@openapi-integration/openapi-schema";
@@ -100,7 +100,9 @@ export const generateRequestArguments = (resolvedPath: IResolvedPath) => {
 
   const requestParams = requestParamList.length === 0 ? "" : `{${requestParamList.join(",")}}:${argumentTypes}`;
   return resolvedPath.method === "get"
-    ? `${requestParams ? requestParams + ", " : ""}SWRConfig?: ISWRConfig<${resolvedPath.TResp || undefined}, IResponseError>, axiosConfig?: AxiosRequestConfig`
+    ? `${requestParams ? requestParams + ", " : ""}SWRConfig?: ISWRConfig<${
+        resolvedPath.TResp || undefined
+      }, IResponseError>, axiosConfig?: AxiosRequestConfig`
     : `${requestParams ? requestParams + ", " : ""}axiosConfig?: AxiosRequestConfig`;
 };
 
@@ -112,4 +114,18 @@ export const generateClientName = (method: string, responseType: any) => {
   return method === "get"
     ? `useRequest<${responseType || undefined}, IResponseError>`
     : `client.request<${responseType || undefined}, AxiosResponse<${responseType || undefined}>>`;
+};
+
+export const generateEnums = (definitions: Dictionary<any>, key: string) => {
+  if (isEmpty(definitions)) {
+    return "";
+  }
+
+  const enums = definitions[key];
+  const hasNumber = some(enums, (enumValue) => isNumber(enumValue));
+  const enumName = replace(key, ENUM_SUFFIX, "");
+
+  return hasNumber
+    ? `export type ${enumName} = ${enums.map((item: string | number) => JSON.stringify(item)).join("|")}`
+    : `export enum ${enumName} ${JSON.stringify(arrayToObject(enums)).replace(/:/gi, "=")}`;
 };
