@@ -48,12 +48,8 @@ const codegen = (schema: Spec | string) => {
     "\n\n" +
     FILE_TIP +
     [
-      ...PathResolver.of(schema.paths)
-        .resolve()
-        .toRequest(),
-      ...DefinitionsResolver.of(schema.components)
-        .scanDefinitions()
-        .toDeclarations(),
+      ...PathResolver.of(schema.paths).resolve().toRequest(),
+      ...DefinitionsResolver.of(schema.components).scanDefinitions().toDeclarations(),
     ].join("\n\n");
 
   fs.writeFileSync(path.resolve(output, `./${fileName || "request"}.ts`), prettifyCode(fileStr), "utf-8");
@@ -73,11 +69,13 @@ const codegen = (schema: Spec | string) => {
 });
 
 if (clients) {
+  const options = program.opts();
+
   const instance = axios.create({
     timeout: timeout || 10 * 1000,
-    headers: program.authorization
+    headers: options.authorization
       ? {
-          Authorization: program.authorization,
+          Authorization: options.authorization,
         }
       : undefined,
   });
