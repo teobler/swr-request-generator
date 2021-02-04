@@ -1,10 +1,7 @@
-import { camelCase, compact, Dictionary, forEach, indexOf, isEmpty, map, replace, some, trimEnd } from "lodash";
+import { camelCase, Dictionary, forEach, indexOf, isEmpty, map, replace, trimEnd } from "lodash";
 import prettier from "prettier";
-import { ERROR_MESSAGES } from "./constants";
-import { IResolvedPath } from "./types";
-import { isNumber, isObject } from "./specifications";
-
-const ENUM_SUFFIX = `#EnumTypeSuffix`;
+import { ENUM_SUFFIX, ERROR_MESSAGES } from "./constants";
+import { isObject } from "./specifications";
 
 export const toCapitalCase = (str?: string): string => {
   if (!str) {
@@ -78,45 +75,3 @@ export function testJSON(
     return;
   }
 }
-
-export const generateRequestArguments = (resolvedPath: IResolvedPath) => {
-  const argumentTypes = !isEmpty(resolvedPath.TReq) ? toTypes(resolvedPath.TReq) : undefined;
-  const requestParamList = compact([
-    ...resolvedPath.pathParams,
-    ...resolvedPath.queryParams,
-    ...resolvedPath.bodyParams,
-    ...resolvedPath.formDataParams,
-    resolvedPath.requestBody,
-  ]).map((param) => camelCase(param));
-
-  const requestParams = requestParamList.length === 0 ? "" : `{${requestParamList.join(",")}}:${argumentTypes}`;
-  return resolvedPath.method === "get"
-    ? `${requestParams ? requestParams + ", " : ""}SWRConfig?: ISWRConfig<${
-        resolvedPath.TResp || undefined
-      }, IResponseError>, axiosConfig?: AxiosRequestConfig`
-    : `${requestParams ? requestParams + ", " : ""}axiosConfig?: AxiosRequestConfig`;
-};
-
-export const generateFunctionName = (method: string, operationId?: string) => {
-  return method === "get" ? `use${toCapitalCase(camelCase(operationId))}Request` : `${camelCase(operationId)}Request`;
-};
-
-export const generateClientName = (method: string, responseType: any) => {
-  return method === "get"
-    ? `useRequest<${responseType || undefined}, IResponseError>`
-    : `client.request<${responseType || undefined}, AxiosResponse<${responseType || undefined}>>`;
-};
-
-export const generateEnums = (definitions: Dictionary<any>, key: string) => {
-  if (isEmpty(definitions)) {
-    return "";
-  }
-
-  const enums = definitions[key];
-  const hasNumber = some(enums, (enumValue) => isNumber(enumValue));
-  const enumName = replace(key, ENUM_SUFFIX, "");
-
-  return hasNumber
-    ? `export type ${enumName} = ${enums.map((item: string | number) => JSON.stringify(item)).join("|")}`
-    : `export enum ${enumName} ${JSON.stringify(arrayToObject(enums)).replace(/:/gi, "=")}`;
-};

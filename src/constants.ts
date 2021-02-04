@@ -13,3 +13,4 @@ export const FILE_TIP = `\n/*
     *  please do not modify it manually.
     */\n
   `;
+export const ENUM_SUFFIX = `#EnumTypeSuffix`;
