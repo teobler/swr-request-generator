@@ -1,7 +1,7 @@
 import { camelCase, compact, Dictionary, isEmpty, replace, some } from "lodash";
 import { isNumber } from "./specifications";
-import { IResolvedPath } from "./types";
-import { ENUM_SUFFIX } from "./constants";
+import { IResolvedPath } from "../types";
+import { ENUM_SUFFIX } from "../constants";
 import { arrayToObject, toCapitalCase, toTypes } from "./formatters";
 
 export const generateEnums = (definitions: Dictionary<any>, key: string) => {

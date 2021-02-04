@@ -12,9 +12,9 @@ import { SchemaResolver } from "./SchemaResolver";
 import { camelCase, chain, Dictionary, filter, get, isEmpty, map, pick, reduce, sortBy } from "lodash";
 import { HTTP_METHODS, SLASH } from "./constants";
 import { IParameters, IResolvedPath } from "./types";
-import { isRequestBody, isSchema } from "./specifications";
-import { generateClientName, generateEnums, generateFunctionName, generateRequestArguments } from "./generators";
-import { toCapitalCase } from "./formatters";
+import { isRequestBody, isSchema } from "./utils/specifications";
+import { generateClientName, generateEnums, generateFunctionName, generateRequestArguments } from "./utils/generators";
+import { toCapitalCase } from "./utils/formatters";
 
 // TODO: Should handle `deprecated` and `security` in Operation?
 export class PathResolver {

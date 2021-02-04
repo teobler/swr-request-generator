@@ -1,4 +1,4 @@
-import { IResolvedPath } from "../types";
+import { IResolvedPath } from "../../types";
 import { generateClientName, generateEnums, generateFunctionName, generateRequestArguments } from "../generators";
 
 describe("# generators", () => {

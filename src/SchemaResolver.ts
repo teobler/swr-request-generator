@@ -1,7 +1,7 @@
 import { get, indexOf, map, reduce, some } from "lodash";
 import { Schema } from "@openapi-integration/openapi-schema";
-import { isArray, isNumber } from "./specifications";
-import { addPrefixForInterface, toCapitalCase } from "./formatters";
+import { isArray, isNumber } from "./utils/specifications";
+import { addPrefixForInterface, toCapitalCase } from "./utils/formatters";
 
 type TDictionary<T> = { [key: string]: T };
 

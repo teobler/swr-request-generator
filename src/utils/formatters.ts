@@ -1,7 +1,7 @@
 import { camelCase, Dictionary, forEach, indexOf, isEmpty, map, replace, trimEnd } from "lodash";
 import prettier from "prettier";
 import { isObject } from "./specifications";
-import { ENUM_SUFFIX, ERROR_MESSAGES } from "./constants";
+import { ENUM_SUFFIX, ERROR_MESSAGES } from "../constants";
 
 export const toCapitalCase = (str?: string): string => {
   if (!str) {
