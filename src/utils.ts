@@ -43,9 +43,10 @@ export const prettifyCode = (code: string) =>
   });
 
 export const toTypes = (obj: Dictionary<any> | string) => {
-  if (!obj) {
+  if (isEmpty(obj)) {
     return;
   }
+
   const list = map<string, any>(obj, (value: any, key: string) => {
     if (isObject(value)) {
       return `${convertKeyToCamelCaseAndAddQuote(key)}: ${JSON.stringify(value).replace(/"/g, "")};`;

@@ -7,6 +7,7 @@ import {
   generateRequestArguments,
   testJSON,
   toCapitalCase,
+  toTypes,
 } from "../utils";
 import { IResolvedPath } from "../types";
 
@@ -225,5 +226,15 @@ describe("#generateEnums", () => {
     [{}, "", ""],
   ])("should generate enums from definitions", (definitions, key, result) => {
     expect(generateEnums(definitions, key)).toBe(result);
+  });
+});
+
+describe("#toTypes", () => {
+  it.each([
+    [{}, undefined],
+    [{ a: "a" }, "{\n" + "        'a': a;\n" + "      }"],
+    [{ a: { b: "b" } }, "{\n" + "        'a': {b:b};\n" + "      }"],
+  ])("should return type definition for TypeScript code", (definitions, result) => {
+    expect(toTypes(definitions)).toBe(result);
   });
 });
