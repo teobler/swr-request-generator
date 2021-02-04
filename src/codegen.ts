@@ -1,7 +1,7 @@
 import * as fs from "fs";
-import { DefinitionsResolver } from "./DefinitionsResolver";
+import { DefinitionsResolver } from "./resolvers/DefinitionsResolver";
 import * as path from "path";
-import { PathResolver } from "./PathResolver";
+import { PathResolver } from "./resolvers/PathResolver";
 import axios from "axios";
 import { map } from "lodash";
 import { ERROR_MESSAGES, FILE_TIP, LOG_MESSAGE } from "./constants";

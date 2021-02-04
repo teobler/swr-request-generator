@@ -1,10 +1,10 @@
 import { compact, Dictionary, forEach, get, includes } from "lodash";
 import { SchemaResolver } from "./SchemaResolver";
 import { Components, Schema } from "@openapi-integration/openapi-schema";
-import { isRequestBody } from "./utils/specifications";
-import { generateEnums } from "./utils/generators";
-import { addPrefixForInterface, toCapitalCase, toTypes } from "./utils/formatters";
-import { ENUM_SUFFIX } from "./constants";
+import { isRequestBody } from "../utils/specifications";
+import { generateEnums } from "../utils/generators";
+import { addPrefixForInterface, toCapitalCase, toTypes } from "../utils/formatters";
+import { ENUM_SUFFIX } from "../constants";
 
 // TODO: 1. Handle required params.
 // TODO: handle `in: fromData`
