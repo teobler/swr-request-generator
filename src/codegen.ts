@@ -8,17 +8,9 @@ import { ERROR_MESSAGES, FILE_TIP, LOG_MESSAGE } from "./constants";
 import { Spec } from "@openapi-integration/openapi-schema";
 import program from "commander";
 import { convertJsonToString, prettifyCode } from "./utils/formatters";
+import { ICodegenConfig } from "./types";
 
 program.option("-a, --authorization <value>", "authorization header value").parse(process.argv);
-
-interface ICodegenConfig {
-  output?: string;
-  fileHeaders?: string[];
-  timeout?: number;
-  data?: string[];
-  clients?: string[];
-  fileName?: string;
-}
 
 const codegenConfigPath = path.resolve("ts-codegen.config.json");
 

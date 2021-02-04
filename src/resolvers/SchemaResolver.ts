@@ -2,17 +2,8 @@ import { get, indexOf, map, reduce, some } from "lodash";
 import { Schema } from "@openapi-integration/openapi-schema";
 import { isArray, isNumber } from "../utils/specifications";
 import { addPrefixForInterface, toCapitalCase } from "../utils/formatters";
-
-type TDictionary<T> = { [key: string]: T };
-
-interface ISchemaResolverInputs {
-  results: TDictionary<any>;
-  schema?: Schema;
-  key?: string;
-  parentKey?: string;
-}
-
-const ENUM_SUFFIX = "#EnumTypeSuffix";
+import { ISchemaResolverInputs, TDictionary } from "../types";
+import { ENUM_SUFFIX } from "../constants";
 
 export class SchemaResolver {
   static of(inputs: ISchemaResolverInputs) {

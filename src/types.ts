@@ -1,4 +1,4 @@
-import { Parameter } from "@openapi-integration/openapi-schema";
+import { Parameter, Schema } from "@openapi-integration/openapi-schema";
 
 export interface IResolvedPath {
   url: string;
@@ -18,4 +18,22 @@ export interface IParameters {
   queryParams: Parameter[];
   bodyParams: Parameter[];
   formDataParams: Parameter[];
+}
+
+export interface ICodegenConfig {
+  output?: string;
+  fileHeaders?: string[];
+  timeout?: number;
+  data?: string[];
+  clients?: string[];
+  fileName?: string;
+}
+
+export type TDictionary<T> = { [key: string]: T };
+
+export interface ISchemaResolverInputs {
+  results: TDictionary<any>;
+  schema?: Schema;
+  key?: string;
+  parentKey?: string;
 }
