@@ -9,7 +9,7 @@ import {
   Schema,
 } from "@openapi-integration/openapi-schema";
 import { SchemaResolver } from "./SchemaResolver";
-import { camelCase, chain, Dictionary, filter, get, isEmpty, map, pick, reduce, sortBy } from "lodash";
+import { assign, camelCase, chain, Dictionary, filter, get, isEmpty, map, pick, reduce, sortBy } from "lodash";
 import { HTTP_METHODS, SLASH } from "../constants";
 import { IParameters, IResolvedPath } from "../types";
 import { isRequestBody, isSchema } from "../utils/specifications";
@@ -20,7 +20,7 @@ import { toCapitalCase } from "../utils/formatters";
 export class PathResolver {
   resolvedPaths: IResolvedPath[] = [];
   extraDefinitions = {};
-  contentType = "";
+  contentType: { [operationId: string]: string } = {};
 
   static of(paths: Paths) {
     return new PathResolver(paths);
@@ -54,7 +54,9 @@ export class PathResolver {
         url: \`${resolvedPath.url}\`,
         method: "${resolvedPath.method}",
         ${body ? `data: ${body},` : ""}${params ? `params: ${params},` : ""}${
-        body ? `headers: {'Content-Type': "${this.contentType}"},` : ""
+        body
+          ? `headers: {'Content-Type': "${get(this.contentType, resolvedPath.operationId ?? "", "application/json")}"},`
+          : ""
       }...axiosConfig}${resolvedPath.method === "get" ? ", SWRConfig" : ""});`;
     });
 
@@ -193,14 +195,17 @@ export class PathResolver {
   pickParams = (parameters: Parameter[]) => (type: "path" | "query" | "body" | "cookie") =>
     filter(parameters, (param) => param.in === type);
 
+  getContentType(operationId: string, key: string) {
+    // in openAPI spec, the key of content in requestBody field is content type
+    assign(this.contentType, { [operationId]: key });
+  }
+
   getRequestBodyTypes(operationId: string, requestBody?: RequestBody | Reference) {
     if (isRequestBody(requestBody)) {
       return reduce(
         get(requestBody, "content"),
         (results, content, key) => {
-          if (this.contentType === "") {
-            this.contentType = key;
-          }
+          this.getContentType(operationId, key);
 
           return {
             ...results,

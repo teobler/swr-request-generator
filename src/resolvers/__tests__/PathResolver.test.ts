@@ -6,12 +6,16 @@ describe("PathResolver", () => {
     expect(PathResolver.of((openAPI as any).paths).resolve().resolvedPaths).toEqual(expectedPathResolvedData);
   });
 
-  it("should get correct action creator by resolved paths", () => {
+  it("should get correct request creator by resolved paths", () => {
     expect(
       PathResolver.of((openAPI as any).paths)
         .resolve()
         .toRequest(),
     ).toEqual(expectedRequest);
+  });
+
+  it("should get correct content type for different operation id", () => {
+    expect(PathResolver.of((openAPI as any).paths).resolve().contentType).toEqual(expectedContentType);
   });
 });
 
@@ -136,8 +140,14 @@ const expectedRequest = [
   "export const useFindBookByIdUsingGetRequest = ({id}:{\n        'id': string;\n      }, SWRConfig?: ISWRConfig<IBookDetailVo, IResponseError>, axiosConfig?: AxiosRequestConfig) => \n        useRequest<IBookDetailVo, IResponseError>({\n        url: `/book/${id}`,\n        method: \"get\",\n        ...axiosConfig}, SWRConfig);",
   "export const useGetDocumentByIdUsingGetRequest = ({documentId,from}:{\n        'documentId': string;\n'from'?: keyof typeof FromFrom;\n      }, SWRConfig?: ISWRConfig<IDocumentVo, IResponseError>, axiosConfig?: AxiosRequestConfig) => \n        useRequest<IDocumentVo, IResponseError>({\n        url: `/documents/${documentId}/doc`,\n        method: \"get\",\n        params: {\n    from\n    },...axiosConfig}, SWRConfig);",
   "export const useGetScheduleDetailsByDateUsingGetRequest = ({scheduleDate,roleId}:{\n        'roleId'?: string;\n'scheduleDate': number;\n      }, SWRConfig?: ISWRConfig<IScheduleVo[], IResponseError>, axiosConfig?: AxiosRequestConfig) => \n        useRequest<IScheduleVo[], IResponseError>({\n        url: `/schedules`,\n        method: \"get\",\n        params: {\n    scheduleDate,\nroleId\n    },...axiosConfig}, SWRConfig);",
-  "export const updateBookByIdUsingPutRequest = ({id,updateBookByIdUsingPutRequest}:{\n        'id': string;\n'updateBookByIdUsingPutRequest': IUpdateBookRequest;\n      }, axiosConfig?: AxiosRequestConfig) => \n        client.request<undefined, AxiosResponse<undefined>>({\n        url: `/book/${id}`,\n        method: \"put\",\n        data: updateBookByIdUsingPutRequest,headers: {'Content-Type': \"multipart/form-data\"},...axiosConfig});",
+  "export const updateBookByIdUsingPutRequest = ({id,updateBookByIdUsingPutRequest}:{\n        'id': string;\n'updateBookByIdUsingPutRequest': IUpdateBookRequest;\n      }, axiosConfig?: AxiosRequestConfig) => \n        client.request<undefined, AxiosResponse<undefined>>({\n        url: `/book/${id}`,\n        method: \"put\",\n        data: updateBookByIdUsingPutRequest,headers: {'Content-Type': \"application/json\"},...axiosConfig});",
   "export const uploadAttachmentUsingPostRequest = ({uploadAttachmentUsingPostRequest}:{\n        'uploadAttachmentUsingPostRequest': {attachment:FormData};\n      }, axiosConfig?: AxiosRequestConfig) => \n        client.request<IAttachmentBo, AxiosResponse<IAttachmentBo>>({\n        url: `/`,\n        method: \"post\",\n        data: uploadAttachmentUsingPostRequest,headers: {'Content-Type': \"multipart/form-data\"},...axiosConfig});",
   "export const uploadDocumentUsingPostRequest = ({uploadDocumentUsingPostRequest}:{\n        'uploadDocumentUsingPostRequest': IFileUploadReq;\n      }, axiosConfig?: AxiosRequestConfig) => \n        client.request<undefined, AxiosResponse<undefined>>({\n        url: `/documents`,\n        method: \"post\",\n        data: uploadDocumentUsingPostRequest,headers: {'Content-Type': \"multipart/form-data\"},...axiosConfig});",
   'export enum FromFrom {"AAA"="AAA","BBB"="BBB"}',
 ];
+
+const expectedContentType = {
+  updateBookByIdUsingPUT: "application/json",
+  uploadAttachmentUsingPOST: "multipart/form-data",
+  uploadDocumentUsingPOST: "multipart/form-data",
+};
