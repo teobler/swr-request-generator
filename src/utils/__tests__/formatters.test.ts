@@ -36,6 +36,7 @@ describe("# formatters", () => {
       [{}, undefined],
       [{ a: "a" }, "{\n" + "        'a': a;\n" + "      }"],
       [{ a: { b: "b" } }, "{\n" + "        'a': {b:b};\n" + "      }"],
+      [{ uploadDocumentRequest: { file: "FormData" } }, "{\n" + "        'uploadDocumentRequest': FormData\n" + "      }"],
     ])("should return type definition for TypeScript code", (definitions, result) => {
       expect(toTypes(definitions)).toBe(result);
     });

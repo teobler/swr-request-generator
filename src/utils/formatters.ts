@@ -1,4 +1,4 @@
-import { camelCase, Dictionary, forEach, indexOf, isEmpty, map, replace, trimEnd } from "lodash";
+import { camelCase, Dictionary, forEach, indexOf, isEmpty, map, pickBy, replace, trimEnd } from "lodash";
 import prettier from "prettier";
 import { isObject } from "./specifications";
 import { ENUM_SUFFIX, ERROR_MESSAGES } from "../constants";
@@ -33,19 +33,23 @@ export const prettifyCode = (code: string) =>
     parser: "typescript",
   });
 
-export const toTypes = (obj: Dictionary<any> | string) => {
-  if (isEmpty(obj)) {
+export const toTypes = (definitions: Dictionary<any> | string) => {
+  if (isEmpty(definitions)) {
     return;
   }
 
-  const fieldDefinitionList = map<string, any>(obj, (value: any, key: string) =>
-    isObject(value)
+  const fieldDefinitionList = map<string, any>(definitions, (value: any, key: string) => {
+    if (isObject(value) && Object.keys(value).length === 1 && !isEmpty(pickBy(value, (type) => type === "FormData"))) {
+      return `${convertKeyToCamelCaseAndAddQuote(key)}: FormData`;
+    }
+
+    return isObject(value)
       ? `${convertKeyToCamelCaseAndAddQuote(key)}: ${JSON.stringify(value).replace(/"/g, "")};`
-      : `${convertKeyToCamelCaseAndAddQuote(key)}: ${replace(value, ENUM_SUFFIX, "")};`,
-  );
+      : `${convertKeyToCamelCaseAndAddQuote(key)}: ${replace(value, ENUM_SUFFIX, "")};`;
+  });
 
   return (
-    obj &&
+    definitions &&
     `{
         ${fieldDefinitionList.sort().join("\n")}
       }`
