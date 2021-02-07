@@ -121,7 +121,7 @@ export const updateBookByIdUsingPutRequest = (
     url: `/book/${id}`,
     method: "put",
     data: updateBookByIdUsingPutRequest,
-    headers: { "Content-Type": "multipart/form-data" },
+    headers: { "Content-Type": "application/json" },
     ...axiosConfig,
   });
 
@@ -129,7 +129,7 @@ export const uploadAttachmentUsingPostRequest = (
   {
     uploadAttachmentUsingPostRequest,
   }: {
-    uploadAttachmentUsingPostRequest: { attachment: FormData };
+    uploadAttachmentUsingPostRequest: FormData;
   },
   axiosConfig?: AxiosRequestConfig,
 ) =>
