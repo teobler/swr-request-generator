@@ -5,6 +5,7 @@ export interface IResolvedPath {
   method: string;
   TResp: any;
   TReq: any;
+  THeader: any;
   requestBody?: string;
   operationId?: string;
   pathParams: string[];

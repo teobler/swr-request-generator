@@ -104,30 +104,29 @@
         "operationId": "downloadUsingGET",
         "parameters": [
           {
-            "name": "Authorities",
+            "name": "Accept",
             "in": "header",
             "required": true,
             "schema": {
-              "type": "string",
-              "default": "a_officer"
-            }
-          },
-          {
-            "name": "User-Id",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "default": "abc123456789"
-            }
-          },
-          {
-            "name": "User-Name",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "default": "John Hopkins"
+              "enum": [
+                "*/*",
+                "application/msword",
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                "message/rfc822",
+                "application/vnd.ms-excel",
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "application/pdf",
+                "text/plain",
+                "application/xml",
+                "video/x-msvideo",
+                "application/vnd.ms-outlook",
+                "image/jpeg",
+                "image/png",
+                "image/gif",
+                "image/bmp",
+                "application/zip"
+              ],
+              "type": "string"
             }
           },
           {
@@ -232,33 +231,6 @@
         "operationId": "findBookByIdUsingGET",
         "parameters": [
           {
-            "name": "Authorities",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "default": "a_officer"
-            }
-          },
-          {
-            "name": "User-Id",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "default": "abc123456789"
-            }
-          },
-          {
-            "name": "User-Name",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "default": "John Hopkins"
-            }
-          },
-          {
             "name": "id",
             "in": "path",
             "description": "request param for find book",
@@ -296,33 +268,6 @@
         "summary": "update book by given id",
         "operationId": "updateBookByIdUsingPUT",
         "parameters": [
-          {
-            "name": "Authorities",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "default": "a_officer"
-            }
-          },
-          {
-            "name": "User-Id",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "default": "abc123456789"
-            }
-          },
-          {
-            "name": "User-Name",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "default": "John Hopkins"
-            }
-          },
           {
             "name": "id",
             "in": "path",
@@ -370,33 +315,6 @@
         "summary": "getScheduleDetailsByDate",
         "operationId": "getScheduleDetailsByDateUsingGET",
         "parameters": [
-          {
-            "name": "Authorities",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "default": "a_officer"
-            }
-          },
-          {
-            "name": "User-Id",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "default": "abc123456789"
-            }
-          },
-          {
-            "name": "User-Name",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "default": "John Hopkins"
-            }
-          },
           {
             "name": "scheduleDate",
             "in": "query",
@@ -473,33 +391,6 @@
         "summary": "getDocument",
         "operationId": "getDocumentByIdUsingGET",
         "parameters": [
-          {
-            "name": "Authorities",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "default": "a_officer"
-            }
-          },
-          {
-            "name": "User-Id",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "default": "abc123456789"
-            }
-          },
-          {
-            "name": "User-Name",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "default": "John Hopkins"
-            }
-          },
           {
             "name": "from",
             "in": "query",

@@ -1,5 +1,11 @@
 import { IResolvedPath } from "../../types";
-import { generateClientName, generateEnums, generateFunctionName, generateRequestArguments } from "../generators";
+import {
+  generateClientName,
+  generateEnums,
+  generateFunctionName,
+  generateHeader,
+  generateRequestArguments,
+} from "../generators";
 
 describe("# generators", () => {
   describe("## generateRequestArguments", () => {
@@ -164,6 +170,14 @@ describe("# generators", () => {
       [{}, "", ""],
     ])("should generate enums from definitions", (definitions, key, result) => {
       expect(generateEnums(definitions, key)).toBe(result);
+    });
+  });
+
+  describe("## generateHeader", () => {
+    it("should return headers config for axios", () => {
+      expect(generateHeader({ Accept: "string", "Custom-Header": "string" })).toBe(
+        'headers: { "Accept": accept, "Custom-Header": customHeader, },',
+      );
     });
   });
 });

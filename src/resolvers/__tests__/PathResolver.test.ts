@@ -21,6 +21,11 @@ describe("PathResolver", () => {
 
 const expectedPathResolvedData = [
   {
+    THeader: {
+      Authorities: "string",
+      "User-Id": "string",
+      "User-Name": "string",
+    },
     TReq: {
       uploadAttachmentUsingPOSTRequest: {
         attachment: "FormData",
@@ -37,6 +42,9 @@ const expectedPathResolvedData = [
     url: "/",
   },
   {
+    THeader: {
+      Accept: "string",
+    },
     TReq: {
       id: "string",
     },
@@ -50,6 +58,11 @@ const expectedPathResolvedData = [
     url: "/${id}",
   },
   {
+    THeader: {
+      Authorities: "string",
+      "User-Id": "string",
+      "User-Name": "string",
+    },
     TReq: {
       id: "string",
     },
@@ -63,6 +76,7 @@ const expectedPathResolvedData = [
     url: "/${id}",
   },
   {
+    THeader: {},
     TReq: {
       id: "string",
     },
@@ -76,6 +90,7 @@ const expectedPathResolvedData = [
     url: "/book/${id}",
   },
   {
+    THeader: {},
     TReq: {
       id: "string",
       updateBookByIdUsingPUTRequest: "IUpdateBookRequest",
@@ -91,6 +106,7 @@ const expectedPathResolvedData = [
     url: "/book/${id}",
   },
   {
+    THeader: {},
     TReq: {
       "roleId?": "string",
       scheduleDate: "number",
@@ -105,6 +121,7 @@ const expectedPathResolvedData = [
     url: "/schedules",
   },
   {
+    THeader: {},
     TReq: {
       uploadDocumentUsingPOSTRequest: "IFileUploadReq",
     },
@@ -119,6 +136,7 @@ const expectedPathResolvedData = [
     url: "/documents",
   },
   {
+    THeader: {},
     TReq: {
       documentId: "string",
       "from?": "keyof typeof FromFrom#EnumTypeSuffix",
@@ -135,13 +153,13 @@ const expectedPathResolvedData = [
 ];
 
 const expectedRequest = [
-  "export const deleteAttachmentUsingDeleteRequest = ({id}:{\n        'id': string;\n      }, axiosConfig?: AxiosRequestConfig) => \n        client.request<undefined, AxiosResponse<undefined>>({\n        url: `/${id}`,\n        method: \"delete\",\n        ...axiosConfig});",
-  "export const useDownloadUsingGetRequest = ({id}:{\n        'id': string;\n      }, SWRConfig?: ISWRConfig<IResource, IResponseError>, axiosConfig?: AxiosRequestConfig) => \n        useRequest<IResource, IResponseError>({\n        url: `/${id}`,\n        method: \"get\",\n        ...axiosConfig}, SWRConfig);",
+  "export const deleteAttachmentUsingDeleteRequest = ({id,authorities,userId,userName}:{\n        'authorities': string;\n'id': string;\n'userId': string;\n'userName': string;\n      }, axiosConfig?: AxiosRequestConfig) => \n        client.request<undefined, AxiosResponse<undefined>>({\n        url: `/${id}`,\n        method: \"delete\",headers: { \"Authorities\": authorities, \"User-Id\": userId, \"User-Name\": userName, }\n        ...axiosConfig});",
+  "export const useDownloadUsingGetRequest = ({id,accept}:{\n        'accept': string;\n'id': string;\n      }, SWRConfig?: ISWRConfig<IResource, IResponseError>, axiosConfig?: AxiosRequestConfig) => \n        useRequest<IResource, IResponseError>({\n        url: `/${id}`,\n        method: \"get\",headers: { \"Accept\": accept, }\n        ...axiosConfig}, SWRConfig);",
   "export const useFindBookByIdUsingGetRequest = ({id}:{\n        'id': string;\n      }, SWRConfig?: ISWRConfig<IBookDetailVo, IResponseError>, axiosConfig?: AxiosRequestConfig) => \n        useRequest<IBookDetailVo, IResponseError>({\n        url: `/book/${id}`,\n        method: \"get\",\n        ...axiosConfig}, SWRConfig);",
   "export const useGetDocumentByIdUsingGetRequest = ({documentId,from}:{\n        'documentId': string;\n'from'?: keyof typeof FromFrom;\n      }, SWRConfig?: ISWRConfig<IDocumentVo, IResponseError>, axiosConfig?: AxiosRequestConfig) => \n        useRequest<IDocumentVo, IResponseError>({\n        url: `/documents/${documentId}/doc`,\n        method: \"get\",\n        params: {\n    from\n    },...axiosConfig}, SWRConfig);",
   "export const useGetScheduleDetailsByDateUsingGetRequest = ({scheduleDate,roleId}:{\n        'roleId'?: string;\n'scheduleDate': number;\n      }, SWRConfig?: ISWRConfig<IScheduleVo[], IResponseError>, axiosConfig?: AxiosRequestConfig) => \n        useRequest<IScheduleVo[], IResponseError>({\n        url: `/schedules`,\n        method: \"get\",\n        params: {\n    scheduleDate,\nroleId\n    },...axiosConfig}, SWRConfig);",
   "export const updateBookByIdUsingPutRequest = ({id,updateBookByIdUsingPutRequest}:{\n        'id': string;\n'updateBookByIdUsingPutRequest': IUpdateBookRequest;\n      }, axiosConfig?: AxiosRequestConfig) => \n        client.request<undefined, AxiosResponse<undefined>>({\n        url: `/book/${id}`,\n        method: \"put\",\n        data: updateBookByIdUsingPutRequest,headers: {'Content-Type': \"application/json\"},...axiosConfig});",
-  "export const uploadAttachmentUsingPostRequest = ({uploadAttachmentUsingPostRequest}:{\n        'uploadAttachmentUsingPostRequest': FormData\n      }, axiosConfig?: AxiosRequestConfig) => \n        client.request<IAttachmentBo, AxiosResponse<IAttachmentBo>>({\n        url: `/`,\n        method: \"post\",\n        data: uploadAttachmentUsingPostRequest,headers: {'Content-Type': \"multipart/form-data\"},...axiosConfig});",
+  "export const uploadAttachmentUsingPostRequest = ({authorities,userId,userName,uploadAttachmentUsingPostRequest}:{\n        'authorities': string;\n'uploadAttachmentUsingPostRequest': FormData\n'userId': string;\n'userName': string;\n      }, axiosConfig?: AxiosRequestConfig) => \n        client.request<IAttachmentBo, AxiosResponse<IAttachmentBo>>({\n        url: `/`,\n        method: \"post\",headers: { \"Authorities\": authorities, \"User-Id\": userId, \"User-Name\": userName, }\n        data: uploadAttachmentUsingPostRequest,headers: {'Content-Type': \"multipart/form-data\"},...axiosConfig});",
   "export const uploadDocumentUsingPostRequest = ({uploadDocumentUsingPostRequest}:{\n        'uploadDocumentUsingPostRequest': IFileUploadReq;\n      }, axiosConfig?: AxiosRequestConfig) => \n        client.request<undefined, AxiosResponse<undefined>>({\n        url: `/documents`,\n        method: \"post\",\n        data: uploadDocumentUsingPostRequest,headers: {'Content-Type': \"multipart/form-data\"},...axiosConfig});",
   'export enum FromFrom {"AAA"="AAA","BBB"="BBB"}',
 ];

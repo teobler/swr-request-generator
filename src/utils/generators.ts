@@ -1,4 +1,4 @@
-import { camelCase, compact, Dictionary, isEmpty, replace, some } from "lodash";
+import { camelCase, compact, Dictionary, isEmpty, reduce, replace, some } from "lodash";
 import { isNumber } from "./specifications";
 import { IResolvedPath } from "../types";
 import { ENUM_SUFFIX } from "../constants";
@@ -27,12 +27,15 @@ export const generateClientName = (method: string, responseType: any) =>
     : `client.request<${responseType || undefined}, AxiosResponse<${responseType || undefined}>>`;
 
 export const generateRequestArguments = (resolvedPath: IResolvedPath) => {
-  const argumentTypes = !isEmpty(resolvedPath.TReq) ? toTypes(resolvedPath.TReq) : undefined;
+  const argumentTypes = !isEmpty(resolvedPath.TReq)
+    ? toTypes({ ...resolvedPath.TReq, ...resolvedPath.THeader })
+    : undefined;
   const requestParamList = compact([
     ...resolvedPath.pathParams,
     ...resolvedPath.queryParams,
     ...resolvedPath.bodyParams,
     ...resolvedPath.formDataParams,
+    ...Object.keys(resolvedPath.THeader),
     resolvedPath.requestBody,
   ]).map((param) => camelCase(param));
 
@@ -43,4 +46,10 @@ export const generateRequestArguments = (resolvedPath: IResolvedPath) => {
         resolvedPath.TResp || undefined
       }, IResponseError>, axiosConfig?: AxiosRequestConfig`
     : `${requestParams ? requestParams + ", " : ""}axiosConfig?: AxiosRequestConfig`;
+};
+
+export const generateHeader = (header?: Record<string, string>) => {
+  const result = reduce(header, (result, _, key) => result + `"${key}": ` + camelCase(key) + ", ", "");
+
+  return isEmpty(header) ? "" : `headers: { ${result}},`;
 };

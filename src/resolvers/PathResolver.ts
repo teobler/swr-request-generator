@@ -13,7 +13,13 @@ import { assign, camelCase, chain, Dictionary, filter, get, isEmpty, map, pick, 
 import { HTTP_METHODS, SLASH } from "../constants";
 import { IParameters, IResolvedPath } from "../types";
 import { isRequestBody, isSchema } from "../utils/specifications";
-import { generateClientName, generateEnums, generateFunctionName, generateRequestArguments } from "../utils/generators";
+import {
+  generateClientName,
+  generateHeader,
+  generateEnums,
+  generateFunctionName,
+  generateRequestArguments,
+} from "../utils/generators";
 import { toCapitalCase } from "../utils/formatters";
 
 // TODO: Should handle `deprecated` and `security` in Operation?
@@ -41,6 +47,7 @@ export class PathResolver {
     const data = sortBy(this.resolvedPaths, (o) => o.operationId);
     const requests = data.map((resolvedPath: IResolvedPath) => {
       const bodyData = get(resolvedPath.bodyParams, "[0]");
+      const headerData = get(resolvedPath, "THeader");
       const cookie = get(resolvedPath.formDataParams, "[0]");
       const requestBody = get(resolvedPath, "requestBody");
       const body = camelCase(toCapitalCase(requestBody || bodyData || cookie));
@@ -52,7 +59,7 @@ export class PathResolver {
       )} = (${generateRequestArguments(resolvedPath)}) => 
         ${generateClientName(resolvedPath.method, resolvedPath.TResp)}({
         url: \`${resolvedPath.url}\`,
-        method: "${resolvedPath.method}",
+        method: "${resolvedPath.method}",${generateHeader(headerData)}
         ${body ? `data: ${body},` : ""}${params ? `params: ${params},` : ""}${
         body
           ? `headers: {'Content-Type': "${get(this.contentType, resolvedPath.operationId ?? "", "application/json")}"},`
@@ -94,6 +101,7 @@ export class PathResolver {
   // TODO: handle the case when v.parameters = Reference
   resolveOperation = (operation: Operation) => {
     const pickParamsByType = this.pickParams(operation.parameters as Parameter[]);
+    const headerParams = pickParamsByType("header");
     const params = {
       pathParams: pickParamsByType("path"),
       queryParams: pickParamsByType("query"),
@@ -105,6 +113,7 @@ export class PathResolver {
       operationId: operation.operationId,
       TResp: this.getResponseTypes(operation.responses),
       TReq: this.getRequestTypes(params, operation.operationId as string, get(operation, "requestBody")),
+      THeader: this.getPathParamsTypes(headerParams),
       ...this.getParamsNames(params),
       ...this.getRequestBodyName(get(operation, "requestBody"), operation.operationId),
     };
@@ -192,7 +201,7 @@ export class PathResolver {
     }).resolve();
 
   // TODO: when parameters has enum
-  pickParams = (parameters: Parameter[]) => (type: "path" | "query" | "body" | "cookie") =>
+  pickParams = (parameters: Parameter[]) => (type: "path" | "query" | "body" | "cookie" | "header") =>
     filter(parameters, (param) => param.in === type);
 
   getContentType(operationId: string, key: string) {
