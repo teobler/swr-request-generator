@@ -1,4 +1,4 @@
-import { camelCase, compact, Dictionary, isEmpty, reduce, replace, some } from "lodash";
+import { camelCase, compact, Dictionary, get, isEmpty, reduce, replace, some } from "lodash";
 import { isNumber } from "./specifications";
 import { IResolvedPath } from "../types";
 import { ENUM_SUFFIX } from "../constants";
@@ -48,8 +48,17 @@ export const generateRequestArguments = (resolvedPath: IResolvedPath) => {
     : `${requestParams ? requestParams + ", " : ""}axiosConfig?: AxiosRequestConfig`;
 };
 
-export const generateHeader = (header?: Record<string, string>) => {
+export const generateHeader = (
+  hasBody: boolean,
+  contentTypes: { [operationId: string]: string },
+  operationId?: string,
+  header?: Record<string, string>,
+) => {
   const result = reduce(header, (result, _, key) => result + `"${key}": ` + camelCase(key) + ", ", "");
+  const contentType = hasBody ? `"Content-Type": "${get(contentTypes, operationId ?? "", "application/json")}"` : "";
 
-  return isEmpty(header) ? "" : `headers: { ${result}},`;
+  return `headers: { ${result}${contentType}},`;
 };
+
+export const generateResponseType = (axiosHeaderConfig: string) =>
+  axiosHeaderConfig.includes('"Accept":') ? 'responseType: "blob",' : "";

@@ -15,10 +15,11 @@ import { IParameters, IResolvedPath } from "../types";
 import { isRequestBody, isSchema } from "../utils/specifications";
 import {
   generateClientName,
-  generateHeader,
   generateEnums,
   generateFunctionName,
+  generateHeader,
   generateRequestArguments,
+  generateResponseType,
 } from "../utils/generators";
 import { toCapitalCase } from "../utils/formatters";
 
@@ -47,11 +48,12 @@ export class PathResolver {
     const data = sortBy(this.resolvedPaths, (o) => o.operationId);
     const requests = data.map((resolvedPath: IResolvedPath) => {
       const bodyData = get(resolvedPath.bodyParams, "[0]");
-      const headerData = get(resolvedPath, "THeader");
+      const headerType = get(resolvedPath, "THeader");
       const cookie = get(resolvedPath.formDataParams, "[0]");
       const requestBody = get(resolvedPath, "requestBody");
       const body = camelCase(toCapitalCase(requestBody || bodyData || cookie));
       const params = this.toRequestParams(get(resolvedPath, "queryParams"));
+      const axiosHeaderConfig = generateHeader(!isEmpty(body), this.contentType, resolvedPath.operationId, headerType);
 
       return `export const ${generateFunctionName(
         resolvedPath.method,
@@ -59,12 +61,10 @@ export class PathResolver {
       )} = (${generateRequestArguments(resolvedPath)}) => 
         ${generateClientName(resolvedPath.method, resolvedPath.TResp)}({
         url: \`${resolvedPath.url}\`,
-        method: "${resolvedPath.method}",${generateHeader(headerData)}
-        ${body ? `data: ${body},` : ""}${params ? `params: ${params},` : ""}${
-        body
-          ? `headers: {'Content-Type': "${get(this.contentType, resolvedPath.operationId ?? "", "application/json")}"},`
-          : ""
-      }...axiosConfig}${resolvedPath.method === "get" ? ", SWRConfig" : ""});`;
+        method: "${resolvedPath.method}",${axiosHeaderConfig}${generateResponseType(axiosHeaderConfig)}
+        ${body ? `data: ${body},` : ""}${params ? `params: ${params},` : ""}...axiosConfig}${
+        resolvedPath.method === "get" ? ", SWRConfig" : ""
+      });`;
     });
 
     const enums = Object.keys(this.extraDefinitions).map((k) => generateEnums(this.extraDefinitions, k));

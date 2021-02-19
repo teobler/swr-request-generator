@@ -5,6 +5,7 @@ import {
   generateFunctionName,
   generateHeader,
   generateRequestArguments,
+  generateResponseType,
 } from "../generators";
 
 describe("# generators", () => {
@@ -174,10 +175,48 @@ describe("# generators", () => {
   });
 
   describe("## generateHeader", () => {
-    it("should return headers config for axios", () => {
-      expect(generateHeader({ Accept: "string", "Custom-Header": "string" })).toBe(
-        'headers: { "Accept": accept, "Custom-Header": customHeader, },',
-      );
+    it("should return headers config only from swagger", () => {
+      expect(
+        generateHeader(false, {}, undefined, {
+          Accept: "string",
+          "Custom-Header": "string",
+        }),
+      ).toBe('headers: { "Accept": accept, "Custom-Header": customHeader, },');
+    });
+
+    it.each([
+      [true, {}, undefined, undefined, 'headers: { "Content-Type": "application/json"},'],
+      [
+        true,
+        { downloadUsingGET: "application/pdf" },
+        "downloadUsingGET",
+        undefined,
+        'headers: { "Content-Type": "application/pdf"},',
+      ],
+      [
+        true,
+        { downloadUsingGET: "application/pdf" },
+        "uploadUsingPOST",
+        undefined,
+        'headers: { "Content-Type": "application/json"},',
+      ],
+    ])("should return content type only when has body params", (hasBody, contentTypes, operationId, header, result) => {
+      expect(generateHeader(hasBody, contentTypes, operationId, header)).toBe(result);
+    });
+
+    it("should return content type and header params from swagger", () => {
+      expect(
+        generateHeader(true, { downloadUsingGET: "application/pdf" }, "downloadUsingGET", {
+          Accept: "string",
+          "Custom-Header": "string",
+        }),
+      ).toBe('headers: { "Accept": accept, "Custom-Header": customHeader, "Content-Type": "application/pdf"},');
+    });
+  });
+
+  describe("## generateResponseType", () => {
+    it("should return responseType is blob given headers config contains accept header", () => {
+      expect(generateResponseType('headers: { "Accept": accept }')).toBe('responseType: "blob",');
     });
   });
 });
