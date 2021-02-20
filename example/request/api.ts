@@ -10,24 +10,53 @@ import { AxiosRequestConfig, AxiosResponse } from "axios";
  *  please do not modify it manually.
  */
 
+export const updateBookJourneyUsingPostRequest = (
+  {
+    journeyId,
+    journeyType,
+    updateBookJourneyUsingPostRequest,
+  }: {
+    journeyId: string;
+    journeyType: string;
+    updateBookJourneyUsingPostRequest: IStatusFormData;
+  },
+  axiosConfig?: AxiosRequestConfig,
+) =>
+  client.request<{ [key: string]: any }, AxiosResponse<{ [key: string]: any }>>({
+    url: `/book-journey/${journeyId}/${journeyType}`,
+    method: "post",
+    headers: { "Content-Type": "application/json" },
+    data: updateBookJourneyUsingPostRequest,
+    ...axiosConfig,
+  });
+
 export const deleteAttachmentUsingDeleteRequest = (
   {
     id,
+    authorities,
+    userId,
+    userName,
   }: {
+    authorities: string;
     id: string;
+    userId: string;
+    userName: string;
   },
   axiosConfig?: AxiosRequestConfig,
 ) =>
   client.request<undefined, AxiosResponse<undefined>>({
     url: `/${id}`,
     method: "delete",
+    headers: { Authorities: authorities, "User-Id": userId, "User-Name": userName },
     ...axiosConfig,
   });
 
 export const useDownloadUsingGetRequest = (
   {
     id,
+    accept,
   }: {
+    accept: string;
     id: string;
   },
   SWRConfig?: ISWRConfig<IResource, IResponseError>,
@@ -37,6 +66,8 @@ export const useDownloadUsingGetRequest = (
     {
       url: `/${id}`,
       method: "get",
+      headers: { Accept: accept },
+      responseType: "blob",
       ...axiosConfig,
     },
     SWRConfig,
@@ -55,6 +86,7 @@ export const useFindBookByIdUsingGetRequest = (
     {
       url: `/book/${id}`,
       method: "get",
+      headers: {},
       ...axiosConfig,
     },
     SWRConfig,
@@ -75,6 +107,7 @@ export const useGetDocumentByIdUsingGetRequest = (
     {
       url: `/documents/${documentId}/doc`,
       method: "get",
+      headers: {},
       params: {
         from,
       },
@@ -98,6 +131,7 @@ export const useGetScheduleDetailsByDateUsingGetRequest = (
     {
       url: `/schedules`,
       method: "get",
+      headers: {},
       params: {
         scheduleDate,
         roleId,
@@ -120,24 +154,35 @@ export const updateBookByIdUsingPutRequest = (
   client.request<undefined, AxiosResponse<undefined>>({
     url: `/book/${id}`,
     method: "put",
-    data: updateBookByIdUsingPutRequest,
     headers: { "Content-Type": "application/json" },
+    data: updateBookByIdUsingPutRequest,
     ...axiosConfig,
   });
 
 export const uploadAttachmentUsingPostRequest = (
   {
+    authorities,
+    userId,
+    userName,
     uploadAttachmentUsingPostRequest,
   }: {
+    authorities: string;
     uploadAttachmentUsingPostRequest: FormData;
+    userId: string;
+    userName: string;
   },
   axiosConfig?: AxiosRequestConfig,
 ) =>
   client.request<IAttachmentBo, AxiosResponse<IAttachmentBo>>({
     url: `/`,
     method: "post",
+    headers: {
+      Authorities: authorities,
+      "User-Id": userId,
+      "User-Name": userName,
+      "Content-Type": "multipart/form-data",
+    },
     data: uploadAttachmentUsingPostRequest,
-    headers: { "Content-Type": "multipart/form-data" },
     ...axiosConfig,
   });
 
@@ -152,8 +197,8 @@ export const uploadDocumentUsingPostRequest = (
   client.request<undefined, AxiosResponse<undefined>>({
     url: `/documents`,
     method: "post",
-    data: uploadDocumentUsingPostRequest,
     headers: { "Content-Type": "multipart/form-data" },
+    data: uploadDocumentUsingPostRequest,
     ...axiosConfig,
   });
 
@@ -249,6 +294,10 @@ export interface IScheduleVo {
   schedules?: IBookVo[][];
   shiftId?: string;
   team?: string;
+}
+
+export interface IStatusFormData {
+  [key: string]: any;
 }
 
 export interface IUri {
