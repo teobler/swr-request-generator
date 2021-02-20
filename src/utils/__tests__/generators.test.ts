@@ -68,6 +68,22 @@ describe("# generators", () => {
           "{id,name}:{'id':string;'name':string;},SWRConfig?:ISWRConfig<IResponse,IResponseError>,axiosConfig?:AxiosRequestConfig",
         );
       });
+
+      it("should include header params", () => {
+        expect(
+          removeSpaces(
+            generateRequestArguments({
+              ...resolvedPath,
+              pathParams: ["id"],
+              queryParams: ["name"],
+              TReq: { id: "string", name: "string" },
+              THeader: { "Custom-Header": "string", Custom: "number" },
+            }),
+          ),
+        ).toBe(
+          "{id,name,customHeader,custom}:{'custom':number;'customHeader':string;'id':string;'name':string;},SWRConfig?:ISWRConfig<IResponse,IResponseError>,axiosConfig?:AxiosRequestConfig",
+        );
+      });
     });
 
     describe("#others methods", () => {
@@ -124,6 +140,23 @@ describe("# generators", () => {
             }),
           ),
         ).toBe("{id,name}:{'id':string;'name':string;},axiosConfig?:AxiosRequestConfig");
+      });
+
+      it("should include header params", () => {
+        expect(
+          removeSpaces(
+            generateRequestArguments({
+              ...resolvedPath,
+              method: "post",
+              pathParams: ["id"],
+              queryParams: ["name"],
+              TReq: { id: "string", name: "string" },
+              THeader: { "Custom-Header": "string", Custom: "number" },
+            }),
+          ),
+        ).toBe(
+          "{id,name,customHeader,custom}:{'custom':number;'customHeader':string;'id':string;'name':string;},axiosConfig?:AxiosRequestConfig",
+        );
       });
     });
 
