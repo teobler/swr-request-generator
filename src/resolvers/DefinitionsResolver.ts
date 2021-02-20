@@ -1,4 +1,4 @@
-import { compact, Dictionary, forEach, get, includes } from "lodash";
+import { compact, Dictionary, forEach, get, includes, isEmpty } from "lodash";
 import { SchemaResolver } from "./SchemaResolver";
 import { Components, Schema } from "@openapi-integration/openapi-schema";
 import { isRequestBody } from "../utils/specifications";
@@ -64,7 +64,7 @@ export class DefinitionsResolver {
           return generateEnums(this.resolvedDefinitions, key);
         }
 
-        if (this.resolvedDefinitions[key] === "object") {
+        if (this.resolvedDefinitions[key] === "object" || isEmpty(this.resolvedDefinitions[key])) {
           return `export interface ${addPrefixForInterface(toCapitalCase(key))} {[key:string]:any}`;
         }
         const val = toTypes(this.resolvedDefinitions[key]);

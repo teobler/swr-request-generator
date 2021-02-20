@@ -224,6 +224,22 @@
         "deprecated": false
       }
     },
+    "/book-journey/{journeyId}/{journeyType}": {
+      "post": {
+        "operationId": "UpdateBookJourneyUsingPOST",
+        "parameters": [
+          { "name": "journeyId", "required": true, "in": "path", "schema": { "type": "string" } },
+          { "name": "journeyType", "required": true, "in": "path", "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/StatusFormData" } } }
+        },
+        "responses": {
+          "201": { "description": "", "content": { "application/json": { "schema": { "type": "object" } } } }
+        }
+      }
+    },
     "/book/{id}": {
       "get": {
         "tags": ["book-controller"],
@@ -854,7 +870,8 @@
           }
         },
         "title": "ErrorInfo"
-      }
+      },
+      "StatusFormData": { "type": "object", "properties": {} }
     }
   }
 }
