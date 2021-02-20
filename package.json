@@ -1,7 +1,7 @@
 {
   "name": "@openapi-integration/swr-request-generator",
   "version": "0.7.0",
-  "description": "A tool for generating request creator for swr and interface ts code from swagger.",
+  "description": "A tool for generating TypeScript code and interface from swagger by using SWR and axios as client.",
   "main": "lib/index.js",
   "module": "module/index.js",
   "types": "src/index.ts",
@@ -25,14 +25,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/teobler/redux-action-generator/tree/swr-openapi-gen"
+    "url": "https://github.com/teobler/swr-request-generator"
   },
   "author": "teobler",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/teobler/redux-action-generator/issues"
+    "url": "https://github.com/teobler/swr-request-generator/issues"
   },
-  "homepage": "https://github.com/teobler/redux-action-generator/tree/swr-openapi-gen#readme",
+  "keywords": ["swr", "swagger", "OpenAPI", "API-integration", "code generator", "interface", "TypeScript"],
+  "homepage": "https://github.com/teobler/swr-request-generator#readme",
   "devDependencies": {
     "@babel/core": "7.12.x",
     "@babel/preset-env": "7.12.x",
