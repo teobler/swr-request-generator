@@ -1,6 +1,6 @@
 {
   "name": "@openapi-integration/swr-request-generator",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "description": "A tool for generating TypeScript code and interface from swagger by using SWR and axios as client.",
   "main": "lib/index.js",
   "module": "module/index.js",
@@ -32,7 +32,15 @@
   "bugs": {
     "url": "https://github.com/teobler/swr-request-generator/issues"
   },
-  "keywords": ["swr", "swagger", "OpenAPI", "API-integration", "code generator", "interface", "TypeScript"],
+  "keywords": [
+    "swr",
+    "swagger",
+    "OpenAPI",
+    "API-integration",
+    "code generator",
+    "interface",
+    "TypeScript"
+  ],
   "homepage": "https://github.com/teobler/swr-request-generator#readme",
   "devDependencies": {
     "@babel/core": "7.12.x",
