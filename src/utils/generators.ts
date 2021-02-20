@@ -25,7 +25,7 @@ export const generateClientName = (method: string, responseType: any) =>
   method === "get"
     ? `useRequest<${responseType || undefined}, IResponseError>`
     : `client.request<${responseType || undefined}, AxiosResponse<${responseType || undefined}>>`;
-// TODO: 1.add test case for THeader
+// TODO: 1.refactor THeader logic to align with resolvedPath.xxxParams
 // TODO: 2.add response type for download file
 export const generateRequestArguments = (resolvedPath: IResolvedPath) => {
   const argumentTypes = !isEmpty({ ...resolvedPath.TReq, ...resolvedPath.THeader })
