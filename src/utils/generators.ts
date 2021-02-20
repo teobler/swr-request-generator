@@ -25,9 +25,10 @@ export const generateClientName = (method: string, responseType: any) =>
   method === "get"
     ? `useRequest<${responseType || undefined}, IResponseError>`
     : `client.request<${responseType || undefined}, AxiosResponse<${responseType || undefined}>>`;
-
+// TODO: 1.add test case for THeader
+// TODO: 2.add response type for download file
 export const generateRequestArguments = (resolvedPath: IResolvedPath) => {
-  const argumentTypes = !isEmpty(resolvedPath.TReq)
+  const argumentTypes = !isEmpty({ ...resolvedPath.TReq, ...resolvedPath.THeader })
     ? toTypes({ ...resolvedPath.TReq, ...resolvedPath.THeader })
     : undefined;
   const requestParamList = compact([

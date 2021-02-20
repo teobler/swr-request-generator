@@ -135,6 +135,7 @@ describe("# generators", () => {
       formDataParams: [""],
       method: "get",
       TResp: "IResponse",
+      THeader: {},
     } as IResolvedPath;
   });
 
