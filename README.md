@@ -1,8 +1,8 @@
 # SWR request generator
 
-This tool can generate [SWR](https://swr.vercel.app/) request and related request and response interface from swagger.
+This tool can generate [SWR](https://swr.vercel.app/) request and related request params and response interface from swagger.
 
-it will generate all get request via SWR and others will be [axios](https://www.axios.com/).
+it will generate all GET request via SWR and others will be [axios](https://www.axios.com/).
 
 # Dependencies
 
@@ -32,13 +32,9 @@ add a npm script to your package.json file:
 
 ```json
 {
-  ...,
   "scripts": {
-    ...,
-    "codegen": "ts-codegen",
-    ...,
+    "codegen": "ts-codegen"
   }
-  ...,
 }
 ```
 
@@ -82,7 +78,7 @@ fields meaning:
 
 all the details can be found in example folder.
 
-clone this repo(please checkout on `swr-openapi-gen` branch)
+clone this repo
 
 run `npm i` to install all dependency
 
