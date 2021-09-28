@@ -6,6 +6,7 @@ import { ISchemaResolverInputs, TDictionary } from "../types";
 import { ENUM_SUFFIX } from "../constants";
 
 export class SchemaResolver {
+  private schemaType: TDictionary<any> | string = {};
 
   static of(inputs: ISchemaResolverInputs) {
     return new SchemaResolver(inputs);
@@ -13,15 +14,19 @@ export class SchemaResolver {
 
   constructor(private inputs: ISchemaResolverInputs) {}
 
-  resolve = (type?: string): TDictionary<any> | string => {
+  getSchemaType = () => this.schemaType;
+
+  resolve = (type?: string) => {
     const { schema = {}, results, parentKey, key } = this.inputs;
     const advancedType = this.resolveRef(schema.$ref, type || schema.type);
     if (schema.$ref) {
-      return advancedType;
+      this.schemaType = advancedType;
+      return this;
     }
 
     if (schema.items) {
-      return this.resolveItems(schema.items, schema.type);
+      this.schemaType = this.resolveItems(schema.items, schema.type);
+      return this;
     }
 
     if (schema.enum) {
@@ -30,29 +35,36 @@ export class SchemaResolver {
       const hasNumber = some(schema.enum, (v) => isNumber(v));
 
       if (hasNumber) {
-        return enumKey;
+        this.schemaType = enumKey;
+        return this;
       }
 
-      return `keyof typeof ${enumKey}`;
+      this.schemaType = `keyof typeof ${enumKey}`;
+      return this;
     }
 
     if (schema.type === "object") {
       if (schema.properties) {
-        return this.resolveProperties(schema.properties, schema.required);
+        this.schemaType = this.resolveProperties(schema.properties, schema.required);
+        return this;
       }
 
       if (schema.title) {
-        return schema.type;
+        this.schemaType = schema.type;
+        return this;
       }
 
-      return "{[key:string]:any}";
+      this.schemaType = "{[key:string]:any}";
+      return this;
     }
 
     if (schema.type === "string" && schema.format === "binary") {
-      return "FormData";
+      this.schemaType = "FormData";
+      return this;
     }
 
-    return this.getBasicType(schema.type, advancedType);
+    this.schemaType = this.getBasicType(schema.type, advancedType);
+    return this;
   };
 
   getEnumName = (propertyName: string, parentKey: string = "") =>
@@ -108,10 +120,16 @@ export class SchemaResolver {
     }
 
     if (isArray(items)) {
-      return map(items, (item) => SchemaResolver.of({ results: {}, schema: item as Schema }).resolve());
+      return map(items, (item) =>
+        SchemaResolver.of({ results: {}, schema: item as Schema })
+          .resolve()
+          .getSchemaType(),
+      );
     }
 
-    return SchemaResolver.of({ results: {}, schema: items as Schema }).resolve(type);
+    return SchemaResolver.of({ results: {}, schema: items as Schema })
+      .resolve(type)
+      .getSchemaType();
   };
 
   resolveProperties = (
@@ -126,7 +144,9 @@ export class SchemaResolver {
           results: {},
           schema: v as Schema,
           key: k,
-        }).resolve(),
+        })
+          .resolve()
+          .getSchemaType(),
       }),
       {},
     );

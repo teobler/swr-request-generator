@@ -162,7 +162,9 @@ export class PathResolver {
           schema: param.schema,
           key: param.name,
           parentKey: param.name,
-        }).resolve(),
+        })
+          .resolve()
+          .getSchemaType(),
       }),
       {},
     );
@@ -178,7 +180,9 @@ export class PathResolver {
             schema: param.schema,
             key: param.name,
             parentKey: param.name,
-          }).resolve(),
+          })
+            .resolve()
+            .getSchemaType(),
         };
       }
       return {
@@ -198,7 +202,9 @@ export class PathResolver {
         get(responses, "200.content.*/*.schema") ||
         get(responses, "201.content.application/json.schema") ||
         get(responses, "201.content.*/*.schema"),
-    }).resolve();
+    })
+      .resolve()
+      .getSchemaType();
 
   // TODO: when parameters has enum
   pickParams = (parameters: Parameter[]) => (type: "path" | "query" | "body" | "cookie" | "header") =>
@@ -223,7 +229,9 @@ export class PathResolver {
               schema: content.schema,
               key: `${operationId}Request`,
               parentKey: `${operationId}Request`,
-            }).resolve(),
+            })
+              .resolve()
+              .getSchemaType(),
           };
         },
         {},
@@ -236,7 +244,9 @@ export class PathResolver {
         schema: requestBody as Schema,
         key: `${operationId}Request`,
         parentKey: `${operationId}Request`,
-      }).resolve(),
+      })
+        .resolve()
+        .getSchemaType(),
     };
   }
 

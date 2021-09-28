@@ -8,7 +8,9 @@ describe("# SchemaResolver", () => {
         schema: { type: "object" },
         key: "key",
         parentKey: "parentKey",
-      }).resolve(),
+      })
+        .resolve()
+        .getSchemaType(),
     ).toEqual("{[key:string]:any}");
   });
 
@@ -19,7 +21,9 @@ describe("# SchemaResolver", () => {
         schema: { type: "object", title: "URLStreamHandler" },
         key: "URLStreamHandler",
         parentKey: "URLStreamHandler",
-      }).resolve(),
+      })
+        .resolve()
+        .getSchemaType(),
     ).toEqual("object");
   });
 
@@ -42,7 +46,9 @@ describe("# SchemaResolver", () => {
         },
         key: "BookDetailVo",
         parentKey: "BookDetailVo",
-      }).resolve(),
+      })
+        .resolve()
+        .getSchemaType(),
     ).toEqual({
       "attachment?": "IScheduleVo",
       "authorName?": "string",
@@ -65,7 +71,9 @@ describe("# SchemaResolver", () => {
         schema,
         key,
         parentKey: key,
-      }).resolve(),
+      })
+        .resolve()
+        .getSchemaType(),
     ).toBe(result);
   });
 
@@ -76,7 +84,9 @@ describe("# SchemaResolver", () => {
         schema: { $ref: "#/components/schemas/BookDetailVo" },
         key: "attachment",
         parentKey: "attachment",
-      }).resolve(),
+      })
+        .resolve()
+        .getSchemaType(),
     ).toBe("IBookDetailVo");
   });
 
@@ -87,7 +97,9 @@ describe("# SchemaResolver", () => {
         schema: { type: "string", format: "binary" },
         key: "file",
         parentKey: "file",
-      }).resolve(),
+      })
+        .resolve()
+        .getSchemaType(),
     ).toBe("FormData");
   });
 
@@ -119,15 +131,17 @@ describe("# SchemaResolver", () => {
         schema,
         key: "key",
         parentKey: "key",
-      }).resolve(),
+      })
+        .resolve()
+        .getSchemaType(),
     ).toBe(result);
   });
 
   it.each([
-    // [{ $ref: "#/components/schemas/BookDetailVo", type: "array" }, "attachment", "IBookDetailVo[]"],
-    // [{ $ref: "#/components/schemas/URLStreamHandler" }, "deserializedFields", "IUrlStreamHandler"],
+    [{ $ref: "#/components/schemas/BookDetailVo", type: "array" }, "attachment", "IBookDetailVo[]"],
+    [{ $ref: "#/components/schemas/URLStreamHandler" }, "deserializedFields", "IUrlStreamHandler"],
     [{ type: "array", items: { $ref: "#/components/schemas/ErrorInfo" } }, "errors", "IErrorInfo[]"],
-    // [{ $ref: "#/components/schemas/BookDetailVo" }, undefined, "IBookDetailVo"],
+    [{ $ref: "#/components/schemas/BookDetailVo" }, undefined, "IBookDetailVo"],
   ])("should return interface name when schema has $ref", (schema: any, key: string | undefined, result: string) => {
     expect(
       SchemaResolver.of({
@@ -135,7 +149,9 @@ describe("# SchemaResolver", () => {
         schema,
         key,
         parentKey: key,
-      }).resolve(),
+      })
+        .resolve()
+        .getSchemaType(),
     ).toBe(result);
   });
 
@@ -151,7 +167,9 @@ describe("# SchemaResolver", () => {
           schema,
           key,
           parentKey,
-        }).resolve(),
+        })
+          .resolve()
+          .getSchemaType(),
       ).toBe(result);
     },
   );

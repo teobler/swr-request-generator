@@ -32,7 +32,9 @@ export class DefinitionsResolver {
           schema: get(requestBody, "content.application/json.schema"),
           key: requestBodyName,
           parentKey: requestBodyName,
-        }).resolve());
+        })
+          .resolve()
+          .getSchemaType());
       }
 
       return (results[requestBodyName] = SchemaResolver.of({
@@ -40,7 +42,9 @@ export class DefinitionsResolver {
         schema: requestBody as Schema,
         key: requestBodyName,
         parentKey: requestBodyName,
-      }).resolve());
+      })
+        .resolve()
+        .getSchemaType());
     });
 
     forEach(schemas, (schema, schemaName) => {
@@ -49,7 +53,9 @@ export class DefinitionsResolver {
         schema: schema,
         key: schemaName,
         parentKey: schemaName,
-      }).resolve());
+      })
+        .resolve()
+        .getSchemaType());
     });
 
     this.resolvedDefinitions = results;
