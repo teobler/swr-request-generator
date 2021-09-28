@@ -6,18 +6,15 @@ import { ISchemaResolverInputs, TDictionary } from "../types";
 import { ENUM_SUFFIX } from "../constants";
 
 export class SchemaResolver {
+
   static of(inputs: ISchemaResolverInputs) {
     return new SchemaResolver(inputs);
   }
 
   constructor(private inputs: ISchemaResolverInputs) {}
 
-  resolve = (
-    schema: Schema = this.inputs.schema || {},
-    key: string | undefined = this.inputs.key,
-    type?: string,
-  ): TDictionary<any> | string => {
-    const { results, parentKey } = this.inputs;
+  resolve = (type?: string): TDictionary<any> | string => {
+    const { schema = {}, results, parentKey, key } = this.inputs;
     const advancedType = this.resolveRef(schema.$ref, type || schema.type);
     if (schema.$ref) {
       return advancedType;
@@ -111,10 +108,10 @@ export class SchemaResolver {
     }
 
     if (isArray(items)) {
-      return map(items, (item) => this.resolve(item as Schema));
+      return map(items, (item) => SchemaResolver.of({ results: {}, schema: item as Schema }).resolve());
     }
 
-    return this.resolve(items as Schema, undefined, type);
+    return SchemaResolver.of({ results: {}, schema: items as Schema }).resolve(type);
   };
 
   resolveProperties = (
@@ -125,7 +122,11 @@ export class SchemaResolver {
       properties,
       (o, v, k) => ({
         ...o,
-        [`${k}${indexOf(required, k) > -1 ? "" : "?"}`]: this.resolve(v, k),
+        [`${k}${indexOf(required, k) > -1 ? "" : "?"}`]: SchemaResolver.of({
+          results: {},
+          schema: v as Schema,
+          key: k,
+        }).resolve(),
       }),
       {},
     );
