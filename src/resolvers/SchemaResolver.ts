@@ -1,6 +1,6 @@
-import { get, indexOf, map, reduce, some } from "lodash";
+import { get, indexOf, map, reduce } from "lodash";
 import { Schema } from "@openapi-integration/openapi-schema";
-import { isArray, isNumber } from "../utils/specifications";
+import { isArray } from "../utils/specifications";
 import { addPrefixForInterface, toCapitalCase } from "../utils/formatters";
 import { ISchemaResolverInputs, TDictionary } from "../types";
 import { ENUM_SUFFIX } from "../constants";
@@ -33,14 +33,8 @@ export class SchemaResolver {
       const enumKey = this.getEnumName(key!, parentKey);
       // Implicit operation!: Assign enum array definition to results
       results[enumKey] = schema.enum;
-      const hasNumber = some(schema.enum, (v) => isNumber(v));
 
-      if (hasNumber) {
-        this.schemaType = enumKey;
-        return this;
-      }
-
-      this.schemaType = `keyof typeof ${enumKey}`;
+      this.schemaType = enumKey;
       return this;
     }
 

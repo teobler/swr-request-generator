@@ -98,7 +98,7 @@ export const useGetDocumentByIdUsingGetRequest = (
     from,
   }: {
     documentId: string;
-    from?: keyof typeof FromFrom;
+    from?: FromFrom;
   },
   SWRConfig?: ISWRConfig<IDocumentVo, IResponseError>,
   axiosConfig?: AxiosRequestConfig,
@@ -224,7 +224,7 @@ export interface IBookDetailVo {
   id?: string;
   mimeType?: string;
   path?: string;
-  type?: keyof typeof BookDetailVoType;
+  type?: BookDetailVoType;
 }
 
 export enum BookDetailVoType {

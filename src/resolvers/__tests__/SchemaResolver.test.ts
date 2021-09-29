@@ -156,7 +156,7 @@ describe("# SchemaResolver", () => {
   });
 
   it.each([
-    [{ type: "string", enum: ["AAA", "BBB"] }, "from", "parentFrom", "keyof typeof ParentFromFrom#EnumTypeSuffix"],
+    [{ type: "string", enum: ["AAA", "BBB"] }, "from", "parentFrom", "ParentFromFrom#EnumTypeSuffix"],
     [{ type: "number", enum: [1, 2, 3] }, "to", "parentTo", "ParentToTo#EnumTypeSuffix"],
   ])(
     "should return enum with suffix when schema has enum property",

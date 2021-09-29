@@ -34,7 +34,7 @@ const expectedDefinitions = {
     "id?": "string",
     "mimeType?": "string",
     "path?": "string",
-    "type?": "keyof typeof BookDetailVoType#EnumTypeSuffix",
+    "type?": "BookDetailVoType#EnumTypeSuffix",
   },
   "BookDetailVoType#EnumTypeSuffix": ["INTERVENTION_RUN", "CASE_CREATION_DATE"],
   BookVO: {
@@ -148,7 +148,7 @@ const expectedDefinitions = {
 
 const expectedDeclarations = [
   "export interface IAttachmentBo {\n        'authorName'?: string;\n'createdDate'?: number;\n'fileName'?: string;\n'id'?: string;\n'mimeType'?: string;\n'path'?: string;\n      }",
-  "export interface IBookDetailVo {\n        'attachment'?: IScheduleVo;\n'authorName'?: string;\n'createdDate'?: number;\n'fileName'?: string;\n'id'?: string;\n'mimeType'?: string;\n'path'?: string;\n'type'?: keyof typeof BookDetailVoType;\n      }",
+  "export interface IBookDetailVo {\n        'attachment'?: IScheduleVo;\n'authorName'?: string;\n'createdDate'?: number;\n'fileName'?: string;\n'id'?: string;\n'mimeType'?: string;\n'path'?: string;\n'type'?: BookDetailVoType;\n      }",
   'export enum BookDetailVoType {"INTERVENTION_RUN"="INTERVENTION_RUN","CASE_CREATION_DATE"="CASE_CREATION_DATE"}',
   "export interface IBookVo {\n        'address'?: string;\n'price'?: string;\n      }",
   "export interface IBookingResponse {\n        'data': IDocumentVo;\n'errors'?: IErrorInfo[];\n      }",
