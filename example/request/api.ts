@@ -224,6 +224,12 @@ export interface IBookDetailVo {
   id?: string;
   mimeType?: string;
   path?: string;
+  type?: keyof typeof BookDetailVoType;
+}
+
+export enum BookDetailVoType {
+  "INTERVENTION_RUN" = "INTERVENTION_RUN",
+  "CASE_CREATION_DATE" = "CASE_CREATION_DATE",
 }
 
 export interface IBookVo {

@@ -483,6 +483,7 @@
             "type": "string",
             "example": ".png"
           },
+          "type": { "type": "string", "enum": ["INTERVENTION_RUN", "CASE_CREATION_DATE"] },
           "path": {
             "type": "string",
             "example": "/home"

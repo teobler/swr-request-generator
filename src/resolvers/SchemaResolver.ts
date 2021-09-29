@@ -25,12 +25,13 @@ export class SchemaResolver {
     }
 
     if (schema.items) {
-      this.schemaType = this.resolveItems(schema.items, schema.type);
+      this.schemaType = this.resolveItems(schema.items, schema.type, key, parentKey);
       return this;
     }
 
     if (schema.enum) {
       const enumKey = this.getEnumName(key!, parentKey);
+      // Implicit operation!: Assign enum array definition to results
       results[enumKey] = schema.enum;
       const hasNumber = some(schema.enum, (v) => isNumber(v));
 
@@ -45,7 +46,7 @@ export class SchemaResolver {
 
     if (schema.type === "object") {
       if (schema.properties) {
-        this.schemaType = this.resolveProperties(schema.properties, schema.required);
+        this.schemaType = this.resolveProperties(schema.properties, schema.required, parentKey);
         return this;
       }
 
@@ -102,7 +103,7 @@ export class SchemaResolver {
     return list[list.length - 1];
   };
 
-  resolveItems = (items?: Schema | Schema[], type?: string): any => {
+  resolveItems = (items?: Schema | Schema[], type?: string, key?: string, parentKey?: string): any => {
     if (!items) {
       return {};
     }
@@ -111,7 +112,7 @@ export class SchemaResolver {
 
     if (type === "array") {
       if (child) {
-        return `${this.resolveItems(child, (items as any).type)}[]`;
+        return `${this.resolveItems(child, (items as any).type, key, parentKey)}[]`;
       }
 
       if (!get(items, "$ref")) {
@@ -121,13 +122,13 @@ export class SchemaResolver {
 
     if (isArray(items)) {
       return map(items, (item) =>
-        SchemaResolver.of({ results: {}, schema: item as Schema })
+        SchemaResolver.of({ results: this.inputs.results, schema: item as Schema, key, parentKey })
           .resolve()
           .getSchemaType(),
       );
     }
 
-    return SchemaResolver.of({ results: {}, schema: items as Schema })
+    return SchemaResolver.of({ results: this.inputs.results, schema: items as Schema, key, parentKey })
       .resolve(type)
       .getSchemaType();
   };
@@ -135,15 +136,17 @@ export class SchemaResolver {
   resolveProperties = (
     properties: { [propertyName: string]: Schema } = {},
     required: string[] = [],
+    parentKey?: string,
   ): TDictionary<any> =>
     reduce(
       properties,
       (o, v, k) => ({
         ...o,
         [`${k}${indexOf(required, k) > -1 ? "" : "?"}`]: SchemaResolver.of({
-          results: {},
+          results: this.inputs.results,
           schema: v as Schema,
           key: k,
+          parentKey,
         })
           .resolve()
           .getSchemaType(),
