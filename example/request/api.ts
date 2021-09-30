@@ -233,7 +233,7 @@ export enum BookDetailVoType {
 }
 
 export interface IBookVo {
-  address?: string;
+  address?: string | null;
   price?: string;
 }
 
@@ -297,7 +297,7 @@ export interface IResource {
 }
 
 export interface IScheduleVo {
-  schedules?: IBookVo[][];
+  schedules?: IBookVo[][] | null;
   shiftId?: string;
   team?: string;
 }

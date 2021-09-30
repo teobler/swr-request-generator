@@ -512,6 +512,7 @@
           },
           "schedules": {
             "type": "array",
+            "nullable": true,
             "items": {
               "type": "array",
               "items": {
@@ -532,7 +533,8 @@
             "type": "string"
           },
           "address": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           }
         },
         "title": "BookVO"

@@ -103,27 +103,22 @@ describe("# SchemaResolver", () => {
     ).toBe("FormData");
   });
 
-  xit.each`
+  it.each`
     schema                                                           | result
     ${{ type: "string", nullable: true }}                            | ${"string | null"}
     ${{ type: "object", nullable: true }}                            | ${"{[key:string]:any} | null"}
     ${{ type: "object", title: "URLStreamHandler", nullable: true }} | ${"object | null"}
-    ${{
-  type: "object",
-  properties: {
+    ${{ type: "object", properties: {
+    authorName: {
+      type: "string",
+      example: "Tony",
+      nullable: true,
+    },
+  }, nullable: true, title: "BookDetailVo" }} | ${'{"authorName?":"string | null"} | null'}
+    ${{ type: "object", properties: {
     authorName: { type: "string", example: "Tony", nullable: true },
-  },
-  nullable: true,
-  title: "BookDetailVo",
-}} | ${"{authorName: string | null} | null"}
+  }, title: "BookDetailVo" }} | ${{ "authorName?": "string | null" }}
     ${{ type: "string", format: "binary", nullable: true }}          | ${"FormData | null"}
-    ${{
-  type: "object",
-  nullable: true,
-  properties: {
-    totalNumber: { nullable: true, allOf: [{ $ref: "#/components/schemas/LookupEnumRes" }] },
-  },
-}} | ${"{totalNumber?: ILookupEnumRes | null}"}
   `("should return null when schema nullable is true", ({ schema, result }) => {
     expect(
       SchemaResolver.of({
@@ -133,8 +128,9 @@ describe("# SchemaResolver", () => {
         parentKey: "key",
       })
         .resolve()
+        .resolveNullable()
         .getSchemaType(),
-    ).toBe(result);
+    ).toEqual(result);
   });
 
   it.each([

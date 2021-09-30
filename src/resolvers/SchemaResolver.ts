@@ -1,6 +1,6 @@
 import { get, indexOf, map, reduce } from "lodash";
 import { Schema } from "@openapi-integration/openapi-schema";
-import { isArray } from "../utils/specifications";
+import { isArray, isObject } from "../utils/specifications";
 import { addPrefixForInterface, toCapitalCase } from "../utils/formatters";
 import { ISchemaResolverInputs, TDictionary } from "../types";
 import { ENUM_SUFFIX } from "../constants";
@@ -62,6 +62,16 @@ export class SchemaResolver {
     return this;
   };
 
+  resolveNullable = () => {
+    if (this.inputs.schema?.nullable) {
+      this.schemaType = isObject(this.schemaType)
+        ? `${JSON.stringify(this.schemaType)} | null`
+        : `${this.schemaType} | null`;
+    }
+
+    return this;
+  };
+
   getEnumName = (propertyName: string, parentKey: string = "") =>
     `${toCapitalCase(parentKey)}${toCapitalCase(propertyName)}${ENUM_SUFFIX}`;
 
@@ -118,12 +128,14 @@ export class SchemaResolver {
       return map(items, (item) =>
         SchemaResolver.of({ results: this.inputs.results, schema: item as Schema, key, parentKey })
           .resolve()
+          .resolveNullable()
           .getSchemaType(),
       );
     }
 
     return SchemaResolver.of({ results: this.inputs.results, schema: items as Schema, key, parentKey })
       .resolve(type)
+      .resolveNullable()
       .getSchemaType();
   };
 
@@ -143,6 +155,7 @@ export class SchemaResolver {
           parentKey,
         })
           .resolve()
+          .resolveNullable()
           .getSchemaType(),
       }),
       {},
