@@ -85,3 +85,6 @@ run `npm i` to install all dependency
 then run `bin/ts-codegen.js` can generate api file in `example/request/api.ts`
 
 how to use this file can be found in page.tsx 
+
+## changelog
+[changelog](changelog.md)
