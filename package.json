@@ -1,6 +1,6 @@
 {
   "name": "@openapi-integration/swr-request-generator",
-  "version": "0.7.2",
+  "version": "0.7.3",
   "description": "A tool for generating TypeScript code and interface from swagger by using SWR and axios as client.",
   "main": "lib/index.js",
   "module": "module/index.js",
