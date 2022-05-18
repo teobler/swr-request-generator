@@ -560,6 +560,9 @@
           "filename": {
             "type": "string"
           },
+          "filename_with_underscores": {
+            "type": "string"
+          },
           "inputStream": {
             "$ref": "#/components/schemas/InputStream"
           },

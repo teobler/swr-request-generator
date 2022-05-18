@@ -35,7 +35,7 @@ describe("# generators", () => {
             }),
           ),
         ).toBe(
-          "{bookControllerCreateBookRequest}:{'bookControllerCreateBookRequest':ICreateBookRequest;},SWRConfig?:ISWRConfig<IResponse,IResponseError>,axiosConfig?:AxiosRequestConfig",
+          "{bookControllerCreateBookRequest}:{'BookController_createBookRequest':ICreateBookRequest;},SWRConfig?:ISWRConfig<IResponse,IResponseError>,axiosConfig?:AxiosRequestConfig",
         );
       });
 
@@ -81,7 +81,7 @@ describe("# generators", () => {
             }),
           ),
         ).toBe(
-          "{id,name,customHeader,custom}:{'custom':number;'customHeader':string;'id':string;'name':string;},SWRConfig?:ISWRConfig<IResponse,IResponseError>,axiosConfig?:AxiosRequestConfig",
+          "{id,name,customHeader,custom}:{'Custom':number;'customHeader':string;'id':string;'name':string;},SWRConfig?:ISWRConfig<IResponse,IResponseError>,axiosConfig?:AxiosRequestConfig",
         );
       });
     });
@@ -110,7 +110,7 @@ describe("# generators", () => {
             }),
           ),
         ).toBe(
-          "{bookControllerCreateBookRequest}:{'bookControllerCreateBookRequest':ICreateBookRequest;},axiosConfig?:AxiosRequestConfig",
+          "{bookControllerCreateBookRequest}:{'BookController_createBookRequest':ICreateBookRequest;},axiosConfig?:AxiosRequestConfig",
         );
       });
 
@@ -155,7 +155,7 @@ describe("# generators", () => {
             }),
           ),
         ).toBe(
-          "{id,name,customHeader,custom}:{'custom':number;'customHeader':string;'id':string;'name':string;},axiosConfig?:AxiosRequestConfig",
+          "{id,name,customHeader,custom}:{'Custom':number;'customHeader':string;'id':string;'name':string;},axiosConfig?:AxiosRequestConfig",
         );
       });
     });

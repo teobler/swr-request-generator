@@ -1,6 +1,6 @@
 {
   "name": "@frostup/swr-request-generator",
-  "version": "0.7.4",
+  "version": "0.7.5",
   "description": "A tool for generating TypeScript code and interface from swagger by using SWR and axios as client.",
   "main": "lib/index.js",
   "module": "module/index.js",
