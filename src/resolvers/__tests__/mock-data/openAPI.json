@@ -550,7 +550,12 @@
             "type": "string"
           },
           "file": {
-            "$ref": "#/components/schemas/File"
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/File"
+              }
+            ]
           },
           "filename": {
             "type": "string"

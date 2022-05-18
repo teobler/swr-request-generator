@@ -83,7 +83,7 @@ const expectedDefinitions = {
   InputStream: "object",
   Resource: {
     "description?": "string",
-    "file?": "IFile",
+    "file?": "IFile | null",
     "filename?": "string",
     "inputStream?": "IInputStream",
     "open?": "boolean",
@@ -157,7 +157,7 @@ const expectedDeclarations = [
   "export interface IFile {\n        'absolute'?: boolean;\n'absoluteFile'?: IFile;\n'absolutePath'?: string;\n'canonicalFile'?: IFile;\n'canonicalPath'?: string;\n'directory'?: boolean;\n'executable'?: boolean;\n'file'?: boolean;\n'freeSpace'?: number;\n'hidden'?: boolean;\n'lastModified'?: number;\n'name'?: string;\n'parent'?: string;\n'parentFile'?: IFile;\n'path'?: string;\n'readable'?: boolean;\n'totalSpace'?: number;\n'usableSpace'?: number;\n'writable'?: boolean;\n      }",
   "export interface IFileUploadReq {\n        'file': FormData;\n      }",
   "export interface IInputStream {[key:string]:any}",
-  "export interface IResource {\n        'description'?: string;\n'file'?: IFile;\n'filename'?: string;\n'inputStream'?: IInputStream;\n'open'?: boolean;\n'readable'?: boolean;\n'uri'?: IUri;\n'url'?: IUrl;\n      }",
+  "export interface IResource {\n        'description'?: string;\n'file'?: IFile | null;\n'filename'?: string;\n'inputStream'?: IInputStream;\n'open'?: boolean;\n'readable'?: boolean;\n'uri'?: IUri;\n'url'?: IUrl;\n      }",
   "export interface IScheduleVo {\n        'schedules'?: IBookVo[][] | null;\n'shiftId'?: string;\n'team'?: string;\n      }",
   "export interface IStatusFormData {[key:string]:any}",
   "export interface IUri {\n        'absolute'?: boolean;\n'authority'?: string;\n'fragment'?: string;\n'host'?: string;\n'opaque'?: boolean;\n'path'?: string;\n'port'?: number;\n'query'?: string;\n'rawAuthority'?: string;\n'rawFragment'?: string;\n'rawPath'?: string;\n'rawQuery'?: string;\n'rawSchemeSpecificPart'?: string;\n'rawUserInfo'?: string;\n'scheme'?: string;\n'schemeSpecificPart'?: string;\n'userInfo'?: string;\n      }",

@@ -18,9 +18,16 @@ export class SchemaResolver {
 
   resolve = (type?: string) => {
     const { schema = {}, results, parentKey, key } = this.inputs;
+
     const advancedType = this.resolveRef(schema.$ref, type || schema.type);
     if (schema.$ref) {
       this.schemaType = advancedType;
+      return this;
+    }
+
+    if (schema.allOf || schema.oneOf || schema.anyOf) {
+      const schemas = schema.oneOf || schema.allOf || schema.anyOf;
+      this.schemaType = this.resolveRef((schemas ?? [])[0].$ref, type || schema.type);
       return this;
     }
 
