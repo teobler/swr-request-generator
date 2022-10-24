@@ -1,8 +1,6 @@
-import path from "path";
-// @ts-ignore
-import rollupBabel from "rollup-plugin-babel";
-// @ts-ignore
-import rollupTypeScript from "rollup-plugin-typescript";
+const path = require("path");
+const rollupBabel = require("@rollup/plugin-babel");
+const rollupTypeScript = require("@rollup/plugin-typescript");
 
 const pkg = require(path.join(__dirname, "package.json"));
 
@@ -20,7 +18,6 @@ module.exports = {
   ],
   external: [
     "tslib",
-    // @ts-ignore
     ...Object.keys(process.binding("natives")),
     ...Object.keys(pkg.dependencies || {}),
     ...Object.keys(pkg.peerDependencies || {}),

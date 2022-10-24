@@ -1,4 +1,4 @@
-// you can use your own request handler file, this is just a example
+// you can use your own request handler file, this is just an example
 import useSWR, { ConfigInterface, responseInterface } from "swr";
 import { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 import { client } from "./client";
