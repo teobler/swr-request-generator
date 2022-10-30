@@ -48,7 +48,7 @@ create a new json file named `ts-codegen.config.json` in your project root direc
   "fileHeaders": [
     "/* eslint-disable @typescript-eslint/explicit-module-boundary-types */",
     "/* eslint-disable @typescript-eslint/no-explicit-any */",
-    "import { ISWRConfig, useRequest } from './useRequest';",
+    "import { ISWRConfig, useGetRequest } from './useGetRequest';",
     "import { IResponseError } from \"../../constants/error\";",
     "import { client } from \"./client\";"
   ],

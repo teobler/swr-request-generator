@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ISWRConfig, useRequest } from "./useRequest";
+import { ISWRConfig, useGetRequest } from "example/request/useGetRequest";
 import { IResponseError } from "../types";
 import { client } from "./client";
 import { AxiosRequestConfig, AxiosResponse } from "axios";
@@ -62,7 +62,7 @@ export const useDownloadUsingGetRequest = (
   SWRConfig?: ISWRConfig<IResource, IResponseError>,
   axiosConfig?: AxiosRequestConfig,
 ) =>
-  useRequest<IResource, IResponseError>(
+  useGetRequest<IResource, IResponseError>(
     {
       url: `/${id}`,
       method: "get",
@@ -82,7 +82,7 @@ export const useFindBookByIdUsingGetRequest = (
   SWRConfig?: ISWRConfig<IBookDetailVo, IResponseError>,
   axiosConfig?: AxiosRequestConfig,
 ) =>
-  useRequest<IBookDetailVo, IResponseError>(
+  useGetRequest<IBookDetailVo, IResponseError>(
     {
       url: `/book/${id}`,
       method: "get",
@@ -103,7 +103,7 @@ export const useGetDocumentByIdUsingGetRequest = (
   SWRConfig?: ISWRConfig<IDocumentVo, IResponseError>,
   axiosConfig?: AxiosRequestConfig,
 ) =>
-  useRequest<IDocumentVo, IResponseError>(
+  useGetRequest<IDocumentVo, IResponseError>(
     {
       url: `/documents/${documentId}/doc`,
       method: "get",
@@ -127,7 +127,7 @@ export const useGetScheduleDetailsByDateUsingGetRequest = (
   SWRConfig?: ISWRConfig<IScheduleVo[], IResponseError>,
   axiosConfig?: AxiosRequestConfig,
 ) =>
-  useRequest<IScheduleVo[], IResponseError>(
+  useGetRequest<IScheduleVo[], IResponseError>(
     {
       url: `/schedules`,
       method: "get",
