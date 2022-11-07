@@ -18,13 +18,12 @@ export const generateEnums = (definitions: Dictionary<any>, key: string) => {
     : `export enum ${enumName} ${JSON.stringify(arrayToObject(enums)).replace(/:/gi, "=")}`;
 };
 
-export const generateFunctionName = (method: string, operationId?: string) =>
-  method === "get" ? `use${toCapitalCase(camelCase(operationId))}Request` : `${camelCase(operationId)}Request`;
+export const generateFunctionName = (operationId?: string) => `use${toCapitalCase(camelCase(operationId))}Request`;
 
 export const generateClientName = (method: string, responseType: any) =>
   method === "get"
-    ? `useRequest<${responseType || undefined}, IResponseError>`
-    : `client.request<${responseType || undefined}, AxiosResponse<${responseType || undefined}>>`;
+    ? `useGetRequest<${responseType || undefined}, IResponseError>`
+    : `useMutationRequest<${responseType || undefined}, AxiosResponse<${responseType || undefined}>>`;
 // TODO: 1.refactor THeader logic to align with resolvedPath.xxxParams
 // TODO: 2.add response type for download file
 export const generateRequestArguments = (resolvedPath: IResolvedPath) => {

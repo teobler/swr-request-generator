@@ -55,10 +55,9 @@ export class PathResolver {
       const params = this.toRequestParams(get(resolvedPath, "queryParams"));
       const axiosHeaderConfig = generateHeader(!isEmpty(body), this.contentType, resolvedPath.operationId, headerType);
 
-      return `export const ${generateFunctionName(
-        resolvedPath.method,
-        resolvedPath.operationId,
-      )} = (${generateRequestArguments(resolvedPath)}) => 
+      return `export const ${generateFunctionName(resolvedPath.operationId)} = (${generateRequestArguments(
+        resolvedPath,
+      )}) => 
         ${generateClientName(resolvedPath.method, resolvedPath.TResp)}({
         url: \`${resolvedPath.url}\`,
         method: "${resolvedPath.method}",${axiosHeaderConfig}${generateResponseType(axiosHeaderConfig)}

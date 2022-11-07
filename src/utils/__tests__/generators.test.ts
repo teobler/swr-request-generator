@@ -11,6 +11,16 @@ import {
 describe("# generators", () => {
   describe("## generateRequestArguments", () => {
     const removeSpaces = (str: string) => str.replace(/[\n \r]/g, "");
+    const resolvedPath = {
+      TReq: undefined,
+      pathParams: [""],
+      queryParams: [""],
+      bodyParams: [""],
+      formDataParams: [""],
+      method: "get",
+      TResp: "IResponse",
+      THeader: {},
+    } as IResolvedPath;
 
     describe("#get method", () => {
       it("should return axios config only when request argument is empty", () => {
@@ -159,36 +169,25 @@ describe("# generators", () => {
         );
       });
     });
-
-    const resolvedPath = {
-      TReq: undefined,
-      pathParams: [""],
-      queryParams: [""],
-      bodyParams: [""],
-      formDataParams: [""],
-      method: "get",
-      TResp: "IResponse",
-      THeader: {},
-    } as IResolvedPath;
   });
 
   describe("## generateFunctionName", () => {
     it.each([
-      ["get", "PersonController_findPersonById", "usePersonControllerFindPersonByIdRequest"],
-      ["post", "PersonController_findPersonById", "personControllerFindPersonByIdRequest"],
-      ["put", "PersonController_findPersonById", "personControllerFindPersonByIdRequest"],
-      ["delete", "PersonController_findPersonById", "personControllerFindPersonByIdRequest"],
-    ])("should return expected method name different request method", (method, operationId, result) => {
-      expect(generateFunctionName(method, operationId)).toBe(result);
+      ["PersonController_findPersonById", "usePersonControllerFindPersonByIdRequest"],
+      ["PersonController_findPersonById", "usePersonControllerFindPersonByIdRequest"],
+      ["PersonController_findPersonById", "usePersonControllerFindPersonByIdRequest"],
+      ["PersonController_findPersonById", "usePersonControllerFindPersonByIdRequest"],
+    ])("should return expected method name different request method", (operationId, result) => {
+      expect(generateFunctionName(operationId)).toBe(result);
     });
   });
 
   describe("## generateClientName", () => {
     it.each([
-      ["get", "IResponse", "useRequest<IResponse, IResponseError>"],
-      ["post", "IResponse", "client.request<IResponse, AxiosResponse<IResponse>>"],
-      ["put", "IResponse", "client.request<IResponse, AxiosResponse<IResponse>>"],
-      ["delete", "IResponse", "client.request<IResponse, AxiosResponse<IResponse>>"],
+      ["get", "IResponse", "useGetRequest<IResponse, IResponseError>"],
+      ["post", "IResponse", "useMutationRequest<IResponse, AxiosResponse<IResponse>>"],
+      ["put", "IResponse", "useMutationRequest<IResponse, AxiosResponse<IResponse>>"],
+      ["delete", "IResponse", "useMutationRequest<IResponse, AxiosResponse<IResponse>>"],
     ])("should return different client given different request method", (method, responseType, result) => {
       expect(generateClientName(method, responseType)).toBe(result);
     });
