@@ -33,10 +33,8 @@ export const generateRequestArguments = (resolvedPath: IResolvedPath) => {
   const requestParamList = compact([
     ...resolvedPath.pathParams,
     ...resolvedPath.queryParams,
-    ...resolvedPath.bodyParams,
     ...resolvedPath.formDataParams,
     ...Object.keys(resolvedPath.THeader),
-    resolvedPath.requestBody,
   ]).map((param) => camelCase(param));
 
   const requestParams = requestParamList.length === 0 ? "" : `{${requestParamList.join(",")}}:${argumentTypes}`;

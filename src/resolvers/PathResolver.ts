@@ -111,7 +111,8 @@ export class PathResolver {
     return {
       operationId: operation.operationId,
       TResp: this.getResponseTypes(operation.responses),
-      TReq: this.getRequestTypes(params, operation.operationId as string, get(operation, "requestBody")),
+      TReq: this.getRequestTypes(params),
+      TReqBody: this.getRequestBodyTypes(operation.operationId as string, get(operation, "requestBody")),
       THeader: this.getPathParamsTypes(headerParams),
       ...this.getParamsNames(params),
       ...this.getRequestBodyName(get(operation, "requestBody"), operation.operationId),
@@ -128,12 +129,11 @@ export class PathResolver {
     };
   };
 
-  getRequestTypes = (params: IParameters, operationId: string, requestBody?: RequestBody | Reference) => ({
+  getRequestTypes = (params: IParameters) => ({
     ...this.getPathParamsTypes(params.pathParams),
     ...this.getBodyAndQueryParamsTypes(params.bodyParams),
     ...this.getBodyAndQueryParamsTypes(params.queryParams),
     ...this.getFormDataParamsTypes(params.formDataParams),
-    ...this.getRequestBodyTypes(operationId, requestBody),
   });
 
   getPathParamsTypes = (pathParams: Parameter[]) =>

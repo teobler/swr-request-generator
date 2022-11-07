@@ -26,7 +26,8 @@ const expectedPathResolvedData = [
       "User-Id": "string",
       "User-Name": "string",
     },
-    TReq: {
+    TReq: {},
+    TReqBody: {
       uploadAttachmentUsingPOSTRequest: {
         attachment: "FormData",
       },
@@ -48,6 +49,7 @@ const expectedPathResolvedData = [
     TReq: {
       id: "string",
     },
+    TReqBody: {},
     TResp: "IResource",
     bodyParams: [],
     formDataParams: [],
@@ -66,6 +68,7 @@ const expectedPathResolvedData = [
     TReq: {
       id: "string",
     },
+    TReqBody: {},
     TResp: "",
     bodyParams: [],
     formDataParams: [],
@@ -78,9 +81,11 @@ const expectedPathResolvedData = [
   {
     THeader: {},
     TReq: {
-      UpdateBookJourneyUsingPOSTRequest: "IStatusFormData",
       journeyId: "string",
       journeyType: "string",
+    },
+    TReqBody: {
+      UpdateBookJourneyUsingPOSTRequest: "IStatusFormData",
     },
     TResp: "{[key:string]:any}",
     bodyParams: [],
@@ -97,6 +102,7 @@ const expectedPathResolvedData = [
     TReq: {
       id: "string",
     },
+    TReqBody: {},
     TResp: "IBookDetailVo",
     bodyParams: [],
     formDataParams: [],
@@ -110,6 +116,8 @@ const expectedPathResolvedData = [
     THeader: {},
     TReq: {
       id: "string",
+    },
+    TReqBody: {
       updateBookByIdUsingPUTRequest: "IUpdateBookRequest",
     },
     TResp: "",
@@ -128,6 +136,7 @@ const expectedPathResolvedData = [
       "roleId?": "string",
       scheduleDate: "number",
     },
+    TReqBody: {},
     TResp: "IScheduleVo[]",
     bodyParams: [],
     formDataParams: [],
@@ -139,7 +148,8 @@ const expectedPathResolvedData = [
   },
   {
     THeader: {},
-    TReq: {
+    TReq: {},
+    TReqBody: {
       uploadDocumentUsingPOSTRequest: "IFileUploadReq",
     },
     TResp: "",
@@ -158,6 +168,7 @@ const expectedPathResolvedData = [
       documentId: "string",
       "from?": "FromFrom#EnumTypeSuffix",
     },
+    TReqBody: {},
     TResp: "IDocumentVo",
     bodyParams: [],
     formDataParams: [],
@@ -170,15 +181,15 @@ const expectedPathResolvedData = [
 ];
 
 const expectedRequest = [
-  "export const useUpdateBookJourneyUsingPostRequest = ({journeyId,journeyType,updateBookJourneyUsingPostRequest}:{\n        'journeyId': string;\n'journeyType': string;\n'updateBookJourneyUsingPostRequest': IStatusFormData;\n      }, axiosConfig?: AxiosRequestConfig) => \n        useMutationRequest<{[key:string]:any}, AxiosResponse<{[key:string]:any}>>({\n        url: `/book-journey/${journeyId}/${journeyType}`,\n        method: \"post\",headers: { \"Content-Type\": \"application/json\"},\n        data: updateBookJourneyUsingPostRequest,...axiosConfig});",
+  'export const useUpdateBookJourneyUsingPostRequest = ({journeyId,journeyType}:{\n        \'journeyId\': string;\n\'journeyType\': string;\n      }, axiosConfig?: AxiosRequestConfig) => \n        useMutationRequest<{[key:string]:any}, AxiosResponse<{[key:string]:any}>>({\n        url: `/book-journey/${journeyId}/${journeyType}`,\n        method: "post",headers: { "Content-Type": "application/json"},\n        data: updateBookJourneyUsingPostRequest,...axiosConfig});',
   "export const useDeleteAttachmentUsingDeleteRequest = ({id,authorities,userId,userName}:{\n        'authorities': string;\n'id': string;\n'userId': string;\n'userName': string;\n      }, axiosConfig?: AxiosRequestConfig) => \n        useMutationRequest<undefined, AxiosResponse<undefined>>({\n        url: `/${id}`,\n        method: \"delete\",headers: { \"Authorities\": authorities, \"User-Id\": userId, \"User-Name\": userName, },\n        ...axiosConfig});",
   'export const useDownloadUsingGetRequest = ({id,accept}:{\n        \'accept\': string;\n\'id\': string;\n      }, SWRConfig?: ISWRConfig<IResource, IResponseError>, axiosConfig?: AxiosRequestConfig) => \n        useGetRequest<IResource, IResponseError>({\n        url: `/${id}`,\n        method: "get",headers: { "Accept": accept, },responseType: "blob",\n        ...axiosConfig}, SWRConfig);',
   "export const useFindBookByIdUsingGetRequest = ({id}:{\n        'id': string;\n      }, SWRConfig?: ISWRConfig<IBookDetailVo, IResponseError>, axiosConfig?: AxiosRequestConfig) => \n        useGetRequest<IBookDetailVo, IResponseError>({\n        url: `/book/${id}`,\n        method: \"get\",headers: { },\n        ...axiosConfig}, SWRConfig);",
   "export const useGetDocumentByIdUsingGetRequest = ({documentId,from}:{\n        'documentId': string;\n'from'?: FromFrom;\n      }, SWRConfig?: ISWRConfig<IDocumentVo, IResponseError>, axiosConfig?: AxiosRequestConfig) => \n        useGetRequest<IDocumentVo, IResponseError>({\n        url: `/documents/${documentId}/doc`,\n        method: \"get\",headers: { },\n        params: {\n    from\n    },...axiosConfig}, SWRConfig);",
   "export const useGetScheduleDetailsByDateUsingGetRequest = ({scheduleDate,roleId}:{\n        'roleId'?: string;\n'scheduleDate': number;\n      }, SWRConfig?: ISWRConfig<IScheduleVo[], IResponseError>, axiosConfig?: AxiosRequestConfig) => \n        useGetRequest<IScheduleVo[], IResponseError>({\n        url: `/schedules`,\n        method: \"get\",headers: { },\n        params: {\n    scheduleDate,\nroleId\n    },...axiosConfig}, SWRConfig);",
-  'export const useUpdateBookByIdUsingPutRequest = ({id,updateBookByIdUsingPutRequest}:{\n        \'id\': string;\n\'updateBookByIdUsingPutRequest\': IUpdateBookRequest;\n      }, axiosConfig?: AxiosRequestConfig) => \n        useMutationRequest<undefined, AxiosResponse<undefined>>({\n        url: `/book/${id}`,\n        method: "put",headers: { "Content-Type": "application/json"},\n        data: updateBookByIdUsingPutRequest,...axiosConfig});',
-  'export const useUploadAttachmentUsingPostRequest = ({authorities,userId,userName,uploadAttachmentUsingPostRequest}:{\n        \'authorities\': string;\n\'uploadAttachmentUsingPostRequest\': FormData\n\'userId\': string;\n\'userName\': string;\n      }, axiosConfig?: AxiosRequestConfig) => \n        useMutationRequest<IAttachmentBo, AxiosResponse<IAttachmentBo>>({\n        url: `/`,\n        method: "post",headers: { "Authorities": authorities, "User-Id": userId, "User-Name": userName, "Content-Type": "multipart/form-data"},\n        data: uploadAttachmentUsingPostRequest,...axiosConfig});',
-  'export const useUploadDocumentUsingPostRequest = ({uploadDocumentUsingPostRequest}:{\n        \'uploadDocumentUsingPostRequest\': IFileUploadReq;\n      }, axiosConfig?: AxiosRequestConfig) => \n        useMutationRequest<undefined, AxiosResponse<undefined>>({\n        url: `/documents`,\n        method: "post",headers: { "Content-Type": "multipart/form-data"},\n        data: uploadDocumentUsingPostRequest,...axiosConfig});',
+  'export const useUpdateBookByIdUsingPutRequest = ({id}:{\n        \'id\': string;\n      }, axiosConfig?: AxiosRequestConfig) => \n        useMutationRequest<undefined, AxiosResponse<undefined>>({\n        url: `/book/${id}`,\n        method: "put",headers: { "Content-Type": "application/json"},\n        data: updateBookByIdUsingPutRequest,...axiosConfig});',
+  'export const useUploadAttachmentUsingPostRequest = ({authorities,userId,userName}:{\n        \'authorities\': string;\n\'userId\': string;\n\'userName\': string;\n      }, axiosConfig?: AxiosRequestConfig) => \n        useMutationRequest<IAttachmentBo, AxiosResponse<IAttachmentBo>>({\n        url: `/`,\n        method: "post",headers: { "Authorities": authorities, "User-Id": userId, "User-Name": userName, "Content-Type": "multipart/form-data"},\n        data: uploadAttachmentUsingPostRequest,...axiosConfig});',
+  'export const useUploadDocumentUsingPostRequest = (axiosConfig?: AxiosRequestConfig) => \n        useMutationRequest<undefined, AxiosResponse<undefined>>({\n        url: `/documents`,\n        method: "post",headers: { "Content-Type": "multipart/form-data"},\n        data: uploadDocumentUsingPostRequest,...axiosConfig});',
   'export enum FromFrom {"AAA"="AAA","BBB"="BBB"}',
 ];
 

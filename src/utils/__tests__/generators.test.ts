@@ -45,7 +45,7 @@ describe("# generators", () => {
             }),
           ),
         ).toBe(
-          "{bookControllerCreateBookRequest}:{'bookControllerCreateBookRequest':ICreateBookRequest;},SWRConfig?:ISWRConfig<IResponse,IResponseError>,axiosConfig?:AxiosRequestConfig",
+          "SWRConfig?:ISWRConfig<IResponse,IResponseError>,axiosConfig?:AxiosRequestConfig",
         );
       });
 
@@ -120,7 +120,7 @@ describe("# generators", () => {
             }),
           ),
         ).toBe(
-          "{bookControllerCreateBookRequest}:{'bookControllerCreateBookRequest':ICreateBookRequest;},axiosConfig?:AxiosRequestConfig",
+          "axiosConfig?:AxiosRequestConfig",
         );
       });
 
