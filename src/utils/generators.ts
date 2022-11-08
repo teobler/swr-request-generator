@@ -33,7 +33,7 @@ export const generateRequestArguments = (resolvedPath: IResolvedPath) => {
   const requestParamList = compact([
     ...resolvedPath.pathParams,
     ...resolvedPath.queryParams,
-    ...resolvedPath.formDataParams,
+    ...resolvedPath.cookieParams,
     ...Object.keys(resolvedPath.THeader),
   ]).map((param) => camelCase(param));
 

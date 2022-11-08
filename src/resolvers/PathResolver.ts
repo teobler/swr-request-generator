@@ -1,13 +1,3 @@
-import {
-  Operation,
-  Parameter,
-  Path,
-  Paths,
-  Reference,
-  RequestBody,
-  Response,
-  Schema,
-} from "@openapi-integration/openapi-schema";
 import { SchemaResolver } from "./SchemaResolver";
 import { assign, camelCase, chain, Dictionary, filter, get, isEmpty, map, pick, reduce, sortBy } from "lodash";
 import { HTTP_METHODS, SLASH } from "../constants";
@@ -22,6 +12,15 @@ import {
   generateResponseType,
 } from "../utils/generators";
 import { toCapitalCase } from "../utils/formatters";
+import {
+  OperationObject,
+  ParameterObject,
+  PathItemObject,
+  PathsObject,
+  ReferenceObject,
+  RequestBodyObject,
+  ResponsesObject,
+} from "@ts-stack/openapi-spec";
 
 // TODO: Should handle `deprecated` and `security` in Operation?
 export class PathResolver {
@@ -29,16 +28,19 @@ export class PathResolver {
   extraDefinitions = {};
   contentType: { [operationId: string]: string } = {};
 
-  static of(paths: Paths) {
+  static of(paths: PathsObject) {
     return new PathResolver(paths);
   }
 
-  constructor(private paths: Paths) {}
+  constructor(private paths: PathsObject) {}
 
   resolve = () => {
     this.resolvedPaths = reduce(
       this.paths,
-      (results: IResolvedPath[], path: Path, pathName: string) => [...results, ...this.resolvePath(path, pathName)],
+      (results: IResolvedPath[], path: PathItemObject, pathName: string) => [
+        ...results,
+        ...this.resolvePath(path, pathName),
+      ],
       [],
     );
     return this;
@@ -47,11 +49,10 @@ export class PathResolver {
   toRequest = (): string[] => {
     const data = sortBy(this.resolvedPaths, (o) => o.operationId);
     const requests = data.map((resolvedPath: IResolvedPath) => {
-      const bodyData = get(resolvedPath.bodyParams, "[0]");
       const headerType = get(resolvedPath, "THeader");
-      const cookie = get(resolvedPath.formDataParams, "[0]");
+      const cookie = get(resolvedPath.cookieParams, "[0]");
       const requestBody = get(resolvedPath, "requestBody");
-      const body = camelCase(toCapitalCase(requestBody || bodyData || cookie));
+      const body = camelCase(toCapitalCase(requestBody || cookie));
       const params = this.toRequestParams(get(resolvedPath, "queryParams"));
       const axiosHeaderConfig = generateHeader(!isEmpty(body), this.contentType, resolvedPath.operationId, headerType);
 
@@ -77,7 +78,7 @@ export class PathResolver {
     }`
       : undefined;
 
-  resolvePath(path: Path, pathName: string) {
+  resolvePath(path: PathItemObject, pathName: string) {
     const operations = pick(path, HTTP_METHODS);
 
     return Object.keys(operations).map((httpMethod) => ({
@@ -97,22 +98,23 @@ export class PathResolver {
 
   isPathParam = (str: string) => str.startsWith("{");
 
-  // TODO: handle the case when v.parameters = Reference
-  resolveOperation = (operation: Operation) => {
-    const pickParamsByType = this.pickParams(operation.parameters as Parameter[]);
+  resolveOperation = (operation: OperationObject) => {
+    // TODO: handle the case when v.parameters = Reference
+    const pickParamsByType = this.pickParams(operation.parameters as ParameterObject[] | undefined);
+    // axios config header data
     const headerParams = pickParamsByType("header");
+    // axios config params data
     const params = {
       pathParams: pickParamsByType("path"),
       queryParams: pickParamsByType("query"),
-      bodyParams: pickParamsByType("body"),
-      formDataParams: pickParamsByType("cookie"),
+      cookieParams: pickParamsByType("cookie"),
     };
 
     return {
       operationId: operation.operationId,
       TResp: this.getResponseTypes(operation.responses),
       TReq: this.getRequestTypes(params),
-      TReqBody: this.getRequestBodyTypes(operation.operationId as string, get(operation, "requestBody")),
+      TReqBody: this.getRequestBodyTypes(operation.operationId, get(operation, "requestBody")),
       THeader: this.getPathParamsTypes(headerParams),
       ...this.getParamsNames(params),
       ...this.getRequestBodyName(get(operation, "requestBody"), operation.operationId),
@@ -124,19 +126,17 @@ export class PathResolver {
     return {
       pathParams: getNames(params.pathParams),
       queryParams: getNames(params.queryParams),
-      bodyParams: getNames(params.bodyParams),
-      formDataParams: getNames(params.formDataParams),
+      cookieParams: getNames(params.cookieParams),
     };
   };
 
   getRequestTypes = (params: IParameters) => ({
     ...this.getPathParamsTypes(params.pathParams),
-    ...this.getBodyAndQueryParamsTypes(params.bodyParams),
-    ...this.getBodyAndQueryParamsTypes(params.queryParams),
-    ...this.getFormDataParamsTypes(params.formDataParams),
+    ...this.getQueryParamsTypes(params.queryParams),
+    ...this.getCookieParamsTypes(params.cookieParams),
   });
 
-  getPathParamsTypes = (pathParams: Parameter[]) =>
+  getPathParamsTypes = (pathParams: ParameterObject[]) =>
     pathParams.reduce((results, param) => {
       const schema = get(param, "schema");
 
@@ -152,8 +152,8 @@ export class PathResolver {
       };
     }, {});
 
-  getBodyAndQueryParamsTypes = (bodyParams: Parameter[]) =>
-    bodyParams.reduce(
+  getQueryParamsTypes = (queryParams: ParameterObject[]) =>
+    queryParams.reduce(
       (results, param) => ({
         ...results,
         [`${param.name}${param.required ? "" : "?"}`]: SchemaResolver.of({
@@ -169,7 +169,7 @@ export class PathResolver {
     );
 
   // TODO: handle other params here?
-  getFormDataParamsTypes = (formDataParams: any[]) => {
+  getCookieParamsTypes = (formDataParams: any[]) => {
     return formDataParams.reduce((results, param) => {
       if (param.schema) {
         return {
@@ -192,7 +192,7 @@ export class PathResolver {
   };
 
   // TODO: handle Response or Reference
-  getResponseTypes = (responses: { [responseName: string]: Response | Reference }) =>
+  getResponseTypes = (responses?: ResponsesObject) =>
     SchemaResolver.of({
       results: this.extraDefinitions,
       // TODO: handle other content type here
@@ -206,20 +206,22 @@ export class PathResolver {
       .getSchemaType();
 
   // TODO: when parameters has enum
-  pickParams = (parameters: Parameter[]) => (type: "path" | "query" | "body" | "cookie" | "header") =>
+  // TODO: handle the case when v.parameters = Reference
+  // parameters should be (ParameterObject | ReferenceObject)[] | undefined
+  pickParams = (parameters?: ParameterObject[]) => (type: "query" | "header" | "path" | "cookie") =>
     filter(parameters, (param) => param.in === type);
 
-  getContentType(operationId: string, key: string) {
+  getContentType(key: string, operationId?: string) {
     // in openAPI spec, the key of content in requestBody field is content type
-    assign(this.contentType, { [operationId]: key });
+    operationId && assign(this.contentType, { [operationId]: key });
   }
 
-  getRequestBodyTypes(operationId: string, requestBody?: RequestBody | Reference) {
+  getRequestBodyTypes(operationId?: string, requestBody?: RequestBodyObject | ReferenceObject) {
     if (isRequestBody(requestBody)) {
       return reduce(
         get(requestBody, "content"),
         (results, content, key) => {
-          this.getContentType(operationId, key);
+          this.getContentType(key, operationId);
 
           return {
             ...results,
@@ -240,7 +242,7 @@ export class PathResolver {
     return {
       [`${operationId}Request`]: SchemaResolver.of({
         results: this.extraDefinitions,
-        schema: requestBody as Schema,
+        schema: requestBody,
         key: `${operationId}Request`,
         parentKey: `${operationId}Request`,
       })
@@ -249,7 +251,7 @@ export class PathResolver {
     };
   }
 
-  getRequestBodyName(requestBody?: RequestBody | Reference, operationId?: string) {
+  getRequestBodyName(requestBody?: RequestBodyObject | ReferenceObject, operationId?: string) {
     if (requestBody) {
       return {
         requestBody: `${operationId}Request`,

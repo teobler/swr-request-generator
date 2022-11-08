@@ -15,8 +15,7 @@ describe("# generators", () => {
       TReq: undefined,
       pathParams: [""],
       queryParams: [""],
-      bodyParams: [""],
-      formDataParams: [""],
+      cookieParams: [""],
       method: "get",
       TResp: "IResponse",
       THeader: {},
@@ -40,13 +39,10 @@ describe("# generators", () => {
           removeSpaces(
             generateRequestArguments({
               ...resolvedPath,
-              bodyParams: ["BookController_createBookRequest"],
               TReq: { BookController_createBookRequest: "ICreateBookRequest" },
             }),
           ),
-        ).toBe(
-          "SWRConfig?:ISWRConfig<IResponse,IResponseError>,axiosConfig?:AxiosRequestConfig",
-        );
+        ).toBe("SWRConfig?:ISWRConfig<IResponse,IResponseError>,axiosConfig?:AxiosRequestConfig");
       });
 
       it("should return args and it's corresponding types when multiple arguments present", () => {
@@ -115,13 +111,10 @@ describe("# generators", () => {
             generateRequestArguments({
               ...resolvedPath,
               method: "post",
-              bodyParams: ["BookController_createBookRequest"],
               TReq: { BookController_createBookRequest: "ICreateBookRequest" },
             }),
           ),
-        ).toBe(
-          "axiosConfig?:AxiosRequestConfig",
-        );
+        ).toBe("axiosConfig?:AxiosRequestConfig");
       });
 
       it("should return args and it's corresponding types when multiple arguments present", () => {

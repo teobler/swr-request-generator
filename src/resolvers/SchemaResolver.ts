@@ -1,9 +1,9 @@
 import { get, indexOf, map, reduce } from "lodash";
-import { Schema } from "@openapi-integration/openapi-schema";
 import { isArray, isObject } from "../utils/specifications";
 import { addPrefixForInterface, toCapitalCase } from "../utils/formatters";
 import { ISchemaResolverInputs, TDictionary } from "../types";
 import { ENUM_SUFFIX } from "../constants";
+import { SchemaObject, SchemaObjectType } from "@ts-stack/openapi-spec";
 
 export class SchemaResolver {
   private schemaType: TDictionary<any> | string = {};
@@ -18,14 +18,16 @@ export class SchemaResolver {
 
   resolve = (type?: string) => {
     const { schema = {}, results, parentKey, key } = this.inputs;
-    const advancedType = this.resolveRef(schema.$ref, type || schema.type);
+    // TODO: handle schema.type is array
+    const advancedType = this.resolveRef(schema.$ref, type || (schema.type as SchemaObjectType));
     if (schema.$ref) {
       this.schemaType = advancedType;
       return this;
     }
 
     if (schema.items) {
-      this.schemaType = this.resolveItems(schema.items, schema.type, key, parentKey);
+      // TODO: handle schema.type is array
+      this.schemaType = this.resolveItems(schema.items, schema.type as SchemaObjectType, key, parentKey);
       return this;
     }
 
@@ -58,11 +60,13 @@ export class SchemaResolver {
       return this;
     }
 
-    this.schemaType = this.getBasicType(schema.type, advancedType);
+    // TODO: handle schema.type is array
+    this.schemaType = this.getBasicType(schema.type as SchemaObjectType, advancedType);
     return this;
   };
 
   resolveNullable = () => {
+    // TODO: fix nullable here
     if (this.inputs.schema?.nullable) {
       this.schemaType = isObject(this.schemaType)
         ? `${JSON.stringify(this.schemaType)} | null`
@@ -84,13 +88,13 @@ export class SchemaResolver {
     return type === "array" ? `${refType}[]` : refType;
   };
 
-  getBasicType = (basicType: string = "", advancedType?: string): string => {
+  getBasicType = (basicType?: SchemaObjectType, advancedType?: string): string => {
     switch (basicType) {
       case "integer":
         return "number";
       case "array":
         return this.getTypeForArray(advancedType);
-      case "":
+      case undefined:
         return advancedType || "";
       default:
         return basicType;
@@ -107,7 +111,12 @@ export class SchemaResolver {
     return list[list.length - 1];
   };
 
-  resolveItems = (items?: Schema | Schema[], type?: string, key?: string, parentKey?: string): any => {
+  resolveItems = (
+    items?: SchemaObject | SchemaObject[],
+    type?: SchemaObjectType,
+    key?: string,
+    parentKey?: string,
+  ): any => {
     if (!items) {
       return {};
     }
@@ -126,21 +135,23 @@ export class SchemaResolver {
 
     if (isArray(items)) {
       return map(items, (item) =>
-        SchemaResolver.of({ results: this.inputs.results, schema: item as Schema, key, parentKey })
+        SchemaResolver.of({ results: this.inputs.results, schema: item, key, parentKey })
           .resolve()
           .resolveNullable()
           .getSchemaType(),
       );
     }
 
-    return SchemaResolver.of({ results: this.inputs.results, schema: items as Schema, key, parentKey })
+    return SchemaResolver.of({ results: this.inputs.results, schema: items as SchemaObject, key, parentKey })
       .resolve(type)
       .resolveNullable()
       .getSchemaType();
   };
 
   resolveProperties = (
-    properties: { [propertyName: string]: Schema } = {},
+    properties: {
+      [propertyName: string]: SchemaObject;
+    } = {},
     required: string[] = [],
     parentKey?: string,
   ): TDictionary<any> =>
@@ -150,7 +161,7 @@ export class SchemaResolver {
         ...o,
         [`${k}${indexOf(required, k) > -1 ? "" : "?"}`]: SchemaResolver.of({
           results: this.inputs.results,
-          schema: v as Schema,
+          schema: v,
           key: k,
           parentKey,
         })

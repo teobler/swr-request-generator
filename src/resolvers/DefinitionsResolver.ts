@@ -1,10 +1,10 @@
 import { compact, Dictionary, forEach, get, includes, isEmpty } from "lodash";
 import { SchemaResolver } from "./SchemaResolver";
-import { Components, Schema } from "@openapi-integration/openapi-schema";
 import { isRequestBody } from "../utils/specifications";
 import { generateEnums } from "../utils/generators";
 import { addPrefixForInterface, toCapitalCase, toTypes } from "../utils/formatters";
 import { ENUM_SUFFIX } from "../constants";
+import { ComponentsObject } from "@ts-stack/openapi-spec";
 
 // TODO: 1. Handle required params.
 // TODO: handle `in: fromData`
@@ -14,11 +14,11 @@ import { ENUM_SUFFIX } from "../constants";
 export class DefinitionsResolver {
   resolvedDefinitions: any;
 
-  static of(components?: Components) {
+  static of(components?: ComponentsObject) {
     return new DefinitionsResolver(components);
   }
 
-  constructor(private components?: Components) {}
+  constructor(private components?: ComponentsObject) {}
 
   scanDefinitions = () => {
     const results: Dictionary<any> = {};
@@ -39,7 +39,7 @@ export class DefinitionsResolver {
 
       return (results[requestBodyName] = SchemaResolver.of({
         results,
-        schema: requestBody as Schema,
+        schema: requestBody,
         key: requestBodyName,
         parentKey: requestBodyName,
       })

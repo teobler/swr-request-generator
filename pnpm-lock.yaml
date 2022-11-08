@@ -4,9 +4,9 @@ specifiers:
   '@babel/core': 7.19.x
   '@babel/preset-env': 7.19.x
   '@babel/preset-typescript': 7.18.x
-  '@openapi-integration/openapi-schema': 0.0.6
   '@rollup/plugin-babel': ^6.0.2
   '@rollup/plugin-typescript': ^9.0.2
+  '@ts-stack/openapi-spec': ^3.1.5
   '@types/jest': 29.2.x
   '@types/lodash': 4.14.x
   '@types/node': 18.11.x
@@ -35,9 +35,9 @@ devDependencies:
   '@babel/core': 7.19.6
   '@babel/preset-env': 7.19.4_@babel+core@7.19.6
   '@babel/preset-typescript': 7.18.6_@babel+core@7.19.6
-  '@openapi-integration/openapi-schema': 0.0.6
   '@rollup/plugin-babel': 6.0.2_@babel+core@7.19.6+rollup@3.2.3
   '@rollup/plugin-typescript': 9.0.2_0d5bb20fa7c6e45193dce4f0648d3c40
+  '@ts-stack/openapi-spec': 3.1.5
   '@types/jest': 29.2.0
   '@types/lodash': 4.14.186
   '@types/node': 18.11.4
@@ -1573,10 +1573,6 @@ packages:
       '@jridgewell/sourcemap-codec': 1.4.14
     dev: true
 
-  /@openapi-integration/openapi-schema/0.0.6:
-    resolution: {integrity: sha512-RSvWNV0pb6ERxRks0elwX2TltMGDp1M76J7dxshpb9q6+p3z8n028gjXhvDiQDvl/TBrBuHp+MqogMoa0/nEag==}
-    dev: true
-
   /@rollup/plugin-babel/6.0.2_@babel+core@7.19.6+rollup@3.2.3:
     resolution: {integrity: sha512-Vnt8XIWYwCf3MD7qhBWYlP9pjSZvcE++nlPXhQYw6YNehl5742AzFbrV6h4BHb20VAOVUlIksVLymQCTwVCGDg==}
     engines: {node: '>=14.0.0'}
@@ -1645,6 +1641,10 @@ packages:
     resolution: {integrity: sha512-BPS4ynJW/o92PUR4wgriz2Ud5gpST5vz6GQfMixEDK0Z8ZCUv2M7SkBLykH56T++Xs+8ln9zTGbOvNGIe02/jw==}
     dependencies:
       '@sinonjs/commons': 1.8.3
+    dev: true
+
+  /@ts-stack/openapi-spec/3.1.5:
+    resolution: {integrity: sha512-IIalX7oLFYUU8HXY3bFTV6l/8OPyKRbtrt64Z0SM6H7ZfTxfy0e3fWeSYsWiKCIobXeFKL5QETG61PANB9tEHw==}
     dev: true
 
   /@tsconfig/node10/1.0.9:

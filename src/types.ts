@@ -1,4 +1,4 @@
-import { Parameter, Schema } from "@openapi-integration/openapi-schema";
+import { ParameterObject, SchemaObject } from "@ts-stack/openapi-spec";
 
 export interface IResolvedPath {
   url: string;
@@ -11,15 +11,13 @@ export interface IResolvedPath {
   operationId?: string;
   pathParams: string[];
   queryParams: string[];
-  bodyParams: string[];
-  formDataParams: string[];
+  cookieParams: string[];
 }
 
 export interface IParameters {
-  pathParams: Parameter[];
-  queryParams: Parameter[];
-  bodyParams: Parameter[];
-  formDataParams: Parameter[];
+  pathParams: ParameterObject[];
+  queryParams: ParameterObject[];
+  cookieParams: ParameterObject[];
 }
 
 export interface ICodegenConfig {
@@ -33,9 +31,13 @@ export interface ICodegenConfig {
 
 export type TDictionary<T> = { [key: string]: T };
 
+export interface SchemaObjectWithNullable extends SchemaObject {
+  nullable?: boolean;
+}
+
 export interface ISchemaResolverInputs {
   results: TDictionary<any>;
-  schema?: Schema;
+  schema?: SchemaObjectWithNullable;
   key?: string;
   parentKey?: string;
 }

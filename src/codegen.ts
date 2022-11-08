@@ -5,10 +5,10 @@ import { PathResolver } from "./resolvers/PathResolver";
 import axios from "axios";
 import { map } from "lodash";
 import { ERROR_MESSAGES, FILE_TIP, LOG_MESSAGE } from "./constants";
-import { Spec } from "@openapi-integration/openapi-schema";
 import { program } from "commander";
 import { convertJsonToString, prettifyCode } from "./utils/formatters";
 import { ICodegenConfig } from "./types";
+import { OasObject, PathsObject } from "@ts-stack/openapi-spec";
 
 program.option("-a, --authorization <value>", "authorization header value").parse(process.argv);
 
@@ -25,7 +25,7 @@ const getCodegenConfig = (): ICodegenConfig =>
 
 const { output = ".output", fileHeaders, timeout, data, clients, fileName } = getCodegenConfig();
 
-const codegen = (schema: Spec | string) => {
+const codegen = (schema: OasObject | string) => {
   if (typeof schema === "string") {
     console.error(ERROR_MESSAGES.INVALID_JSON_FILE_ERROR);
     return;
@@ -40,7 +40,9 @@ const codegen = (schema: Spec | string) => {
     "\n\n" +
     FILE_TIP +
     [
-      ...PathResolver.of(schema.paths).resolve().toRequest(),
+      ...PathResolver.of(schema.paths as PathsObject)
+        .resolve()
+        .toRequest(),
       ...DefinitionsResolver.of(schema.components).scanDefinitions().toDeclarations(),
     ].join("\n\n");
 
