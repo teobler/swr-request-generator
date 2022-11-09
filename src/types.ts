@@ -4,7 +4,9 @@ export interface IResolvedPath {
   url: string;
   method: string;
   TResp: any;
-  TReq: any;
+  TReqQuery: any,
+  TReqPath: any,
+  TReqCookie: any,
   TReqBody: Record<string, any>;
   THeader: Record<string, any>;
   requestBody?: string;

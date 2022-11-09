@@ -9,9 +9,10 @@ import {
   generateFunctionName,
   generateHeader,
   generateRequestArguments,
+  generateRequestBodyAndParams,
   generateResponseType,
 } from "../utils/generators";
-import { toCapitalCase } from "../utils/formatters";
+import { toCapitalCase, toRequestTypes } from "../utils/formatters";
 import {
   OperationObject,
   ParameterObject,
@@ -48,27 +49,49 @@ export class PathResolver {
 
   toRequest = (): string[] => {
     const data = sortBy(this.resolvedPaths, (o) => o.operationId);
-    const requests = data.map((resolvedPath: IResolvedPath) => {
+    const requestBodiesAndParams = [] as any;
+    const requestHooks = data.map((resolvedPath: IResolvedPath) => {
       const headerType = get(resolvedPath, "THeader");
       const cookie = get(resolvedPath.cookieParams, "[0]");
       const requestBody = get(resolvedPath, "requestBody");
       const body = camelCase(toCapitalCase(requestBody || cookie));
       const params = this.toRequestParams(get(resolvedPath, "queryParams"));
       const axiosHeaderConfig = generateHeader(!isEmpty(body), this.contentType, resolvedPath.operationId, headerType);
+      const [requestInterfaceName, requestInterfaceObj] = generateRequestBodyAndParams(
+        resolvedPath.TReqBody,
+        resolvedPath.TReqQuery,
+        resolvedPath.operationId,
+      );
+      requestBodiesAndParams.push([requestInterfaceName, requestInterfaceObj]);
 
       return `export const ${generateFunctionName(resolvedPath.operationId)} = (${generateRequestArguments(
         resolvedPath,
       )}) => 
-        ${generateClientName(resolvedPath.method, resolvedPath.TResp)}({
+        ${generateClientName(resolvedPath.method, resolvedPath.TResp, requestInterfaceName)}({
         url: \`${resolvedPath.url}\`,
         method: "${resolvedPath.method}",${axiosHeaderConfig}${generateResponseType(axiosHeaderConfig)}
-        ${body ? `data: ${body},` : ""}${params ? `params: ${params},` : ""}...axiosConfig}${
+        ${params && resolvedPath.method === "get" ? `params: ${params},` : ""}...axiosConfig}${
         resolvedPath.method === "get" ? ", SWRConfig" : ""
       });`;
     });
 
     const enums = Object.keys(this.extraDefinitions).map((k) => generateEnums(this.extraDefinitions, k));
-    return [...requests, ...enums];
+
+    const requestParamsDefinition = requestBodiesAndParams
+      .map(([interfaceName, request]: [string, Record<string, string>] | [undefined, undefined]) => {
+        if (!interfaceName) return undefined;
+
+        Object.keys(request).forEach((key) => {
+          if (isEmpty(request[key])) {
+            delete request[key];
+          }
+        });
+
+        return `export interface ${interfaceName} ${toRequestTypes(request)}`;
+      })
+      .filter(Boolean);
+
+    return [...requestHooks, ...requestParamsDefinition, ...enums];
   };
 
   toRequestParams = (data: any[] = []) =>
@@ -113,7 +136,9 @@ export class PathResolver {
     return {
       operationId: operation.operationId,
       TResp: this.getResponseTypes(operation.responses),
-      TReq: this.getRequestTypes(params),
+      TReqQuery: this.getQueryParamsTypes(params.queryParams),
+      TReqPath: this.getPathParamsTypes(params.pathParams),
+      TReqCookie: this.getCookieParamsTypes(params.cookieParams),
       TReqBody: this.getRequestBodyTypes(operation.operationId, get(operation, "requestBody")),
       THeader: this.getPathParamsTypes(headerParams),
       ...this.getParamsNames(params),
@@ -129,12 +154,6 @@ export class PathResolver {
       cookieParams: getNames(params.cookieParams),
     };
   };
-
-  getRequestTypes = (params: IParameters) => ({
-    ...this.getPathParamsTypes(params.pathParams),
-    ...this.getQueryParamsTypes(params.queryParams),
-    ...this.getCookieParamsTypes(params.cookieParams),
-  });
 
   getPathParamsTypes = (pathParams: ParameterObject[]) =>
     pathParams.reduce((results, param) => {

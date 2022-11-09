@@ -2,7 +2,7 @@ import { camelCase, compact, Dictionary, get, isEmpty, reduce, replace, some } f
 import { isNumber } from "./specifications";
 import { IResolvedPath } from "../types";
 import { ENUM_SUFFIX } from "../constants";
-import { arrayToObject, toCapitalCase, toTypes } from "./formatters";
+import { addPrefixForInterface, arrayToObject, toCapitalCase, toTypes } from "./formatters";
 
 export const generateEnums = (definitions: Dictionary<any>, key: string) => {
   if (isEmpty(definitions)) {
@@ -20,20 +20,40 @@ export const generateEnums = (definitions: Dictionary<any>, key: string) => {
 
 export const generateFunctionName = (operationId?: string) => `use${toCapitalCase(camelCase(operationId))}Request`;
 
-export const generateClientName = (method: string, responseType: any) =>
+export const generateClientName = (method: string, responseType: any, requestBodyTypes?: string) =>
   method === "get"
     ? `useGetRequest<${responseType || undefined}, IResponseError>`
-    : `useMutationRequest<${responseType || undefined}, AxiosResponse<${responseType || undefined}>>`;
+    : `useMutationRequest<${requestBodyTypes}, AxiosResponse<${responseType || undefined}>, IResponseError>`;
+
+export const generateRequestBodyAndParams = (
+  requestBodyType: any,
+  requestQueryType: any,
+  operationId: string = "",
+): [string, { body: any; query: any }] | [undefined, undefined] => {
+  if (isEmpty(requestBodyType) && isEmpty(requestQueryType)) {
+    return [undefined, undefined];
+  }
+
+  return [
+    `${addPrefixForInterface(toCapitalCase(operationId))}Request`,
+    { query: requestQueryType, body: requestBodyType },
+  ];
+};
+
 // TODO: 1.refactor THeader logic to align with resolvedPath.xxxParams
 // TODO: 2.add response type for download file
 export const generateRequestArguments = (resolvedPath: IResolvedPath) => {
-  const argumentTypes = !isEmpty({ ...resolvedPath.TReq, ...resolvedPath.THeader })
-    ? toTypes({ ...resolvedPath.TReq, ...resolvedPath.THeader })
-    : undefined;
+  const queryType = resolvedPath.method === "get" ? resolvedPath.TReqQuery : {};
+  const requestType = {
+    ...queryType,
+    ...resolvedPath.TReqPath,
+    ...resolvedPath.THeader,
+  };
+  const argumentTypes = !isEmpty(requestType) ? toTypes(requestType) : undefined;
+  const queryParams = resolvedPath.method === "get" ? resolvedPath.queryParams : [];
   const requestParamList = compact([
     ...resolvedPath.pathParams,
-    ...resolvedPath.queryParams,
-    ...resolvedPath.cookieParams,
+    ...queryParams,
     ...Object.keys(resolvedPath.THeader),
   ]).map((param) => camelCase(param));
 

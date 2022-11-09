@@ -12,12 +12,17 @@ describe("# generators", () => {
   describe("## generateRequestArguments", () => {
     const removeSpaces = (str: string) => str.replace(/[\n \r]/g, "");
     const resolvedPath = {
+      url: "url",
       TReq: undefined,
       pathParams: [""],
       queryParams: [""],
       cookieParams: [""],
       method: "get",
       TResp: "IResponse",
+      TReqQuery: {},
+      TReqPath: {},
+      TReqCookie: {},
+      TReqBody: {},
       THeader: {},
     } as IResolvedPath;
 
@@ -30,7 +35,7 @@ describe("# generators", () => {
 
       it("should return arg and it's corresponding type when request only one argument presents", () => {
         expect(
-          removeSpaces(generateRequestArguments({ ...resolvedPath, pathParams: ["id"], TReq: { id: "string" } })),
+          removeSpaces(generateRequestArguments({ ...resolvedPath, pathParams: ["id"], TReqQuery: { id: "string" } })),
         ).toBe("{id}:{'id':string;},SWRConfig?:ISWRConfig<IResponse,IResponseError>,axiosConfig?:AxiosRequestConfig");
       });
 
@@ -39,7 +44,7 @@ describe("# generators", () => {
           removeSpaces(
             generateRequestArguments({
               ...resolvedPath,
-              TReq: { BookController_createBookRequest: "ICreateBookRequest" },
+              TReqQuery: { BookController_createBookRequest: "ICreateBookRequest" },
             }),
           ),
         ).toBe("SWRConfig?:ISWRConfig<IResponse,IResponseError>,axiosConfig?:AxiosRequestConfig");
@@ -52,7 +57,8 @@ describe("# generators", () => {
               ...resolvedPath,
               pathParams: ["id"],
               queryParams: ["name"],
-              TReq: { id: "string", name: "string" },
+              TReqQuery: { name: "string" },
+              TReqPath: { id: "string" },
             }),
           ),
         ).toBe(
@@ -67,7 +73,8 @@ describe("# generators", () => {
               ...resolvedPath,
               pathParams: ["id"],
               queryParams: ["name"],
-              TReq: { id: "string", name: "string" },
+              TReqQuery: { name: "string" },
+              TReqPath: { id: "string" },
             }),
           ),
         ).toBe(
@@ -82,7 +89,8 @@ describe("# generators", () => {
               ...resolvedPath,
               pathParams: ["id"],
               queryParams: ["name"],
-              TReq: { id: "string", name: "string" },
+              TReqQuery: { name: "string" },
+              TReqPath: { id: "string" },
               THeader: { "Custom-Header": "string", Custom: "number" },
             }),
           ),
@@ -100,7 +108,12 @@ describe("# generators", () => {
       it("should return arg and it's corresponding type when request only one argument presents", () => {
         expect(
           removeSpaces(
-            generateRequestArguments({ ...resolvedPath, method: "put", pathParams: ["id"], TReq: { id: "string" } }),
+            generateRequestArguments({
+              ...resolvedPath,
+              method: "put",
+              pathParams: ["id"],
+              TReqPath: { id: "string" },
+            }),
           ),
         ).toBe("{id}:{'id':string;},axiosConfig?:AxiosRequestConfig");
       });
@@ -111,7 +124,7 @@ describe("# generators", () => {
             generateRequestArguments({
               ...resolvedPath,
               method: "post",
-              TReq: { BookController_createBookRequest: "ICreateBookRequest" },
+              TReqBody: { BookController_createBookRequest: "ICreateBookRequest" },
             }),
           ),
         ).toBe("axiosConfig?:AxiosRequestConfig");
@@ -125,10 +138,11 @@ describe("# generators", () => {
               method: "delete",
               pathParams: ["id"],
               queryParams: ["name"],
-              TReq: { id: "string", name: "string" },
+              TReqQuery: { name: "string" },
+              TReqPath: { id: "string" },
             }),
           ),
-        ).toBe("{id,name}:{'id':string;'name':string;},axiosConfig?:AxiosRequestConfig");
+        ).toBe("{id}:{'id':string;},axiosConfig?:AxiosRequestConfig");
       });
 
       it("should receive last param as axios config", () => {
@@ -139,10 +153,11 @@ describe("# generators", () => {
               method: "post",
               pathParams: ["id"],
               queryParams: ["name"],
-              TReq: { id: "string", name: "string" },
+              TReqQuery: { name: "string" },
+              TReqPath: { id: "string" },
             }),
           ),
-        ).toBe("{id,name}:{'id':string;'name':string;},axiosConfig?:AxiosRequestConfig");
+        ).toBe("{id}:{'id':string;},axiosConfig?:AxiosRequestConfig");
       });
 
       it("should include header params", () => {
@@ -153,12 +168,13 @@ describe("# generators", () => {
               method: "post",
               pathParams: ["id"],
               queryParams: ["name"],
-              TReq: { id: "string", name: "string" },
+              TReqQuery: { name: "string" },
+              TReqPath: { id: "string" },
               THeader: { "Custom-Header": "string", Custom: "number" },
             }),
           ),
         ).toBe(
-          "{id,name,customHeader,custom}:{'custom':number;'customHeader':string;'id':string;'name':string;},axiosConfig?:AxiosRequestConfig",
+          "{id,customHeader,custom}:{'custom':number;'customHeader':string;'id':string;},axiosConfig?:AxiosRequestConfig",
         );
       });
     });
@@ -178,9 +194,9 @@ describe("# generators", () => {
   describe("## generateClientName", () => {
     it.each([
       ["get", "IResponse", "useGetRequest<IResponse, IResponseError>"],
-      ["post", "IResponse", "useMutationRequest<IResponse, AxiosResponse<IResponse>>"],
-      ["put", "IResponse", "useMutationRequest<IResponse, AxiosResponse<IResponse>>"],
-      ["delete", "IResponse", "useMutationRequest<IResponse, AxiosResponse<IResponse>>"],
+      ["post", "IResponse", "useMutationRequest<undefined, AxiosResponse<IResponse>, IResponseError>"],
+      ["put", "IResponse", "useMutationRequest<undefined, AxiosResponse<IResponse>, IResponseError>"],
+      ["delete", "IResponse", "useMutationRequest<undefined, AxiosResponse<IResponse>, IResponseError>"],
     ])("should return different client given different request method", (method, responseType, result) => {
       expect(generateClientName(method, responseType)).toBe(result);
     });

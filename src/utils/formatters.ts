@@ -56,6 +56,43 @@ export const toTypes = (definitions: Dictionary<any> | string) => {
   );
 };
 
+export const toRequestTypes = (requestTypeObj: Record<string, string>) => {
+  const requestBodyFieldList = map<string, any>(requestTypeObj.body, (value: any) => {
+    if (isObject(value) && Object.keys(value).length === 1 && !isEmpty(pickBy(value, (type) => type === "FormData"))) {
+      return `FormData;`;
+    }
+
+    return isObject(value)
+      ? `${JSON.stringify(value).replace(/"/g, "")};`
+      : `${replace(value, ENUM_SUFFIX, "")};`;
+  });
+  const requestBodyDefinition = isEmpty(requestBodyFieldList) ? "" : `body: ${requestBodyFieldList.sort().join("\n")}`;
+
+  if (requestTypeObj.query && Object.keys(requestTypeObj.query).length > 0) {
+    const requestQueryDefinition = `query: ${toTypes(requestTypeObj.query)}`
+    return (
+      `{
+        ${requestBodyDefinition}
+        ${requestQueryDefinition}
+      }`
+    );
+  }
+
+  const requestQueryFieldList = map<string, any>(requestTypeObj.query, (value: any) => {
+    return isObject(value)
+      ? `${JSON.stringify(value).replace(/"/g, "")};`
+      : `${replace(value, ENUM_SUFFIX, "")};`;
+  });
+  const requestQueryDefinition = isEmpty(requestQueryFieldList) ? "" : `query: ${requestQueryFieldList.sort().join("\n")}`;
+
+  return (
+    `{
+        ${requestBodyDefinition}
+        ${requestQueryDefinition}
+      }`
+  );
+}
+
 const convertKeyToCamelCaseAndAddQuote = (key: string) => {
   const isOptional = indexOf(key, "?") > -1;
   return `'${camelCase(toCapitalCase(trimEnd(key, "?")))}'${isOptional ? "?" : ""}`;
