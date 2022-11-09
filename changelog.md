@@ -1,5 +1,9 @@
 # changelog
 
+## 0.7.4
+
+- upgrade all dependencies
+
 ## 0.7.3
 
 - (new feature) support nullable schema
@@ -7,7 +11,3 @@
   - previous: `{ someField: keyof typeof EnumType }`
   - now: `{ someField: EnumType }`
 - (bug fix) fix cannot generate enum type in definition issue
-
-## 0.7.4
-
-- upgrade all dependencies
