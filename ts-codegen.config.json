@@ -3,10 +3,10 @@
   "fileHeaders": [
     "/* eslint-disable @typescript-eslint/explicit-module-boundary-types */",
     "/* eslint-disable @typescript-eslint/no-explicit-any */",
-    "import { ISWRConfig, useRequest } from './useRequest';",
-    "import { IResponseError } from '../types';",
-    "import { client } from './client';",
-    "import { AxiosRequestConfig, AxiosResponse } from 'axios';"
+    "import { ISWRConfig, useGetRequest } from \"./useGetRequest\"",
+    "import { IResponseError } from \"../types\"",
+    "import { AxiosRequestConfig, AxiosResponse } from \"axios\"",
+    "import { useMutationRequest } from \"example/request/useMutationRequest\""
   ],
   "clients": [],
   "data": ["./example/swagger/openAPI.json"],

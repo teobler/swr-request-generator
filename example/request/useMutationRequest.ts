@@ -1,6 +1,6 @@
 import useSWRMutation, { SWRMutationConfiguration } from "swr/mutation";
 import { client } from "example/request/client";
-import { AxiosError, AxiosRequestConfig, AxiosResponse, Method, RawAxiosRequestHeaders } from "axios";
+import { AxiosError, AxiosRequestConfig, AxiosResponse, RawAxiosRequestHeaders } from "axios";
 // every project may have its own error type, define it your self and import it here
 import { IResponseError } from "example/types";
 
@@ -11,7 +11,11 @@ export type SWRMutationConfig<Request = any, Response = any, Error = any> = SWRM
   string
 >;
 
-export const useMutationRequest = <Request = any, Response = any, Error = any>({
+export const useMutationRequest = <
+  Request extends { body?: any; query?: any } | undefined,
+  Response = any,
+  Error = any,
+>({
   url,
   method,
   headers,
@@ -19,7 +23,7 @@ export const useMutationRequest = <Request = any, Response = any, Error = any>({
   axiosConfig,
 }: {
   url: string;
-  method: Method;
+  method: string;
   headers: RawAxiosRequestHeaders;
   mutationConfig?: SWRMutationConfiguration<AxiosResponse<Response>, AxiosError<Error>, Request, string>;
   axiosConfig?: AxiosRequestConfig;
@@ -32,13 +36,13 @@ export const useMutationRequest = <Request = any, Response = any, Error = any>({
     Request
   >(
     url,
-    (url: string, options: { arg: Request }) => client.request({ url, method, headers, data: options, ...axiosConfig }),
+    (url: string, options: { arg: Request }) =>
+      client.request({ url, method, headers, data: options.arg?.body, params: options.arg?.query, ...axiosConfig }),
     mutationConfig,
   );
 
   return { trigger, data, isMutating, error, reset };
 };
-
 
 // draft api here for demo, will delete it after working done
 export const usePayOrder = (
@@ -46,7 +50,7 @@ export const usePayOrder = (
   mutationConfig?: SWRMutationConfig<PayOrderRequest, PayOrderResponse, IResponseError>,
   axiosConfig?: AxiosRequestConfig,
 ) => {
-  return useMutationRequest({
+  return useMutationRequest<PayOrderRequest, PayOrderResponse, IResponseError>({
     url: `/orders/${id}/personal-payment/confirmation`,
     method: "post",
     headers: {},
@@ -56,8 +60,10 @@ export const usePayOrder = (
 };
 
 interface PayOrderRequest {
-  a: string;
-  b: string;
+  body: {
+    a: string;
+    b: string;
+  };
 }
 
 interface PayOrderResponse {

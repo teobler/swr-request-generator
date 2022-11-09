@@ -1,4 +1,4 @@
-// this is just a example file to show how to use api file
+// this is just an example file to show how to use api file
 // this project does not install react
 import * as React from "react";
 import { deleteAttachmentUsingDeleteRequest, useDownloadUsingGetRequest } from "./request/api";
