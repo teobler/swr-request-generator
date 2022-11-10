@@ -78,11 +78,13 @@ export class PathResolver {
 
       return `export const ${generateFunctionName(resolvedPath.operationId)} = (${generateMutationRequestArguments(
         resolvedPath,
+        requestInterfaceName,
       )}) => 
         ${generateMutationClientName(resolvedPath.TResp, requestInterfaceName)}({
         url: \`${resolvedPath.url}\`,
         method: "${resolvedPath.method}",${axiosHeaderConfig}${generateResponseType(axiosHeaderConfig)}
-        ...axiosConfig});`;
+        mutationConfig,
+        axiosConfig});`;
     });
 
     const enums = Object.keys(this.extraDefinitions).map((k) => generateEnums(this.extraDefinitions, k));

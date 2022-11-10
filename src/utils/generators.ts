@@ -62,7 +62,7 @@ export const generateGetRequestArguments = (resolvedPath: IResolvedPath) => {
   }, IResponseError>, axiosConfig?: AxiosRequestConfig`;
 };
 
-export const generateMutationRequestArguments = (resolvedPath: IResolvedPath) => {
+export const generateMutationRequestArguments = (resolvedPath: IResolvedPath, requestBodyTypes?: string) => {
   const requestType = {
     ...resolvedPath.TReqPath,
     ...resolvedPath.THeader,
@@ -73,7 +73,11 @@ export const generateMutationRequestArguments = (resolvedPath: IResolvedPath) =>
   );
   const requestParams = requestParamList.length === 0 ? "" : `{${requestParamList.join(",")}}:${argumentTypes}`;
 
-  return `${requestParams ? requestParams + ", " : ""}axiosConfig?: AxiosRequestConfig`;
+  return `${
+    requestParams ? requestParams + ", " : ""
+  }mutationConfig?: SWRMutationConfig<${requestBodyTypes}, AxiosResponse<${
+    resolvedPath.TResp || undefined
+  }>, IResponseError>, axiosConfig?: AxiosRequestConfig`;
 };
 
 export const generateHeader = (

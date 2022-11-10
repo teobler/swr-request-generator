@@ -107,7 +107,7 @@ describe("# generators", () => {
     describe("#others methods", () => {
       it("should return axios config when request argument is empty for POST method", () => {
         expect(generateMutationRequestArguments({ ...resolvedPath, method: "post" })).toBe(
-          "axiosConfig?: AxiosRequestConfig",
+          "mutationConfig?: SWRMutationConfig<undefined, AxiosResponse<IResponse>, IResponseError>, axiosConfig?: AxiosRequestConfig",
         );
       });
 
@@ -121,7 +121,7 @@ describe("# generators", () => {
               TReqPath: { id: "string" },
             }),
           ),
-        ).toBe("{id}:{'id':string;},axiosConfig?:AxiosRequestConfig");
+        ).toBe("{id}:{'id':string;},mutationConfig?:SWRMutationConfig<undefined,AxiosResponse<IResponse>,IResponseError>,axiosConfig?:AxiosRequestConfig");
       });
 
       it("should return arg and it's corresponding type with camelCase when request only one argument presents", () => {
@@ -133,7 +133,7 @@ describe("# generators", () => {
               TReqBody: { BookController_createBookRequest: "ICreateBookRequest" },
             }),
           ),
-        ).toBe("axiosConfig?:AxiosRequestConfig");
+        ).toBe("mutationConfig?:SWRMutationConfig<undefined,AxiosResponse<IResponse>,IResponseError>,axiosConfig?:AxiosRequestConfig");
       });
 
       it("should return args and it's corresponding types when multiple arguments present", () => {
@@ -148,7 +148,7 @@ describe("# generators", () => {
               TReqPath: { id: "string" },
             }),
           ),
-        ).toBe("{id}:{'id':string;},axiosConfig?:AxiosRequestConfig");
+        ).toBe("{id}:{'id':string;},mutationConfig?:SWRMutationConfig<undefined,AxiosResponse<IResponse>,IResponseError>,axiosConfig?:AxiosRequestConfig");
       });
 
       it("should receive last param as axios config", () => {
@@ -163,7 +163,7 @@ describe("# generators", () => {
               TReqPath: { id: "string" },
             }),
           ),
-        ).toBe("{id}:{'id':string;},axiosConfig?:AxiosRequestConfig");
+        ).toBe("{id}:{'id':string;},mutationConfig?:SWRMutationConfig<undefined,AxiosResponse<IResponse>,IResponseError>,axiosConfig?:AxiosRequestConfig");
       });
 
       it("should include header params", () => {
@@ -180,7 +180,7 @@ describe("# generators", () => {
             }),
           ),
         ).toBe(
-          "{id,customHeader,custom}:{'custom':number;'customHeader':string;'id':string;},axiosConfig?:AxiosRequestConfig",
+          "{id,customHeader,custom}:{'custom':number;'customHeader':string;'id':string;},mutationConfig?:SWRMutationConfig<undefined,AxiosResponse<IResponse>,IResponseError>,axiosConfig?:AxiosRequestConfig",
         );
       });
     });
