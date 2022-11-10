@@ -4,11 +4,13 @@ import { HTTP_METHODS, SLASH } from "../constants";
 import { IParameters, IResolvedPath } from "../types";
 import { isRequestBody, isSchema } from "../utils/specifications";
 import {
-  generateClientName,
   generateEnums,
   generateFunctionName,
+  generateGetClientName,
+  generateGetRequestArguments,
   generateHeader,
-  generateRequestArguments,
+  generateMutationClientName,
+  generateMutationRequestArguments,
   generateRequestBodyAndParams,
   generateResponseType,
 } from "../utils/generators";
@@ -64,15 +66,23 @@ export class PathResolver {
       );
       requestBodiesAndParams.push([requestInterfaceName, requestInterfaceObj]);
 
-      return `export const ${generateFunctionName(resolvedPath.operationId)} = (${generateRequestArguments(
-        resolvedPath,
-      )}) => 
-        ${generateClientName(resolvedPath.method, resolvedPath.TResp, requestInterfaceName)}({
+      if (resolvedPath.method === "get") {
+        return `export const ${generateFunctionName(resolvedPath.operationId)} = (${generateGetRequestArguments(
+          resolvedPath,
+        )}) => 
+        ${generateGetClientName(resolvedPath.TResp)}({
         url: \`${resolvedPath.url}\`,
         method: "${resolvedPath.method}",${axiosHeaderConfig}${generateResponseType(axiosHeaderConfig)}
-        ${params && resolvedPath.method === "get" ? `params: ${params},` : ""}...axiosConfig}${
-        resolvedPath.method === "get" ? ", SWRConfig" : ""
-      });`;
+        ${params ? `params: ${params},` : ""}...axiosConfig}, SWRConfig);`;
+      }
+
+      return `export const ${generateFunctionName(resolvedPath.operationId)} = (${generateMutationRequestArguments(
+        resolvedPath,
+      )}) => 
+        ${generateMutationClientName(resolvedPath.TResp, requestInterfaceName)}({
+        url: \`${resolvedPath.url}\`,
+        method: "${resolvedPath.method}",${axiosHeaderConfig}${generateResponseType(axiosHeaderConfig)}
+        ...axiosConfig});`;
     });
 
     const enums = Object.keys(this.extraDefinitions).map((k) => generateEnums(this.extraDefinitions, k));

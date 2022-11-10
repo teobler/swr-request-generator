@@ -1,10 +1,12 @@
 import { IResolvedPath } from "../../types";
 import {
-  generateClientName,
   generateEnums,
   generateFunctionName,
+  generateGetClientName,
+  generateGetRequestArguments,
   generateHeader,
-  generateRequestArguments,
+  generateMutationClientName,
+  generateMutationRequestArguments,
   generateResponseType,
 } from "../generators";
 
@@ -28,21 +30,23 @@ describe("# generators", () => {
 
     describe("#get method", () => {
       it("should return axios config only when request argument is empty", () => {
-        expect(generateRequestArguments(resolvedPath)).toBe(
+        expect(generateGetRequestArguments(resolvedPath)).toBe(
           "SWRConfig?: ISWRConfig<IResponse, IResponseError>, axiosConfig?: AxiosRequestConfig",
         );
       });
 
       it("should return arg and it's corresponding type when request only one argument presents", () => {
         expect(
-          removeSpaces(generateRequestArguments({ ...resolvedPath, pathParams: ["id"], TReqQuery: { id: "string" } })),
+          removeSpaces(
+            generateGetRequestArguments({ ...resolvedPath, pathParams: ["id"], TReqQuery: { id: "string" } }),
+          ),
         ).toBe("{id}:{'id':string;},SWRConfig?:ISWRConfig<IResponse,IResponseError>,axiosConfig?:AxiosRequestConfig");
       });
 
       it("should return arg and it's corresponding type with camelCase when request only one argument presents", () => {
         expect(
           removeSpaces(
-            generateRequestArguments({
+            generateGetRequestArguments({
               ...resolvedPath,
               TReqQuery: { BookController_createBookRequest: "ICreateBookRequest" },
             }),
@@ -53,7 +57,7 @@ describe("# generators", () => {
       it("should return args and it's corresponding types when multiple arguments present", () => {
         expect(
           removeSpaces(
-            generateRequestArguments({
+            generateGetRequestArguments({
               ...resolvedPath,
               pathParams: ["id"],
               queryParams: ["name"],
@@ -69,7 +73,7 @@ describe("# generators", () => {
       it("should receive last param as axios config", () => {
         expect(
           removeSpaces(
-            generateRequestArguments({
+            generateGetRequestArguments({
               ...resolvedPath,
               pathParams: ["id"],
               queryParams: ["name"],
@@ -85,7 +89,7 @@ describe("# generators", () => {
       it("should include header params", () => {
         expect(
           removeSpaces(
-            generateRequestArguments({
+            generateGetRequestArguments({
               ...resolvedPath,
               pathParams: ["id"],
               queryParams: ["name"],
@@ -102,13 +106,15 @@ describe("# generators", () => {
 
     describe("#others methods", () => {
       it("should return axios config when request argument is empty for POST method", () => {
-        expect(generateRequestArguments({ ...resolvedPath, method: "post" })).toBe("axiosConfig?: AxiosRequestConfig");
+        expect(generateMutationRequestArguments({ ...resolvedPath, method: "post" })).toBe(
+          "axiosConfig?: AxiosRequestConfig",
+        );
       });
 
       it("should return arg and it's corresponding type when request only one argument presents", () => {
         expect(
           removeSpaces(
-            generateRequestArguments({
+            generateMutationRequestArguments({
               ...resolvedPath,
               method: "put",
               pathParams: ["id"],
@@ -121,7 +127,7 @@ describe("# generators", () => {
       it("should return arg and it's corresponding type with camelCase when request only one argument presents", () => {
         expect(
           removeSpaces(
-            generateRequestArguments({
+            generateMutationRequestArguments({
               ...resolvedPath,
               method: "post",
               TReqBody: { BookController_createBookRequest: "ICreateBookRequest" },
@@ -133,7 +139,7 @@ describe("# generators", () => {
       it("should return args and it's corresponding types when multiple arguments present", () => {
         expect(
           removeSpaces(
-            generateRequestArguments({
+            generateMutationRequestArguments({
               ...resolvedPath,
               method: "delete",
               pathParams: ["id"],
@@ -148,7 +154,7 @@ describe("# generators", () => {
       it("should receive last param as axios config", () => {
         expect(
           removeSpaces(
-            generateRequestArguments({
+            generateMutationRequestArguments({
               ...resolvedPath,
               method: "post",
               pathParams: ["id"],
@@ -163,7 +169,7 @@ describe("# generators", () => {
       it("should include header params", () => {
         expect(
           removeSpaces(
-            generateRequestArguments({
+            generateMutationRequestArguments({
               ...resolvedPath,
               method: "post",
               pathParams: ["id"],
@@ -193,12 +199,17 @@ describe("# generators", () => {
 
   describe("## generateClientName", () => {
     it.each([
-      ["get", "IResponse", "useGetRequest<IResponse, IResponseError>"],
-      ["post", "IResponse", "useMutationRequest<undefined, AxiosResponse<IResponse>, IResponseError>"],
-      ["put", "IResponse", "useMutationRequest<undefined, AxiosResponse<IResponse>, IResponseError>"],
-      ["delete", "IResponse", "useMutationRequest<undefined, AxiosResponse<IResponse>, IResponseError>"],
-    ])("should return different client given different request method", (method, responseType, result) => {
-      expect(generateClientName(method, responseType)).toBe(result);
+      ["IResponse", "IUpdateBookByIdUsingPutRequest", "useMutationRequest<IUpdateBookByIdUsingPutRequest, AxiosResponse<IResponse>, IResponseError>"],
+      ["IResponse", "undefined", "useMutationRequest<undefined, AxiosResponse<IResponse>, IResponseError>"],
+      ["IResponse", undefined, "useMutationRequest<undefined, AxiosResponse<IResponse>, IResponseError>"],
+    ])("should return different client given different request method", (responseType, responseBodyType, result) => {
+      expect(generateMutationClientName(responseType, responseBodyType)).toBe(result);
+    });
+  });
+
+  describe("## generateGetClientName", () => {
+    it("should return different client given different request method", () => {
+      expect(generateGetClientName("IResponse")).toBe("useGetRequest<IResponse, IResponseError>");
     });
   });
 

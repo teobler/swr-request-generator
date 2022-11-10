@@ -20,10 +20,11 @@ export const generateEnums = (definitions: Dictionary<any>, key: string) => {
 
 export const generateFunctionName = (operationId?: string) => `use${toCapitalCase(camelCase(operationId))}Request`;
 
-export const generateClientName = (method: string, responseType: any, requestBodyTypes?: string) =>
-  method === "get"
-    ? `useGetRequest<${responseType || undefined}, IResponseError>`
-    : `useMutationRequest<${requestBodyTypes}, AxiosResponse<${responseType || undefined}>, IResponseError>`;
+export const generateGetClientName = (responseType: any) =>
+  `useGetRequest<${responseType || undefined}, IResponseError>`;
+
+export const generateMutationClientName = (responseType: any, requestBodyTypes?: string) =>
+  `useMutationRequest<${requestBodyTypes}, AxiosResponse<${responseType || undefined}>, IResponseError>`;
 
 export const generateRequestBodyAndParams = (
   requestBodyType: any,
@@ -42,28 +43,37 @@ export const generateRequestBodyAndParams = (
 
 // TODO: 1.refactor THeader logic to align with resolvedPath.xxxParams
 // TODO: 2.add response type for download file
-export const generateRequestArguments = (resolvedPath: IResolvedPath) => {
-  const queryType = resolvedPath.method === "get" ? resolvedPath.TReqQuery : {};
+export const generateGetRequestArguments = (resolvedPath: IResolvedPath) => {
   const requestType = {
-    ...queryType,
+    ...resolvedPath.TReqQuery,
     ...resolvedPath.TReqPath,
     ...resolvedPath.THeader,
   };
   const argumentTypes = !isEmpty(requestType) ? toTypes(requestType) : undefined;
-  const queryParams = resolvedPath.method === "get" ? resolvedPath.queryParams : [];
   const requestParamList = compact([
     ...resolvedPath.pathParams,
-    ...queryParams,
+    ...resolvedPath.queryParams,
     ...Object.keys(resolvedPath.THeader),
   ]).map((param) => camelCase(param));
-
   const requestParams = requestParamList.length === 0 ? "" : `{${requestParamList.join(",")}}:${argumentTypes}`;
 
-  return resolvedPath.method === "get"
-    ? `${requestParams ? requestParams + ", " : ""}SWRConfig?: ISWRConfig<${
-        resolvedPath.TResp || undefined
-      }, IResponseError>, axiosConfig?: AxiosRequestConfig`
-    : `${requestParams ? requestParams + ", " : ""}axiosConfig?: AxiosRequestConfig`;
+  return `${requestParams ? requestParams + ", " : ""}SWRConfig?: ISWRConfig<${
+    resolvedPath.TResp || undefined
+  }, IResponseError>, axiosConfig?: AxiosRequestConfig`;
+};
+
+export const generateMutationRequestArguments = (resolvedPath: IResolvedPath) => {
+  const requestType = {
+    ...resolvedPath.TReqPath,
+    ...resolvedPath.THeader,
+  };
+  const argumentTypes = !isEmpty(requestType) ? toTypes(requestType) : undefined;
+  const requestParamList = compact([...resolvedPath.pathParams, ...Object.keys(resolvedPath.THeader)]).map((param) =>
+    camelCase(param),
+  );
+  const requestParams = requestParamList.length === 0 ? "" : `{${requestParamList.join(",")}}:${argumentTypes}`;
+
+  return `${requestParams ? requestParams + ", " : ""}axiosConfig?: AxiosRequestConfig`;
 };
 
 export const generateHeader = (
