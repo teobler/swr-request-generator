@@ -6,7 +6,7 @@
     "import { ISWRConfig, useGetRequest } from \"./useGetRequest\"",
     "import { IResponseError } from \"../types\"",
     "import { AxiosRequestConfig, AxiosResponse } from \"axios\"",
-    "import { useMutationRequest } from \"example/request/useMutationRequest\""
+    "import { SWRMutationConfig, useMutationRequest } from \"example/request/useMutationRequest\";"
   ],
   "clients": [],
   "data": ["./example/swagger/openAPI.json"],
