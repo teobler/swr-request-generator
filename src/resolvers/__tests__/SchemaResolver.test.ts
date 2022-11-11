@@ -289,4 +289,31 @@ describe("# SchemaResolver", () => {
         .getSchemaType(),
     ).toBe("ICat & IDog | null");
   });
+
+  it("should resolve mixed refs and object in allOf with null", () => {
+    expect(
+      SchemaResolver.of({
+        results: {},
+        schema: {
+          nullable: true,
+          allOf: [
+            {
+              $ref: "#/components/schemas/Cat",
+            },
+            {
+              type: "object",
+              properties: {
+                bark: { type: "boolean" },
+                breed: { type: "string", enum: ["Dingo", "Husky", "Retriever", "Shepherd"] },
+              },
+            },
+          ],
+        },
+        key: "updatePetRequest",
+        parentKey: "updatePetRequest",
+      })
+        .resolve()
+        .getSchemaType(),
+    ).toBe("ICat & {bark?:boolean,breed?:Breed} | null");
+  });
 });

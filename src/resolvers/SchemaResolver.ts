@@ -121,9 +121,17 @@ export class SchemaResolver {
   resolveAllOf = (allOf: SchemaObjectWithNullable[]) => {
     return allOf
       .map((schema) => {
-        return SchemaResolver.of({ results: {}, schema }).resolve().resolveNullable().getSchemaType();
+        // TODO: handle schema.type is array
+        const schemaType = SchemaResolver.of({ results: {}, schema })
+          .resolve(schema.type as SchemaObjectType)
+          .resolveNullable()
+          .getSchemaType();
+
+        return JSON.stringify(schemaType);
       })
-      .join(" & ");
+      .join(" & ")
+      .replace(ENUM_SUFFIX, "")
+      .replace(/"/g, "");
   };
 
   getBasicType = (basicType?: SchemaObjectType, advancedType?: string): string => {
