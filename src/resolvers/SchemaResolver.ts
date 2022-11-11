@@ -30,6 +30,12 @@ export class SchemaResolver {
       return this;
     }
 
+    if (schema.allOf) {
+      this.schemaType = this.resolveAllOf(schema.allOf as SchemaObjectWithNullable[]);
+      this.schemaType = this.resolveNullable().getSchemaType();
+      return this;
+    }
+
     if (schema.items) {
       // TODO: handle schema.type is array
       this.schemaType = this.resolveItems(schema.items, schema.type as SchemaObjectType, key, parentKey);
@@ -102,6 +108,14 @@ export class SchemaResolver {
         return SchemaResolver.of({ results: {}, schema }).resolve().resolveNullable().getSchemaType();
       })
       .join(" | ");
+  };
+
+  resolveAllOf = (allOf: SchemaObjectWithNullable[]) => {
+    return allOf
+      .map((schema) => {
+        return SchemaResolver.of({ results: {}, schema }).resolve().resolveNullable().getSchemaType();
+      })
+      .join(" & ");
   };
 
   getBasicType = (basicType?: SchemaObjectType, advancedType?: string): string => {

@@ -215,4 +215,27 @@ describe("# SchemaResolver", () => {
         .getSchemaType(),
     ).toBe("ICat | IDog | null");
   });
+
+  it("should resolve all refs in allOf with null", () => {
+    expect(
+      SchemaResolver.of({
+        results: {},
+        schema: {
+          nullable: true,
+          allOf: [
+            {
+              $ref: "#/components/schemas/Cat",
+            },
+            {
+              $ref: "#/components/schemas/Dog",
+            },
+          ],
+        },
+        key: "updatePetRequest",
+        parentKey: "updatePetRequest",
+      })
+        .resolve()
+        .getSchemaType(),
+    ).toBe("ICat & IDog | null");
+  });
 });
