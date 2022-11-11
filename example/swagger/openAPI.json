@@ -450,6 +450,22 @@
         },
         "deprecated": false
       }
+    },
+    "/pets": {
+      "patch": {
+        "operationId": "updatePets",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "nullable": true,
+                "oneOf": [{ "$ref": "#/components/schemas/Cat" }, { "$ref": "#/components/schemas/Dog" }]
+              }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Updated" } }
+      }
     }
   },
   "servers": [
@@ -459,6 +475,20 @@
   ],
   "components": {
     "schemas": {
+      "Dog": {
+        "type": "object",
+        "properties": {
+          "bark": { "type": "boolean" },
+          "breed": { "type": "string", "enum": ["Dingo", "Husky", "Retriever", "Shepherd"] }
+        }
+      },
+      "Cat": {
+        "type": "object",
+        "properties": {
+          "hunts": { "type": "boolean" },
+          "age": { "type": "integer" }
+        }
+      },
       "BookDetailVo": {
         "type": "object",
         "properties": {

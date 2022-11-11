@@ -163,6 +163,18 @@ export const useUpdateBookByIdUsingPutRequest = (
     axiosConfig,
   });
 
+export const useUpdatePetsRequest = (
+  mutationConfig?: SWRMutationConfig<IUpdatePetsRequest, AxiosResponse<undefined>, IResponseError>,
+  axiosConfig?: AxiosRequestConfig,
+) =>
+  useMutationRequest<IUpdatePetsRequest, AxiosResponse<undefined>, IResponseError>({
+    url: `/pets`,
+    method: "patch",
+    headers: { "Content-Type": "application/json" },
+    mutationConfig,
+    axiosConfig,
+  });
+
 export const useUploadAttachmentUsingPostRequest = (
   {
     authorities,
@@ -222,6 +234,10 @@ export interface IUpdateBookByIdUsingPutRequest {
   body: IUpdateBookRequest;
 }
 
+export interface IUpdatePetsRequest {
+  body: ICat | IDog | null;
+}
+
 export interface IUploadAttachmentUsingPostRequest {
   body: FormData;
 }
@@ -270,6 +286,11 @@ export interface IBookingResponse {
   errors?: IErrorInfo[];
 }
 
+export interface ICat {
+  age?: number;
+  hunts?: boolean;
+}
+
 export interface IDocumentVo {
   attachment?: IBookDetailVo;
   authorName?: string;
@@ -277,6 +298,18 @@ export interface IDocumentVo {
   id?: string;
   note?: string;
   title?: string;
+}
+
+export interface IDog {
+  bark?: boolean;
+  breed?: DogBreed;
+}
+
+export enum DogBreed {
+  "Dingo" = "Dingo",
+  "Husky" = "Husky",
+  "Retriever" = "Retriever",
+  "Shepherd" = "Shepherd",
 }
 
 export interface IErrorInfo {
