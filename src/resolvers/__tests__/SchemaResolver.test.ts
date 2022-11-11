@@ -169,4 +169,50 @@ describe("# SchemaResolver", () => {
       ).toBe(result);
     },
   );
+
+  it("should resolve all refs in oneOf with null", () => {
+    expect(
+      SchemaResolver.of({
+        results: {},
+        schema: {
+          nullable: true,
+          oneOf: [
+            {
+              $ref: "#/components/schemas/Cat",
+            },
+            {
+              $ref: "#/components/schemas/Dog",
+            },
+          ],
+        },
+        key: "updatePetRequest",
+        parentKey: "updatePetRequest",
+      })
+        .resolve()
+        .getSchemaType(),
+    ).toBe("ICat | IDog | null");
+  });
+
+  it("should resolve all refs in anyOf with null", () => {
+    expect(
+      SchemaResolver.of({
+        results: {},
+        schema: {
+          nullable: true,
+          anyOf: [
+            {
+              $ref: "#/components/schemas/Cat",
+            },
+            {
+              $ref: "#/components/schemas/Dog",
+            },
+          ],
+        },
+        key: "updatePetRequest",
+        parentKey: "updatePetRequest",
+      })
+        .resolve()
+        .getSchemaType(),
+    ).toBe("ICat | IDog | null");
+  });
 });

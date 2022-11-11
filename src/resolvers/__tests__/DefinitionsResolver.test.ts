@@ -45,6 +45,10 @@ const expectedDefinitions = {
     data: "IDocumentVo",
     "errors?": "IErrorInfo[]",
   },
+  Cat: {
+    "age?": "number",
+    "hunts?": "boolean",
+  },
   DocumentVO: {
     "attachment?": "IBookDetailVo",
     "authorName?": "string",
@@ -53,6 +57,11 @@ const expectedDefinitions = {
     "note?": "string",
     "title?": "string",
   },
+  Dog: {
+    "bark?": "boolean",
+    "breed?": "DogBreed#EnumTypeSuffix",
+  },
+  "DogBreed#EnumTypeSuffix": ["Dingo", "Husky", "Retriever", "Shepherd"],
   ErrorInfo: {
     "errorMessage?": "string",
   },
@@ -152,7 +161,10 @@ const expectedDeclarations = [
   'export enum BookDetailVoType {"INTERVENTION_RUN"="INTERVENTION_RUN","CASE_CREATION_DATE"="CASE_CREATION_DATE"}',
   "export interface IBookVo {\n        'address'?: string | null;\n'price'?: string;\n      }",
   "export interface IBookingResponse {\n        'data': IDocumentVo;\n'errors'?: IErrorInfo[];\n      }",
+  "export interface ICat {\n        'age'?: number;\n'hunts'?: boolean;\n      }",
   "export interface IDocumentVo {\n        'attachment'?: IBookDetailVo;\n'authorName'?: string;\n'createdDate'?: number;\n'id'?: string;\n'note'?: string;\n'title'?: string;\n      }",
+  "export interface IDog {\n        'bark'?: boolean;\n'breed'?: DogBreed;\n      }",
+  'export enum DogBreed {"Dingo"="Dingo","Husky"="Husky","Retriever"="Retriever","Shepherd"="Shepherd"}',
   "export interface IErrorInfo {\n        'errorMessage'?: string;\n      }",
   "export interface IFile {\n        'absolute'?: boolean;\n'absoluteFile'?: IFile;\n'absolutePath'?: string;\n'canonicalFile'?: IFile;\n'canonicalPath'?: string;\n'directory'?: boolean;\n'executable'?: boolean;\n'file'?: boolean;\n'freeSpace'?: number;\n'hidden'?: boolean;\n'lastModified'?: number;\n'name'?: string;\n'parent'?: string;\n'parentFile'?: IFile;\n'path'?: string;\n'readable'?: boolean;\n'totalSpace'?: number;\n'usableSpace'?: number;\n'writable'?: boolean;\n      }",
   "export interface IFileUploadReq {\n        'file': FormData;\n      }",

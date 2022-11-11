@@ -1,7 +1,7 @@
 import { get, indexOf, map, reduce } from "lodash";
 import { isArray, isObject } from "../utils/specifications";
 import { addPrefixForInterface, toCapitalCase } from "../utils/formatters";
-import { ISchemaResolverInputs, TDictionary } from "../types";
+import { ISchemaResolverInputs, SchemaObjectWithNullable, TDictionary } from "../types";
 import { ENUM_SUFFIX } from "../constants";
 import { SchemaObject, SchemaObjectType } from "@ts-stack/openapi-spec";
 
@@ -18,10 +18,15 @@ export class SchemaResolver {
 
   resolve = (type?: string) => {
     const { schema = {}, results, parentKey, key } = this.inputs;
-    // TODO: handle schema.type is array
-    const advancedType = this.resolveRef(schema.$ref, type || (schema.type as SchemaObjectType));
     if (schema.$ref) {
-      this.schemaType = advancedType;
+      // TODO: handle schema.type is array
+      this.schemaType = this.resolveRef(schema.$ref, type || (schema.type as SchemaObjectType));
+      return this;
+    }
+
+    if (schema.oneOf || schema.anyOf) {
+      this.schemaType = this.resolveOneOfAndAnyOf((schema.oneOf || schema.anyOf) as SchemaObjectWithNullable[]);
+      this.schemaType = this.resolveNullable().getSchemaType();
       return this;
     }
 
@@ -61,12 +66,15 @@ export class SchemaResolver {
     }
 
     // TODO: handle schema.type is array
-    this.schemaType = this.getBasicType(schema.type as SchemaObjectType, advancedType);
+    this.schemaType = this.getBasicType(
+      schema.type as SchemaObjectType,
+      // TODO: handle schema.type is array
+      this.resolveRef(schema.$ref, type || (schema.type as SchemaObjectType)),
+    );
     return this;
   };
 
   resolveNullable = () => {
-    // TODO: fix nullable here
     if (this.inputs.schema?.nullable) {
       this.schemaType = isObject(this.schemaType)
         ? `${JSON.stringify(this.schemaType)} | null`
@@ -86,6 +94,14 @@ export class SchemaResolver {
 
     const refType = addPrefixForInterface(toCapitalCase(this.pickTypeByRef($ref)));
     return type === "array" ? `${refType}[]` : refType;
+  };
+
+  resolveOneOfAndAnyOf = (oneOfOrAnyOf: SchemaObjectWithNullable[]) => {
+    return oneOfOrAnyOf
+      .map((schema) => {
+        return SchemaResolver.of({ results: {}, schema }).resolve().resolveNullable().getSchemaType();
+      })
+      .join(" | ");
   };
 
   getBasicType = (basicType?: SchemaObjectType, advancedType?: string): string => {
