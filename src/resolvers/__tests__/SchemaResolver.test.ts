@@ -193,6 +193,57 @@ describe("# SchemaResolver", () => {
     ).toBe("ICat | IDog | null");
   });
 
+  it("should resolve mixed refs and string in oneOf with null", () => {
+    expect(
+      SchemaResolver.of({
+        results: {},
+        schema: {
+          nullable: true,
+          oneOf: [
+            {
+              $ref: "#/components/schemas/Cat",
+            },
+            {
+              type: "string",
+              default: "abc123456789",
+            },
+          ],
+        },
+        key: "updatePetRequest",
+        parentKey: "updatePetRequest",
+      })
+        .resolve()
+        .getSchemaType(),
+    ).toBe("ICat | string | null");
+  });
+
+  it("should resolve mixed refs and object in oneOf with null", () => {
+    expect(
+      SchemaResolver.of({
+        results: {},
+        schema: {
+          nullable: true,
+          oneOf: [
+            {
+              $ref: "#/components/schemas/Cat",
+            },
+            {
+              type: "object",
+              properties: {
+                bark: { type: "boolean" },
+                breed: { type: "string", enum: ["Dingo", "Husky", "Retriever", "Shepherd"] },
+              },
+            },
+          ],
+        },
+        key: "updatePetRequest",
+        parentKey: "updatePetRequest",
+      })
+        .resolve()
+        .getSchemaType(),
+    ).toBe("ICat | {bark?:boolean,breed?:Breed} | null");
+  });
+
   it("should resolve all refs in anyOf with null", () => {
     expect(
       SchemaResolver.of({
