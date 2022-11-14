@@ -261,10 +261,10 @@ export interface IAttachmentBo {
 }
 
 export interface IBookDetailVo {
+  CreatedDate?: number;
   attachment?: IScheduleVo;
-  authorName?: string;
-  createdDate?: number;
-  fileName?: string;
+  author_name?: string;
+  filename?: string;
   id?: string;
   mimeType?: string;
   path?: string;

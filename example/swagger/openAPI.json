@@ -492,16 +492,16 @@
       "BookDetailVo": {
         "type": "object",
         "properties": {
-          "authorName": {
+          "author_name": {
             "type": "string",
             "example": "Tony"
           },
-          "createdDate": {
+          "CreatedDate": {
             "type": "integer",
             "format": "int64",
             "example": 19920010
           },
-          "fileName": {
+          "filename": {
             "type": "string",
             "example": "aaa"
           },
