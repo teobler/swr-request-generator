@@ -12,7 +12,10 @@ export const toCapitalCase = (str?: string): string => {
   return `${camelStr.charAt(0).toUpperCase()}${camelStr.slice(1)}`;
 };
 
-const addPrefix = (prefix: string) => (str: string = "") => `${prefix}${str}`;
+const addPrefix =
+  (prefix: string) =>
+  (str: string = "") =>
+    `${prefix}${str}`;
 export const addPrefixForInterface = addPrefix("I");
 
 export const arrayToObject = (arr: any[] = []) => {
@@ -33,19 +36,20 @@ export const prettifyCode = (code: string) =>
     parser: "typescript",
   });
 
-export const toTypes = (definitions: Dictionary<any> | string) => {
+export const toTypes = (definitions: Dictionary<any> | string, category: "interface" | "request") => {
   if (isEmpty(definitions)) {
     return;
   }
+  const convertor = category === "interface" ? addQuoteForKey : convertKeyToCamelCaseAndAddQuote;
 
   const fieldDefinitionList = map<string, any>(definitions, (value: any, key: string) => {
     if (isObject(value) && Object.keys(value).length === 1 && !isEmpty(pickBy(value, (type) => type === "FormData"))) {
-      return `${convertKeyToCamelCaseAndAddQuote(key)}: FormData`;
+      return `${convertor(key)}: FormData`;
     }
 
     return isObject(value)
-      ? `${convertKeyToCamelCaseAndAddQuote(key)}: ${JSON.stringify(value).replace(/"/g, "")};`
-      : `${convertKeyToCamelCaseAndAddQuote(key)}: ${replace(value, ENUM_SUFFIX, "")};`;
+      ? `${convertor(key)}: ${JSON.stringify(value).replace(/"/g, "")};`
+      : `${convertor(key)}: ${replace(value, ENUM_SUFFIX, "")};`;
   });
 
   return (
@@ -62,40 +66,41 @@ export const toRequestTypes = (requestTypeObj: Record<string, string>) => {
       return `FormData;`;
     }
 
-    return isObject(value)
-      ? `${JSON.stringify(value).replace(/"/g, "")};`
-      : `${replace(value, ENUM_SUFFIX, "")};`;
+    return isObject(value) ? `${JSON.stringify(value).replace(/"/g, "")};` : `${replace(value, ENUM_SUFFIX, "")};`;
   });
   const requestBodyDefinition = isEmpty(requestBodyFieldList) ? "" : `body: ${requestBodyFieldList.sort().join("\n")}`;
 
   if (requestTypeObj.query && Object.keys(requestTypeObj.query).length > 0) {
-    const requestQueryDefinition = `query: ${toTypes(requestTypeObj.query)}`
-    return (
-      `{
+    const requestQueryDefinition = `query: ${toTypes(requestTypeObj.query, "interface")}`;
+    return `{
         ${requestBodyDefinition}
         ${requestQueryDefinition}
-      }`
-    );
+      }`;
   }
 
   const requestQueryFieldList = map<string, any>(requestTypeObj.query, (value: any) => {
-    return isObject(value)
-      ? `${JSON.stringify(value).replace(/"/g, "")};`
-      : `${replace(value, ENUM_SUFFIX, "")};`;
+    return isObject(value) ? `${JSON.stringify(value).replace(/"/g, "")};` : `${replace(value, ENUM_SUFFIX, "")};`;
   });
-  const requestQueryDefinition = isEmpty(requestQueryFieldList) ? "" : `query: ${requestQueryFieldList.sort().join("\n")}`;
+  const requestQueryDefinition = isEmpty(requestQueryFieldList)
+    ? ""
+    : `query: ${requestQueryFieldList.sort().join("\n")}`;
 
-  return (
-    `{
+  return `{
         ${requestBodyDefinition}
         ${requestQueryDefinition}
-      }`
-  );
-}
+      }`;
+};
 
 const convertKeyToCamelCaseAndAddQuote = (key: string) => {
   const isOptional = indexOf(key, "?") > -1;
   return `'${camelCase(toCapitalCase(trimEnd(key, "?")))}'${isOptional ? "?" : ""}`;
+};
+
+const addQuoteForKey = (key: string) => {
+  const isOptional = indexOf(key, "?") > -1;
+  const trimmedKey = trimEnd(key, "?");
+
+  return `'${trimmedKey}'${isOptional ? "?" : ""}`;
 };
 
 export const convertJsonToString = (

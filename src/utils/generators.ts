@@ -49,7 +49,7 @@ export const generateGetRequestArguments = (resolvedPath: IResolvedPath) => {
     ...resolvedPath.TReqPath,
     ...resolvedPath.THeader,
   };
-  const argumentTypes = !isEmpty(requestType) ? toTypes(requestType) : undefined;
+  const argumentTypes = !isEmpty(requestType) ? toTypes(requestType, "request") : undefined;
   const requestParamList = compact([
     ...resolvedPath.pathParams,
     ...resolvedPath.queryParams,
@@ -67,7 +67,7 @@ export const generateMutationRequestArguments = (resolvedPath: IResolvedPath, re
     ...resolvedPath.TReqPath,
     ...resolvedPath.THeader,
   };
-  const argumentTypes = !isEmpty(requestType) ? toTypes(requestType) : undefined;
+  const argumentTypes = !isEmpty(requestType) ? toTypes(requestType, "request") : undefined;
   const requestParamList = compact([...resolvedPath.pathParams, ...Object.keys(resolvedPath.THeader)]).map((param) =>
     camelCase(param),
   );
