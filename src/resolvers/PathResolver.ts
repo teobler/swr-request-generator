@@ -25,7 +25,6 @@ import {
   ResponsesObject,
 } from "@ts-stack/openapi-spec";
 
-// TODO: Should handle `deprecated` and `security` in Operation?
 export class PathResolver {
   resolvedPaths: IResolvedPath[] = [];
   extraDefinitions = {};
@@ -134,7 +133,6 @@ export class PathResolver {
   isPathParam = (str: string) => str.startsWith("{");
 
   resolveOperation = (operation: OperationObject) => {
-    // TODO: handle the case when v.parameters = Reference
     const pickParamsByType = this.pickParams(operation.parameters as ParameterObject[] | undefined);
     // axios config header data
     const headerParams = pickParamsByType("header");
@@ -199,7 +197,6 @@ export class PathResolver {
       {},
     );
 
-  // TODO: handle other params here?
   getCookieParamsTypes = (formDataParams: any[]) => {
     return formDataParams.reduce((results, param) => {
       if (param.schema) {
@@ -222,11 +219,9 @@ export class PathResolver {
     }, {});
   };
 
-  // TODO: handle Response or Reference
   getResponseTypes = (responses?: ResponsesObject) =>
     SchemaResolver.of({
       results: this.extraDefinitions,
-      // TODO: handle other content type here
       schema:
         get(responses, "200.content.application/json.schema") ||
         get(responses, "200.content.*/*.schema") ||
@@ -236,9 +231,6 @@ export class PathResolver {
       .resolve()
       .getSchemaType();
 
-  // TODO: when parameters has enum
-  // TODO: handle the case when v.parameters = Reference
-  // parameters should be (ParameterObject | ReferenceObject)[] | undefined
   pickParams = (parameters?: ParameterObject[]) => (type: "query" | "header" | "path" | "cookie") =>
     filter(parameters, (param) => param.in === type);
 

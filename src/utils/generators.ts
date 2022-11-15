@@ -41,8 +41,6 @@ export const generateRequestBodyAndParams = (
   ];
 };
 
-// TODO: 1.refactor THeader logic to align with resolvedPath.xxxParams
-// TODO: 2.add response type for download file
 export const generateGetRequestArguments = (resolvedPath: IResolvedPath) => {
   const requestType = {
     ...resolvedPath.TReqQuery,

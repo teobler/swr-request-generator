@@ -19,7 +19,6 @@ export class SchemaResolver {
   resolve = (type?: SchemaObjectType) => {
     const { schema = {}, results, parentKey, key } = this.inputs;
     if (schema.$ref) {
-      // TODO: handle schema.type is array
       this.schemaType = this.resolveRef(schema.$ref, type || (schema.type as SchemaObjectType));
       return this;
     }
@@ -37,7 +36,6 @@ export class SchemaResolver {
     }
 
     if (schema.items) {
-      // TODO: handle schema.type is array
       this.schemaType = this.resolveItems(schema.items, schema.type as SchemaObjectType, key, parentKey);
       return this;
     }
@@ -71,10 +69,8 @@ export class SchemaResolver {
       return this;
     }
 
-    // TODO: handle schema.type is array
     this.schemaType = this.getBasicType(
       schema.type as SchemaObjectType,
-      // TODO: handle schema.type is array
       this.resolveRef(schema.$ref, type || (schema.type as SchemaObjectType)),
     );
     return this;
@@ -105,7 +101,6 @@ export class SchemaResolver {
   resolveOneOfAndAnyOf = (oneOfOrAnyOf: SchemaObjectWithNullable[]) => {
     return oneOfOrAnyOf
       .map((schema) => {
-        // TODO: handle schema.type is array
         const schemaType = SchemaResolver.of({ results: {}, schema })
           .resolve(schema.type as SchemaObjectType)
           .resolveNullable()
@@ -121,7 +116,6 @@ export class SchemaResolver {
   resolveAllOf = (allOf: SchemaObjectWithNullable[]) => {
     return allOf
       .map((schema) => {
-        // TODO: handle schema.type is array
         const schemaType = SchemaResolver.of({ results: {}, schema })
           .resolve(schema.type as SchemaObjectType)
           .resolveNullable()
