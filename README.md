@@ -2,27 +2,51 @@
 
 This tool can generate [SWR](https://swr.vercel.app/) request and related request params and response interface from swagger.
 
-it will generate all GET request via SWR and others will be [axios](https://www.axios.com/).
+Because SWR will support mutation request like POST/UPDATE... since [version 2.x](https://github.com/vercel/swr/discussions/1919).
+
+Then SWR request generator will generate these requests through SWR as well since version 1.0.
+
+You can get more info about the change between 0.x and 1.0 via [changelog](changelog.md).
 
 # Dependencies
 
 if you want to use this tool, your project should be:
 
 1. your back end API should use swagger and OpenAPI 3.0 standard
-2. your front end client should be axios
+2. your front end client should be [axios](https://www.axios.com/)
 3. use SWR as data fetching lib for your front end web app
+
+## You are using SWR already, why still with axios?
+
+Personally I think axios is a good request client library which can provide better development experience.
+
+Just like you can easily add your own interceptor, etc.
+
+And SWR mutation request need a `fetcher` to be request client, I think axios could be a good choice.
+
+But on the other side, axios do increase the size of the packaged code, this could be a cons for using axios.
+
+If enough developers like this in the future, and you need a `fetch` version, maybe I can make a new one for `fetch` API.
+
+And if anyone want to make it happen, it should be super cool!
 
 # How to use
 ## install
 
 ```bash
-npm install -D @openapi-integration/swr-request-generator
+pnpm install -D @openapi-integration/swr-request-generator
 ```
 
 or
 
 ```bash
 yarn add -D @openapi-integration/swr-request-generator
+```
+
+or
+
+```bash
+npm install -D @openapi-integration/swr-request-generator
 ```
 
 ## Configuration
@@ -78,13 +102,28 @@ fields meaning:
 
 all the details can be found in example folder.
 
-clone this repo
+clone this repo.
 
-run `npm i` to install all dependency
+```bash
+cd example && pnpm install
+```
 
-then run `bin/ts-codegen.js` can generate api file in `example/request/api.ts`
+after installing all dependencies you can run
 
-how to use this file can be found in page.tsx 
+```bash
+pnpm run codegen
+```
+
+then swr request generator will generate api file in `src/request/api.ts`.
+
+and it's source is `swagger/opanAPI.json`, you can find more info in `ts-codegen.config.json` file.
+
+how to use this file can be found in `src/APP.tsx`.
+
+### tip
+Wrapper functions in example folder like `useGetRequest` and `useMutationRequest` just one of the implementation.
+
+You can use your own wrapper functions and error types as well, just ensure your function name and error type are aligned with demo, since generated function will use these names.
 
 ## changelog
 [changelog](changelog.md)
