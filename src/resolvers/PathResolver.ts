@@ -114,14 +114,14 @@ export class PathResolver {
     return [...requestHooks, ...requestParamsDefinition, ...enums];
   };
 
-  toHookParams = (data: string[] = []) =>
+  private toHookParams = (data: string[] = []) =>
     !isEmpty(data)
       ? `{
     ${data.join(",\n")}
     }`
       : undefined;
 
-  resolvePath(path: PathItemObject, pathName: string) {
+  private resolvePath(path: PathItemObject, pathName: string) {
     const operations = pick(path, HTTP_METHODS);
 
     return Object.keys(operations).map((httpMethod) => ({
@@ -131,7 +131,7 @@ export class PathResolver {
     }));
   }
 
-  getRequestURL = (pathName: string) => {
+  private getRequestURL = (pathName: string) => {
     return chain(pathName)
       .split(SLASH)
       .map((p) => (this.isPathParam(p) ? `$${p}` : p))
@@ -139,9 +139,9 @@ export class PathResolver {
       .value();
   };
 
-  isPathParam = (str: string) => str.startsWith("{");
+  private isPathParam = (str: string) => str.startsWith("{");
 
-  resolveOperation = (operation: OperationObject) => {
+  private resolveOperation = (operation: OperationObject) => {
     const pickParamsByType = this.pickParams(operation.parameters as ParameterObject[] | undefined);
     // axios config header data
     const headerParams = pickParamsByType("header");
@@ -165,7 +165,7 @@ export class PathResolver {
     };
   };
 
-  getParamsNames = (params: IParameters) => {
+  private getParamsNames = (params: IParameters) => {
     const getNames = (list: ParameterObject[]) => (isEmpty(list) ? [] : map(list, (item) => item.name));
     return {
       pathParams: getNames(params.pathParams),
@@ -174,7 +174,7 @@ export class PathResolver {
     };
   };
 
-  getPathParamsTypes = (pathParams: ParameterObject[]) =>
+  private getPathParamsTypes = (pathParams: ParameterObject[]) =>
     pathParams.reduce((results, param) => {
       const schema = get(param, "schema");
 
@@ -190,7 +190,7 @@ export class PathResolver {
       };
     }, {});
 
-  getQueryParamsTypes = (queryParams: ParameterObject[]) =>
+  private getQueryParamsTypes = (queryParams: ParameterObject[]) =>
     queryParams.reduce(
       (results, param) => ({
         ...results,
@@ -206,7 +206,7 @@ export class PathResolver {
       {},
     );
 
-  getCookieParamsTypes = (formDataParams?: ParameterObject[]) => {
+  private getCookieParamsTypes = (formDataParams?: ParameterObject[]) => {
     return formDataParams?.reduce((results, param) => {
       return {
         ...results,
@@ -222,7 +222,7 @@ export class PathResolver {
     }, {});
   };
 
-  getResponseTypes = (responses?: ResponsesObject) =>
+  private getResponseTypes = (responses?: ResponsesObject) =>
     SchemaResolver.of({
       results: this.extraDefinitions,
       schema:
@@ -234,15 +234,15 @@ export class PathResolver {
       .resolve()
       .getSchemaType();
 
-  pickParams = (parameters?: ParameterObject[]) => (type: "query" | "header" | "path" | "cookie") =>
+  private pickParams = (parameters?: ParameterObject[]) => (type: "query" | "header" | "path" | "cookie") =>
     filter(parameters, (param) => param.in === type);
 
-  getContentType(key: string, operationId?: string) {
+  private getContentType(key: string, operationId?: string) {
     // in openAPI spec, the key of content in requestBody field is content type
     operationId && assign(this.contentType, { [operationId]: key });
   }
 
-  getRequestBodyTypes(operationId?: string, requestBody?: RequestBodyObject | ReferenceObject) {
+  private getRequestBodyTypes(operationId?: string, requestBody?: RequestBodyObject | ReferenceObject) {
     if (isRequestBody(requestBody)) {
       return reduce(
         get(requestBody, "content"),
@@ -277,7 +277,7 @@ export class PathResolver {
     };
   }
 
-  getRequestBodyName(requestBody?: RequestBodyObject | ReferenceObject, operationId?: string) {
+  private getRequestBodyName(requestBody?: RequestBodyObject | ReferenceObject, operationId?: string) {
     if (requestBody) {
       return {
         requestBody: `${operationId}Request`,

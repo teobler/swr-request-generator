@@ -21,6 +21,7 @@ export class SchemaResolver {
     const { schema = {}, results, parentKey, key } = this.inputs;
     if (schema.$ref) {
       this.schemaType = this.resolveRef(schema.$ref, type || (schema.type as SchemaObjectType));
+      this.schemaType = this.resolveNullable().getSchemaType();
       return this;
     }
 
@@ -38,6 +39,7 @@ export class SchemaResolver {
 
     if (schema.items) {
       this.schemaType = this.resolveItems(schema.items, schema.type as SchemaObjectType, key, parentKey);
+      this.schemaType = this.resolveNullable().getSchemaType();
       return this;
     }
 
@@ -47,26 +49,31 @@ export class SchemaResolver {
       results[enumKey] = schema.enum;
 
       this.schemaType = enumKey;
+      this.schemaType = this.resolveNullable().getSchemaType();
       return this;
     }
 
     if (schema.type === "object") {
       if (schema.properties) {
         this.schemaType = this.resolveProperties(schema.properties, schema.required, parentKey);
+        this.schemaType = this.resolveNullable().getSchemaType();
         return this;
       }
 
       if (schema.title) {
         this.schemaType = schema.type;
+        this.schemaType = this.resolveNullable().getSchemaType();
         return this;
       }
 
       this.schemaType = "{[key:string]:any}";
+      this.schemaType = this.resolveNullable().getSchemaType();
       return this;
     }
 
     if (schema.type === "string" && schema.format === "binary") {
       this.schemaType = "FormData";
+      this.schemaType = this.resolveNullable().getSchemaType();
       return this;
     }
 
@@ -74,10 +81,11 @@ export class SchemaResolver {
       schema.type as SchemaObjectType,
       this.resolveRef(schema.$ref, type || (schema.type as SchemaObjectType)),
     );
+    this.schemaType = this.resolveNullable().getSchemaType();
     return this;
   };
 
-  resolveNullable = () => {
+  private resolveNullable = () => {
     if (this.inputs.schema?.nullable) {
       this.schemaType = isObject(this.schemaType)
         ? `${JSON.stringify(this.schemaType)} | null`
@@ -87,10 +95,10 @@ export class SchemaResolver {
     return this;
   };
 
-  getEnumName = (propertyName: string, parentKey: string = "") =>
+  private getEnumName = (propertyName: string, parentKey: string = "") =>
     `${toCapitalCase(parentKey)}${toCapitalCase(propertyName)}${ENUM_SUFFIX}`;
 
-  resolveRef = ($ref?: string, type?: string): string => {
+  private resolveRef = ($ref?: string, type?: string): string => {
     if (!$ref) {
       return "";
     }
@@ -99,12 +107,11 @@ export class SchemaResolver {
     return type === "array" ? `${refType}[]` : refType;
   };
 
-  resolveOneOfAndAnyOf = (oneOfOrAnyOf: SchemaObjectWithNullable[]) => {
+  private resolveOneOfAndAnyOf = (oneOfOrAnyOf: SchemaObjectWithNullable[]) => {
     return oneOfOrAnyOf
       .map((schema) => {
         const schemaType = SchemaResolver.of({ results: {}, schema })
           .resolve(schema.type as SchemaObjectType)
-          .resolveNullable()
           .getSchemaType();
 
         return JSON.stringify(schemaType);
@@ -114,12 +121,11 @@ export class SchemaResolver {
       .replace(/"/g, "");
   };
 
-  resolveAllOf = (allOf: SchemaObjectWithNullable[]) => {
+  private resolveAllOf = (allOf: SchemaObjectWithNullable[]) => {
     return allOf
       .map((schema) => {
         const schemaType = SchemaResolver.of({ results: {}, schema })
           .resolve(schema.type as SchemaObjectType)
-          .resolveNullable()
           .getSchemaType();
 
         return JSON.stringify(schemaType);
@@ -129,7 +135,7 @@ export class SchemaResolver {
       .replace(/"/g, "");
   };
 
-  getBasicType = (basicType?: SchemaObjectType, advancedType?: string): string => {
+  private getBasicType = (basicType?: SchemaObjectType, advancedType?: string): string => {
     switch (basicType) {
       case "integer":
         return "number";
@@ -142,9 +148,9 @@ export class SchemaResolver {
     }
   };
 
-  getTypeForArray = (advancedType?: string) => (advancedType ? `${advancedType}[]` : "Array<any>");
+  private getTypeForArray = (advancedType?: string) => (advancedType ? `${advancedType}[]` : "Array<any>");
 
-  pickTypeByRef = (str?: string) => {
+  private pickTypeByRef = (str?: string) => {
     if (!str) {
       return;
     }
@@ -152,7 +158,7 @@ export class SchemaResolver {
     return list[list.length - 1];
   };
 
-  resolveItems = (
+  private resolveItems = (
     items?: SchemaObject | SchemaObject[],
     type?: SchemaObjectType,
     key?: string,
@@ -178,18 +184,16 @@ export class SchemaResolver {
       return map(items, (item) =>
         SchemaResolver.of({ results: this.inputs.results, schema: item, key, parentKey })
           .resolve()
-          .resolveNullable()
           .getSchemaType(),
       );
     }
 
     return SchemaResolver.of({ results: this.inputs.results, schema: items as SchemaObject, key, parentKey })
       .resolve(type)
-      .resolveNullable()
       .getSchemaType();
   };
 
-  resolveProperties = (
+  private resolveProperties = (
     properties: {
       [propertyName: string]: SchemaObject;
     } = {},
@@ -207,7 +211,6 @@ export class SchemaResolver {
           parentKey,
         })
           .resolve()
-          .resolveNullable()
           .getSchemaType(),
       }),
       {},

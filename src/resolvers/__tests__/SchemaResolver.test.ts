@@ -128,7 +128,6 @@ describe("# SchemaResolver", () => {
         parentKey: "key",
       })
         .resolve()
-        .resolveNullable()
         .getSchemaType(),
     ).toEqual(result);
   });
