@@ -1,5 +1,21 @@
 # changelog
 
+## 1.0.0
+
+### **Breaking changes**
+- support `useSWRMutation` for mutation request
+  - previous: use `axios.request` for mutation request
+  - now: use `useSWRMutation` hook as a wrapper, use `axios` as request client
+- rename `useSWR` wrapper from  `useRequest` to `useGetRequest`
+- support oneOf/anyOf/allOf in openAPI spec
+
+### Other changes
+- add new wrapper function demo `useMutationRequest` in `example/src/request/useMutationRequest`
+- fix wrong rewrite behavior for request/response
+  - previous version will rewrite all the key in request and response to camelCase, this version fixed this wrong behavior, all the variables will follow backend definition
+- clean up `any` types in source code
+- rewrite example folder as a independent project, can be easily understand how to use this lib
+
 ## 0.7.4
 
 - upgrade all dependencies
