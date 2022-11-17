@@ -1,12 +1,12 @@
 {
-  "output": "./request",
+  "output": "src/request",
   "fileHeaders": [
     "/* eslint-disable @typescript-eslint/explicit-module-boundary-types */",
     "/* eslint-disable @typescript-eslint/no-explicit-any */",
     "import { ISWRConfig, useGetRequest } from \"./useGetRequest\"",
     "import { IResponseError } from \"../types\"",
     "import { AxiosRequestConfig, AxiosResponse } from \"axios\"",
-    "import { SWRMutationConfig, useMutationRequest } from \"example/request/useMutationRequest\";"
+    "import { SWRMutationConfig, useMutationRequest } from \"src/request/useMutationRequest\";"
   ],
   "clients": [],
   "data": ["./swagger/openAPI.json"],
