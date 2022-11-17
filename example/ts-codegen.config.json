@@ -1,5 +1,5 @@
 {
-  "output": "example/request",
+  "output": "./request",
   "fileHeaders": [
     "/* eslint-disable @typescript-eslint/explicit-module-boundary-types */",
     "/* eslint-disable @typescript-eslint/no-explicit-any */",
@@ -9,6 +9,6 @@
     "import { SWRMutationConfig, useMutationRequest } from \"example/request/useMutationRequest\";"
   ],
   "clients": [],
-  "data": ["./example/swagger/openAPI.json"],
+  "data": ["./swagger/openAPI.json"],
   "fileName": "api"
 }
