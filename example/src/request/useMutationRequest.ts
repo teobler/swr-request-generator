@@ -1,8 +1,8 @@
 import useSWRMutation, { SWRMutationConfiguration } from "swr/mutation";
-import { client } from "example/request/client";
 import { AxiosError, AxiosRequestConfig, AxiosResponse, RawAxiosRequestHeaders } from "axios";
+import { client } from "src/request/client";
 // every project may have its own error type, define it your self and import it here
-import { IResponseError } from "example/types";
+import { IResponseError } from "src/types";
 
 export type SWRMutationConfig<Request = any, Response = any, Error = any> = SWRMutationConfiguration<
   AxiosResponse<Response>,

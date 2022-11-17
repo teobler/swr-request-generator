@@ -5,13 +5,17 @@ public/
 coverage/
 .tmp/
 
-.package-lock.json
 .DS_Store
 .idea/
 .code/
-yarn.lock
 wsEndpoint
 .output/
 dist/
 lib/
 module/
+
+# example folder
+/example/node_modules/
+/example/public/
+/example/public/coverage/
+/example/.DS_Store
