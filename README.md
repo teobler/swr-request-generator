@@ -13,7 +13,7 @@ You can get more info about the change between 0.x and 1.0 via [changelog](chang
 if you want to use this tool, your project should be:
 
 1. your back end API should use swagger and OpenAPI 3.0 standard
-2. your front end client should be [axios](https://www.axios.com/)
+2. your front end client should be [axios](https://github.com/axios/axios)
 3. use SWR as data fetching lib for your front end web app
 
 ## You are using SWR already, why still with axios?
