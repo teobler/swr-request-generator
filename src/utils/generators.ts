@@ -1,15 +1,17 @@
-import { camelCase, compact, Dictionary, get, isEmpty, reduce, replace, some } from "lodash";
+import { camelCase, compact, get, isEmpty, reduce, replace, some } from "lodash";
 import { isNumber } from "./specifications";
-import { IResolvedPath } from "../types";
+import { IResolvedPath, ReqBody } from "../types";
 import { ENUM_SUFFIX } from "../constants";
 import { addPrefixForInterface, arrayToObject, toCapitalCase, toTypes } from "./formatters";
+import { RequestBodiesAndParams } from "src/resolvers/PathResolver";
+import { ResolvedDefinitions, ResolvedSchema } from "src/resolvers/DefinitionsResolver";
 
-export const generateEnums = (definitions: Dictionary<any>, key: string) => {
+export const generateEnums = (definitions: ResolvedDefinitions, key: string) => {
   if (isEmpty(definitions)) {
     return "";
   }
 
-  const enums = definitions[key];
+  const enums = definitions[key] as [string | number];
   const hasNumber = some(enums, (enumValue) => isNumber(enumValue));
   const enumName = replace(key, ENUM_SUFFIX, "");
 
@@ -20,17 +22,19 @@ export const generateEnums = (definitions: Dictionary<any>, key: string) => {
 
 export const generateFunctionName = (operationId?: string) => `use${toCapitalCase(camelCase(operationId))}Request`;
 
-export const generateGetClientName = (responseType: any) =>
-  `useGetRequest<${responseType || undefined}, IResponseError>`;
+export const generateGetClientName = (responseType?: ResolvedSchema) =>
+  `useGetRequest<${responseType === "" ? undefined : responseType}, IResponseError>`;
 
-export const generateMutationClientName = (responseType: any, requestBodyTypes?: string) =>
-  `useMutationRequest<${requestBodyTypes}, AxiosResponse<${responseType || undefined}>, IResponseError>`;
+export const generateMutationClientName = (responseType?: ResolvedSchema, requestBodyTypes?: string) =>
+  `useMutationRequest<${requestBodyTypes}, AxiosResponse<${
+    responseType === "" ? undefined : responseType
+  }>, IResponseError>`;
 
 export const generateRequestBodyAndParams = (
-  requestBodyType: any,
-  requestQueryType: any,
+  requestBodyType?: ReqBody,
+  requestQueryType?: Record<string, string>,
   operationId: string = "",
-): [string, { body: any; query: any }] | [undefined, undefined] => {
+): RequestBodiesAndParams => {
   if (isEmpty(requestBodyType) && isEmpty(requestQueryType)) {
     return [undefined, undefined];
   }
@@ -49,9 +53,9 @@ export const generateGetRequestArguments = (resolvedPath: IResolvedPath) => {
   };
   const argumentTypes = !isEmpty(requestType) ? toTypes(requestType, "request") : undefined;
   const requestParamList = compact([
-    ...resolvedPath.pathParams,
-    ...resolvedPath.queryParams,
-    ...Object.keys(resolvedPath.THeader),
+    ...(resolvedPath.pathParams ?? []),
+    ...(resolvedPath.queryParams ?? []),
+    ...Object.keys(resolvedPath.THeader ?? {}),
   ]).map((param) => camelCase(param));
   const requestParams = requestParamList.length === 0 ? "" : `{${requestParamList.join(",")}}:${argumentTypes}`;
 
@@ -66,9 +70,10 @@ export const generateMutationRequestArguments = (resolvedPath: IResolvedPath, re
     ...resolvedPath.THeader,
   };
   const argumentTypes = !isEmpty(requestType) ? toTypes(requestType, "request") : undefined;
-  const requestParamList = compact([...resolvedPath.pathParams, ...Object.keys(resolvedPath.THeader)]).map((param) =>
-    camelCase(param),
-  );
+  const requestParamList = compact([
+    ...(resolvedPath.pathParams ?? []),
+    ...Object.keys(resolvedPath.THeader ?? {}),
+  ]).map((param) => camelCase(param));
   const requestParams = requestParamList.length === 0 ? "" : `{${requestParamList.join(",")}}:${argumentTypes}`;
 
   return `${

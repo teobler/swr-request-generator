@@ -4,9 +4,10 @@ import { addPrefixForInterface, toCapitalCase } from "../utils/formatters";
 import { ISchemaResolverInputs, SchemaObjectWithNullable, TDictionary } from "../types";
 import { ENUM_SUFFIX } from "../constants";
 import { SchemaObject, SchemaObjectType } from "@ts-stack/openapi-spec";
+import { ResolvedSchema } from "src/resolvers/DefinitionsResolver";
 
 export class SchemaResolver {
-  private schemaType: TDictionary<any> | string = {};
+  private schemaType: ResolvedSchema = {};
 
   static of(inputs: ISchemaResolverInputs) {
     return new SchemaResolver(inputs);

@@ -46,7 +46,7 @@ describe("# formatters", () => {
         "request",
         "{\n" + "        'uploadDocumentRequest': FormData\n" + "      }",
       ],
-    ])("should return type definition for TypeScript code", (definitions, category: any, result) => {
+    ])("should return type definition for TypeScript code", (definitions: any, category: any, result) => {
       expect(toTypes(definitions, category)).toBe(result);
     });
   });

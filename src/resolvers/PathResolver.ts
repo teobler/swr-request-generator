@@ -1,7 +1,7 @@
 import { SchemaResolver } from "./SchemaResolver";
-import { assign, camelCase, chain, Dictionary, filter, get, isEmpty, map, pick, reduce, sortBy } from "lodash";
+import { assign, camelCase, chain, filter, get, isEmpty, map, pick, reduce, sortBy } from "lodash";
 import { HTTP_METHODS, SLASH } from "../constants";
-import { IParameters, IResolvedPath } from "../types";
+import { IParameters, IResolvedPath, ReqBody } from "../types";
 import { isRequestBody, isSchema } from "../utils/specifications";
 import {
   generateEnums,
@@ -24,6 +24,15 @@ import {
   RequestBodyObject,
   ResponsesObject,
 } from "@ts-stack/openapi-spec";
+
+export type RequestBodiesAndParams =
+  | [string, { body: ReqBody | undefined; query: Record<string, string> | undefined }]
+  | [undefined, undefined];
+
+type RequestTypeOfPathItemObject = Extract<
+  "get" | "post" | "put" | "delete" | "patch" | "options" | "head",
+  keyof PathItemObject
+>;
 
 export class PathResolver {
   resolvedPaths: IResolvedPath[] = [];
@@ -50,20 +59,20 @@ export class PathResolver {
 
   toRequest = (): string[] => {
     const data = sortBy(this.resolvedPaths, (o) => o.operationId);
-    const requestBodiesAndParams = [] as any;
+    const requestBodiesAndParams: RequestBodiesAndParams[] = [];
     const requestHooks = data.map((resolvedPath: IResolvedPath) => {
       const headerType = get(resolvedPath, "THeader");
       const cookie = get(resolvedPath.cookieParams, "[0]");
       const requestBody = get(resolvedPath, "requestBody");
       const body = camelCase(toCapitalCase(requestBody || cookie));
-      const params = this.toRequestParams(get(resolvedPath, "queryParams"));
+      const params = this.toHookParams(get(resolvedPath, "queryParams"));
       const axiosHeaderConfig = generateHeader(!isEmpty(body), this.contentType, resolvedPath.operationId, headerType);
       const [requestInterfaceName, requestInterfaceObj] = generateRequestBodyAndParams(
         resolvedPath.TReqBody,
         resolvedPath.TReqQuery,
         resolvedPath.operationId,
       );
-      requestBodiesAndParams.push([requestInterfaceName, requestInterfaceObj]);
+      requestBodiesAndParams.push([requestInterfaceName, requestInterfaceObj] as RequestBodiesAndParams);
 
       if (resolvedPath.method === "get") {
         return `export const ${generateFunctionName(resolvedPath.operationId)} = (${generateGetRequestArguments(
@@ -89,23 +98,23 @@ export class PathResolver {
     const enums = Object.keys(this.extraDefinitions).map((k) => generateEnums(this.extraDefinitions, k));
 
     const requestParamsDefinition = requestBodiesAndParams
-      .map(([interfaceName, request]: [string, Record<string, string>] | [undefined, undefined]) => {
+      .map(([interfaceName, request]: RequestBodiesAndParams) => {
         if (!interfaceName) return undefined;
 
         Object.keys(request).forEach((key) => {
-          if (isEmpty(request[key])) {
-            delete request[key];
+          if (isEmpty(request[key as "body" | "query"])) {
+            delete request[key as "body" | "query"];
           }
         });
 
         return `export interface ${interfaceName} ${toRequestTypes(request)}`;
       })
-      .filter(Boolean);
+      .filter(Boolean) as string[];
 
     return [...requestHooks, ...requestParamsDefinition, ...enums];
   };
 
-  toRequestParams = (data: any[] = []) =>
+  toHookParams = (data: string[] = []) =>
     !isEmpty(data)
       ? `{
     ${data.join(",\n")}
@@ -118,7 +127,7 @@ export class PathResolver {
     return Object.keys(operations).map((httpMethod) => ({
       url: this.getRequestURL(pathName),
       method: httpMethod,
-      ...this.resolveOperation((operations as Dictionary<any>)[httpMethod]),
+      ...this.resolveOperation(operations[httpMethod as RequestTypeOfPathItemObject] as OperationObject),
     }));
   }
 
@@ -157,7 +166,7 @@ export class PathResolver {
   };
 
   getParamsNames = (params: IParameters) => {
-    const getNames = (list: any[]) => (isEmpty(list) ? [] : map(list, (item) => item.name));
+    const getNames = (list: ParameterObject[]) => (isEmpty(list) ? [] : map(list, (item) => item.name));
     return {
       pathParams: getNames(params.pathParams),
       queryParams: getNames(params.queryParams),
@@ -197,24 +206,18 @@ export class PathResolver {
       {},
     );
 
-  getCookieParamsTypes = (formDataParams: any[]) => {
-    return formDataParams.reduce((results, param) => {
-      if (param.schema) {
-        return {
-          ...results,
-          [`${param.name}${param.required ? "" : "?"}`]: SchemaResolver.of({
-            results: this.extraDefinitions,
-            schema: param.schema,
-            key: param.name,
-            parentKey: param.name,
-          })
-            .resolve()
-            .getSchemaType(),
-        };
-      }
+  getCookieParamsTypes = (formDataParams?: ParameterObject[]) => {
+    return formDataParams?.reduce((results, param) => {
       return {
         ...results,
-        [`${param.name}${param.required ? "" : "?"}`]: param.type === "file" ? "File" : param.type,
+        [`${param.name}${param.required ? "" : "?"}`]: SchemaResolver.of({
+          results: this.extraDefinitions,
+          schema: param.schema,
+          key: param.name,
+          parentKey: param.name,
+        })
+          .resolve()
+          .getSchemaType(),
       };
     }, {});
   };

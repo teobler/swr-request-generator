@@ -1,19 +1,24 @@
 import { ParameterObject, SchemaObject } from "@ts-stack/openapi-spec";
+import { ResolvedSchema } from "src/resolvers/DefinitionsResolver";
+
+export interface ReqBody {
+  [bodyName: string]: string | Record<string, string>;
+}
 
 export interface IResolvedPath {
   url: string;
   method: string;
-  TResp: any;
-  TReqQuery: any,
-  TReqPath: any,
-  TReqCookie: any,
-  TReqBody: Record<string, any>;
-  THeader: Record<string, any>;
+  TResp: ResolvedSchema;
+  TReqQuery: { [queryName: string]: string } | {};
+  TReqPath: { [pathName: string]: string } | {};
+  TReqCookie?: { [cookieName: string]: string } | {};
+  TReqBody: ReqBody | {};
+  THeader: { [headerName: string]: string } | {};
   requestBody?: string;
   operationId?: string;
-  pathParams: string[];
-  queryParams: string[];
-  cookieParams: string[];
+  pathParams: string[] | [];
+  queryParams: string[] | [];
+  cookieParams: string[] | [];
 }
 
 export interface IParameters {

@@ -1,7 +1,9 @@
-import { camelCase, Dictionary, forEach, indexOf, isEmpty, map, pickBy, replace, trimEnd } from "lodash";
+import { camelCase, forEach, indexOf, isEmpty, map, pickBy, replace, trimEnd } from "lodash";
 import prettier from "prettier";
 import { isObject } from "./specifications";
 import { ENUM_SUFFIX, ERROR_MESSAGES } from "../constants";
+import { ReqBody } from "src/types";
+import { ResolvedSchema } from "src/resolvers/DefinitionsResolver";
 
 export const toCapitalCase = (str?: string): string => {
   if (!str) {
@@ -36,13 +38,13 @@ export const prettifyCode = (code: string) =>
     parser: "typescript",
   });
 
-export const toTypes = (definitions: Dictionary<any> | string, category: "interface" | "request") => {
+export const toTypes = (definitions: ResolvedSchema, category: "interface" | "request") => {
   if (isEmpty(definitions)) {
     return;
   }
   const convertor = category === "interface" ? addQuoteForKey : convertKeyToCamelCaseAndAddQuote;
 
-  const fieldDefinitionList = map<string, any>(definitions, (value: any, key: string) => {
+  const fieldDefinitionList = map(definitions, (value: any, key: string) => {
     if (isObject(value) && Object.keys(value).length === 1 && !isEmpty(pickBy(value, (type) => type === "FormData"))) {
       return `${convertor(key)}: FormData`;
     }
@@ -60,8 +62,11 @@ export const toTypes = (definitions: Dictionary<any> | string, category: "interf
   );
 };
 
-export const toRequestTypes = (requestTypeObj: Record<string, string>) => {
-  const requestBodyFieldList = map<string, any>(requestTypeObj.body, (value: any) => {
+export const toRequestTypes = (requestTypeObj: {
+  body: ReqBody | undefined;
+  query: Record<string, string> | undefined;
+}) => {
+  const requestBodyFieldList = map(requestTypeObj.body, (value) => {
     if (isObject(value) && Object.keys(value).length === 1 && !isEmpty(pickBy(value, (type) => type === "FormData"))) {
       return `FormData;`;
     }
@@ -78,7 +83,7 @@ export const toRequestTypes = (requestTypeObj: Record<string, string>) => {
       }`;
   }
 
-  const requestQueryFieldList = map<string, any>(requestTypeObj.query, (value: any) => {
+  const requestQueryFieldList = map(requestTypeObj.query, (value) => {
     return isObject(value) ? `${JSON.stringify(value).replace(/"/g, "")};` : `${replace(value, ENUM_SUFFIX, "")};`;
   });
   const requestQueryDefinition = isEmpty(requestQueryFieldList)

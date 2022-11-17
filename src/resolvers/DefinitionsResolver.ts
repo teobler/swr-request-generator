@@ -1,4 +1,4 @@
-import { compact, Dictionary, forEach, get, includes, isEmpty } from "lodash";
+import { compact, forEach, get, includes, isEmpty } from "lodash";
 import { SchemaResolver } from "./SchemaResolver";
 import { isRequestBody } from "../utils/specifications";
 import { generateEnums } from "../utils/generators";
@@ -6,8 +6,20 @@ import { addPrefixForInterface, toCapitalCase, toTypes } from "../utils/formatte
 import { ENUM_SUFFIX } from "../constants";
 import { ComponentsObject } from "@ts-stack/openapi-spec";
 
+export interface RequestBodyOrResponseBody {
+  [key: string]: string;
+}
+
+// RequestBodyOrResponseBody for normal interface
+// [string | number] for enums
+// string for interface name
+// empty string for no response
+export type ResolvedSchema = RequestBodyOrResponseBody | [string | number] | string;
+
+export type ResolvedDefinitions = { [requestOrResponseOrEnum: string]: ResolvedSchema };
+
 export class DefinitionsResolver {
-  resolvedDefinitions: any;
+  resolvedDefinitions: ResolvedDefinitions = {};
 
   static of(components?: ComponentsObject) {
     return new DefinitionsResolver(components);
@@ -16,11 +28,11 @@ export class DefinitionsResolver {
   constructor(private components?: ComponentsObject) {}
 
   scanDefinitions = () => {
-    const results: Dictionary<any> = {};
+    const results: ResolvedDefinitions = {};
     const requestBodies = get(this.components, "requestBodies");
     const schemas = get(this.components, "schemas");
 
-    forEach(requestBodies, (requestBody, requestBodyName) => {
+    forEach(requestBodies, (requestBody, requestBodyName: string) => {
       if (isRequestBody(requestBody)) {
         return (results[requestBodyName] = SchemaResolver.of({
           results,

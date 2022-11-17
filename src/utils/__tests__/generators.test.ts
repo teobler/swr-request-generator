@@ -9,6 +9,7 @@ import {
   generateMutationRequestArguments,
   generateResponseType,
 } from "../generators";
+import { ResolvedDefinitions } from "src/resolvers/DefinitionsResolver";
 
 describe("# generators", () => {
   describe("## generateRequestArguments", () => {
@@ -121,7 +122,9 @@ describe("# generators", () => {
               TReqPath: { id: "string" },
             }),
           ),
-        ).toBe("{id}:{'id':string;},mutationConfig?:SWRMutationConfig<undefined,AxiosResponse<IResponse>,IResponseError>,axiosConfig?:AxiosRequestConfig");
+        ).toBe(
+          "{id}:{'id':string;},mutationConfig?:SWRMutationConfig<undefined,AxiosResponse<IResponse>,IResponseError>,axiosConfig?:AxiosRequestConfig",
+        );
       });
 
       it("should return arg and it's corresponding type with camelCase when request only one argument presents", () => {
@@ -133,7 +136,9 @@ describe("# generators", () => {
               TReqBody: { BookController_createBookRequest: "ICreateBookRequest" },
             }),
           ),
-        ).toBe("mutationConfig?:SWRMutationConfig<undefined,AxiosResponse<IResponse>,IResponseError>,axiosConfig?:AxiosRequestConfig");
+        ).toBe(
+          "mutationConfig?:SWRMutationConfig<undefined,AxiosResponse<IResponse>,IResponseError>,axiosConfig?:AxiosRequestConfig",
+        );
       });
 
       it("should return args and it's corresponding types when multiple arguments present", () => {
@@ -148,7 +153,9 @@ describe("# generators", () => {
               TReqPath: { id: "string" },
             }),
           ),
-        ).toBe("{id}:{'id':string;},mutationConfig?:SWRMutationConfig<undefined,AxiosResponse<IResponse>,IResponseError>,axiosConfig?:AxiosRequestConfig");
+        ).toBe(
+          "{id}:{'id':string;},mutationConfig?:SWRMutationConfig<undefined,AxiosResponse<IResponse>,IResponseError>,axiosConfig?:AxiosRequestConfig",
+        );
       });
 
       it("should receive last param as axios config", () => {
@@ -163,7 +170,9 @@ describe("# generators", () => {
               TReqPath: { id: "string" },
             }),
           ),
-        ).toBe("{id}:{'id':string;},mutationConfig?:SWRMutationConfig<undefined,AxiosResponse<IResponse>,IResponseError>,axiosConfig?:AxiosRequestConfig");
+        ).toBe(
+          "{id}:{'id':string;},mutationConfig?:SWRMutationConfig<undefined,AxiosResponse<IResponse>,IResponseError>,axiosConfig?:AxiosRequestConfig",
+        );
       });
 
       it("should include header params", () => {
@@ -199,7 +208,11 @@ describe("# generators", () => {
 
   describe("## generateClientName", () => {
     it.each([
-      ["IResponse", "IUpdateBookByIdUsingPutRequest", "useMutationRequest<IUpdateBookByIdUsingPutRequest, AxiosResponse<IResponse>, IResponseError>"],
+      [
+        "IResponse",
+        "IUpdateBookByIdUsingPutRequest",
+        "useMutationRequest<IUpdateBookByIdUsingPutRequest, AxiosResponse<IResponse>, IResponseError>",
+      ],
       ["IResponse", "undefined", "useMutationRequest<undefined, AxiosResponse<IResponse>, IResponseError>"],
       ["IResponse", undefined, "useMutationRequest<undefined, AxiosResponse<IResponse>, IResponseError>"],
     ])("should return different client given different request method", (responseType, responseBodyType, result) => {
@@ -223,7 +236,7 @@ describe("# generators", () => {
       [{ "FromFrom#EnumTypeSuffix": [1, 2] }, "FromFrom#EnumTypeSuffix", "export type FromFrom = 1|2"],
       [{}, "", ""],
     ])("should generate enums from definitions", (definitions, key, result) => {
-      expect(generateEnums(definitions, key)).toBe(result);
+      expect(generateEnums(definitions as ResolvedDefinitions, key)).toBe(result);
     });
   });
 
