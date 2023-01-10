@@ -13,6 +13,7 @@ import { OasObject, PathsObject } from "@ts-stack/openapi-spec";
 import { useGetRequest } from "./template/useGetRequest";
 import { useMutationRequest } from "./template/useMutationRequest";
 import { client } from "./template/client";
+import { greenConsole, redConsole } from "./utils/console";
 
 program.option("-a, --authorization <value>", "authorization header value").parse(process.argv);
 
@@ -40,7 +41,7 @@ const {
 
 const codegen = (schema: OasObject | string) => {
   if (typeof schema === "string") {
-    console.error(ERROR_MESSAGES.INVALID_JSON_FILE_ERROR);
+    redConsole(ERROR_MESSAGES.INVALID_JSON_FILE_ERROR);
     return;
   }
 
@@ -64,7 +65,7 @@ const codegen = (schema: OasObject | string) => {
 
 (data || []).map((file: string) => {
   if (!file.endsWith("json") && !file.endsWith("yml") && !file.endsWith("yaml")) {
-    console.error(ERROR_MESSAGES.INVALID_FILE_FORMAT);
+    redConsole(ERROR_MESSAGES.INVALID_FILE_FORMAT);
     return;
   }
 
@@ -76,7 +77,7 @@ const codegen = (schema: OasObject | string) => {
   if (schema) {
     console.log(LOG_MESSAGE.GENERATING + "\n");
     codegen(schema);
-    console.log(LOG_MESSAGE.SUCCESSFUL + "\n");
+    greenConsole(LOG_MESSAGE.SUCCESSFUL + "\n");
   }
 });
 
@@ -99,10 +100,10 @@ if (clients) {
       .then((response) => {
         console.log(LOG_MESSAGE.GENERATING + "\n");
         codegen(response.data);
-        console.log(LOG_MESSAGE.SUCCESSFUL + "\n");
+        greenConsole(LOG_MESSAGE.SUCCESSFUL + "\n");
       })
       .catch((error) => {
-        console.error(`${error.code}: ${ERROR_MESSAGES.FETCH_CLIENT_FAILED_ERROR}`);
+        redConsole(`${error.code}: ${ERROR_MESSAGES.FETCH_CLIENT_FAILED_ERROR}`);
       });
   });
 }

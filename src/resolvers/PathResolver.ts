@@ -24,6 +24,7 @@ import {
   RequestBodyObject,
   ResponsesObject,
 } from "@ts-stack/openapi-spec";
+import { yellowConsole } from "../utils/console";
 
 export type RequestBodiesAndParams =
   | [string, { body: ReqBody | undefined; query: Record<string, string> | undefined }]
@@ -143,7 +144,7 @@ export class PathResolver {
 
   private resolveOperation = (operation: OperationObject) => {
     if (!operation.operationId) {
-      console.warn("\x1b[33myour request does not have an operation id, generated request method will not has uniq name!\n\x1b[0m")
+      yellowConsole("your request does not have an operation id, generated request method will not has uniq name!\n");
     }
 
     const pickParamsByType = this.pickParams(operation.parameters as ParameterObject[] | undefined);

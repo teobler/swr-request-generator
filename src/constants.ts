@@ -1,7 +1,7 @@
 export const ERROR_MESSAGES = {
-  INVALID_JSON_FILE_ERROR: "Your json file is invalid, please check it!",
-  INVALID_FILE_FORMAT: "Your input file is invalid, please check if it json or yaml!",
-  FETCH_CLIENT_FAILED_ERROR: "Fetch client failed! Please check your network or ts-codegen.config.ts file.",
+  INVALID_JSON_FILE_ERROR: "Your json file is invalid, please check it!\n",
+  INVALID_FILE_FORMAT: "Your input file is invalid, please check if it json or yaml!\n",
+  FETCH_CLIENT_FAILED_ERROR: "Fetch client failed! Please check your network or ts-codegen.config.ts file.\n",
 };
 export const LOG_MESSAGE = {
   GENERATING: "generating...",

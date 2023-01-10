@@ -4,6 +4,7 @@ import { isObject } from "./specifications";
 import { ENUM_SUFFIX, ERROR_MESSAGES } from "../constants";
 import { ReqBody } from "src/types";
 import { ResolvedSchema } from "src/resolvers/DefinitionsResolver";
+import { redConsole } from "../utils/console";
 
 export const toCapitalCase = (str?: string): string => {
   if (!str) {
@@ -111,7 +112,7 @@ const addQuoteForKey = (key: string) => {
 export const convertJsonStringToJson = (
   str: unknown,
   errorMsg: string = ERROR_MESSAGES.INVALID_JSON_FILE_ERROR,
-  output: (message: string) => void = console.error,
+  output: (message: string) => void = redConsole,
 ) => {
   if (typeof str !== "string") {
     return;
