@@ -1,4 +1,5 @@
 import * as fs from "fs";
+import * as yaml from "js-yaml";
 import { DefinitionsResolver } from "./resolvers/DefinitionsResolver";
 import * as path from "path";
 import { PathResolver } from "./resolvers/PathResolver";
@@ -6,7 +7,7 @@ import axios from "axios";
 import { map } from "lodash";
 import { ERROR_MESSAGES, FILE_TIP, LOG_MESSAGE } from "./constants";
 import { program } from "commander";
-import { convertJsonToString, prettifyCode } from "./utils/formatters";
+import { convertJsonStringToJson, prettifyCode } from "./utils/formatters";
 import { ICodegenConfig } from "./types";
 import { OasObject, PathsObject } from "@ts-stack/openapi-spec";
 
@@ -50,10 +51,15 @@ const codegen = (schema: OasObject | string) => {
 };
 
 (data || []).map((file: string) => {
+  if (!file.endsWith("json") && !file.endsWith("yml") && !file.endsWith("yaml")) {
+    console.error(ERROR_MESSAGES.INVALID_FILE_FORMAT);
+    return;
+  }
+
   console.log("reading swagger schema from local file...\n");
 
   const schemaStr = fs.readFileSync(file, "utf8");
-  const schema = convertJsonToString(schemaStr);
+  const schema = file.endsWith("json") ? convertJsonStringToJson(schemaStr) : yaml.load(schemaStr);
 
   if (schema) {
     console.log(LOG_MESSAGE.GENERATING + "\n");

@@ -108,7 +108,7 @@ const addQuoteForKey = (key: string) => {
   return `'${trimmedKey}'${isOptional ? "?" : ""}`;
 };
 
-export const convertJsonToString = (
+export const convertJsonStringToJson = (
   str: unknown,
   errorMsg: string = ERROR_MESSAGES.INVALID_JSON_FILE_ERROR,
   output: (message: string) => void = console.error,
