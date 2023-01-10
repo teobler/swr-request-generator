@@ -6,6 +6,8 @@ export const ERROR_MESSAGES = {
 export const LOG_MESSAGE = {
   GENERATING: "generating...",
   SUCCESSFUL: "successful!!!",
+  READING: "reading swagger schema from local file...\n",
+  GETTING_FROM_REMOTE: (index: number) => `getting swagger schema from client ${index + 1}...\n`,
 };
 export const HTTP_METHODS = ["get", "post", "put", "delete", "patch", "options", "head"];
 export const SLASH = "/";

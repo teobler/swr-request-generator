@@ -56,7 +56,7 @@ const codegen = (schema: OasObject | string) => {
     return;
   }
 
-  console.log("reading swagger schema from local file...\n");
+  console.log(LOG_MESSAGE.READING);
 
   const schemaStr = fs.readFileSync(file, "utf8");
   const schema = file.endsWith("json") ? convertJsonStringToJson(schemaStr) : yaml.load(schemaStr);
@@ -81,7 +81,7 @@ if (clients) {
   });
 
   map(clients, (client, index) => {
-    console.log(`getting swagger schema from client ${index + 1}...\n`);
+    console.log(LOG_MESSAGE.GETTING_FROM_REMOTE(index));
     instance
       .get(client)
       .then((response) => {
