@@ -142,6 +142,10 @@ export class PathResolver {
   private isPathParam = (str: string) => str.startsWith("{");
 
   private resolveOperation = (operation: OperationObject) => {
+    if (!operation.operationId) {
+      console.warn("your request does not have an operation id, generated request method will not has uniq name!")
+    }
+
     const pickParamsByType = this.pickParams(operation.parameters as ParameterObject[] | undefined);
     // axios config header data
     const headerParams = pickParamsByType("header");
