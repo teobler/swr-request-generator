@@ -34,6 +34,8 @@ export interface ICodegenConfig {
   data?: string[];
   clients?: string[];
   fileName?: string;
+  needRequestHook?: boolean;
+  needClient?: boolean;
 }
 
 export type TDictionary<T> = { [key: string]: T };

@@ -10,6 +10,9 @@ import { program } from "commander";
 import { convertJsonStringToJson, prettifyCode } from "./utils/formatters";
 import { ICodegenConfig } from "./types";
 import { OasObject, PathsObject } from "@ts-stack/openapi-spec";
+import { useGetRequest } from "./template/useGetRequest";
+import { useMutationRequest } from "./template/useMutationRequest";
+import { client } from "./template/client";
 
 program.option("-a, --authorization <value>", "authorization header value").parse(process.argv);
 
@@ -24,7 +27,16 @@ const getCodegenConfig = (): ICodegenConfig =>
         clients: [],
       };
 
-const { output = ".output", fileHeaders, timeout, data, clients, fileName } = getCodegenConfig();
+const {
+  output = ".output",
+  fileHeaders,
+  timeout,
+  data,
+  clients,
+  fileName,
+  needRequestHook,
+  needClient,
+} = getCodegenConfig();
 
 const codegen = (schema: OasObject | string) => {
   if (typeof schema === "string") {
@@ -93,4 +105,13 @@ if (clients) {
         console.error(`${error.code}: ${ERROR_MESSAGES.FETCH_CLIENT_FAILED_ERROR}`);
       });
   });
+}
+
+if (needRequestHook) {
+  fs.writeFileSync(path.resolve(output, "./useGetRequest.ts"), prettifyCode(useGetRequest), "utf-8");
+  fs.writeFileSync(path.resolve(output, "./useMutationRequest.ts"), prettifyCode(useMutationRequest), "utf-8");
+}
+
+if (needClient) {
+  fs.writeFileSync(path.resolve(output, "./client.ts"), prettifyCode(client), "utf-8");
 }
