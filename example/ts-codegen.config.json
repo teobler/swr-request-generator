@@ -9,6 +9,8 @@
     "import { SWRMutationConfig, useMutationRequest } from \"src/request/useMutationRequest\";"
   ],
   "clients": [],
-  "data": ["./swagger/openAPI.json"],
-  "fileName": "api"
+  "data": ["./swagger/openAPI.yaml"],
+  "fileName": "api",
+  "needRequestHook": true,
+  "needClient": true
 }

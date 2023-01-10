@@ -1,8 +1,6 @@
 import useSWRMutation, { SWRMutationConfiguration } from "swr/mutation";
 import { AxiosError, AxiosRequestConfig, AxiosResponse, RawAxiosRequestHeaders } from "axios";
 import { client } from "src/request/client";
-// every project may have its own error type, define it your self and import it here
-import { IResponseError } from "src/types";
 
 export type SWRMutationConfig<Request = any, Response = any, Error = any> = SWRMutationConfiguration<
   AxiosResponse<Response>,
@@ -43,29 +41,3 @@ export const useMutationRequest = <
 
   return { trigger, data, isMutating, error, reset };
 };
-
-// draft api here for demo, will delete it after working done
-export const usePayOrder = (
-  { id }: { id: string },
-  mutationConfig?: SWRMutationConfig<PayOrderRequest, PayOrderResponse, IResponseError>,
-  axiosConfig?: AxiosRequestConfig,
-) => {
-  return useMutationRequest<PayOrderRequest, PayOrderResponse, IResponseError>({
-    url: `/orders/${id}/personal-payment/confirmation`,
-    method: "post",
-    headers: {},
-    mutationConfig,
-    axiosConfig,
-  });
-};
-
-interface PayOrderRequest {
-  body: {
-    a: string;
-    b: string;
-  };
-}
-
-interface PayOrderResponse {
-  order: string;
-}

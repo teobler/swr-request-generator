@@ -14,12 +14,12 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-scripts": "5.0.1",
-    "swr": "2.0.0-rc.0",
+    "swr": "2.0.0",
     "typescript": "^4.9.3",
     "web-vitals": "^2.1.4"
   },
   "devDependencies": {
-    "@openapi-integration/swr-request-generator": "1.0.0"
+    "@openapi-integration/swr-request-generator": "1.1.0"
   },
   "scripts": {
     "start": "react-scripts start",
