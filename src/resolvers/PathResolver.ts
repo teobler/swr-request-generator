@@ -143,7 +143,7 @@ export class PathResolver {
 
   private resolveOperation = (operation: OperationObject) => {
     if (!operation.operationId) {
-      console.warn("your request does not have an operation id, generated request method will not has uniq name!")
+      console.warn("\x1b[33myour request does not have an operation id, generated request method will not has uniq name!\n\x1b[0m")
     }
 
     const pickParamsByType = this.pickParams(operation.parameters as ParameterObject[] | undefined);
