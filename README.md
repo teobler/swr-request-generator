@@ -72,13 +72,16 @@ create a new json file named `ts-codegen.config.json` in your project root direc
   "fileHeaders": [
     "/* eslint-disable @typescript-eslint/explicit-module-boundary-types */",
     "/* eslint-disable @typescript-eslint/no-explicit-any */",
-    "import { ISWRConfig, useGetRequest } from './useGetRequest';",
-    "import { IResponseError } from \"../../constants/error\";",
-    "import { client } from \"./client\";"
+    "import { ISWRConfig, useGetRequest } from \"./useGetRequest\"",
+    "import { IResponseError } from \"../types\"",
+    "import { AxiosRequestConfig, AxiosResponse } from \"axios\"",
+    "import { SWRMutationConfig, useMutationRequest } from \"src/request/useMutationRequest\";"
   ],
   "clients": ["https://app.swaggerhub.com/apiproxy/registry/teobler/integration-example/1.0.0"],
   "fileName": "api",
-  "data": ["./examples/openAPI.json"]
+  "data": ["./examples/openAPI.json"],
+  "needRequestHook": true,
+  "needClient": true
 }
 ```
 
@@ -87,7 +90,9 @@ fields meaning:
  - fileName(string): output filename
  - fileHeaders(string[]): strings in this array will be placed in output file beginning
  - clients(string[]): your swagger urls
- - data(string[]): your local swagger json file dirs
+ - data(string[]): your local swagger json/yaml file path
+ - needRequestHook(boolean): if need to generate default request hook(useGetRequest and useMutationRequest)
+ - needClient(boolean): if need to generate default request axios client
 
 ### Run it!
 
