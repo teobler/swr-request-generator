@@ -4,7 +4,6 @@ import useSWR, { SWRResponse } from "swr";
 import { SWRConfiguration } from "swr/_internal";
 import { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 import { client } from "./client";
-import { omit } from "lodash";
 
 export interface IReturn<Data, Error>
   extends Pick<SWRResponse<AxiosResponse<Data>, AxiosError<Error>>, "isValidating" | "error" | "mutate" | "isLoading"> {
@@ -35,6 +34,9 @@ export const useGetRequest = <Data = unknown, Error = unknown>(
   SWRConfig?: ISWRConfig<Data, Error>,
 ): IReturn<Data, Error> => {
   const swrConfig = generateSwrConfigWithShouldFetchProperty(SWRConfig);
+  const shouldFetch = swrConfig.shouldFetch;
+  delete swrConfig.shouldFetch;
+
   const {
     data: response,
     error,
@@ -43,11 +45,9 @@ export const useGetRequest = <Data = unknown, Error = unknown>(
     isLoading,
   } = useSWR<AxiosResponse<Data>, AxiosError<Error>>(
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    () => (swrConfig.shouldFetch ? axiosConfig.url! : null),
+    () => (shouldFetch ? axiosConfig.url! : null),
     () => client(axiosConfig),
-    {
-      ...omit(swrConfig, ["shouldFetch"]),
-    },
+    swrConfig,
   );
   return { data: response && response.data, response, error, isValidating, isLoading, mutate };
 };`;
