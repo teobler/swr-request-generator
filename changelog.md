@@ -1,5 +1,10 @@
 # changelog
 
+## 1.1.0
+- add support for yaml file
+- add generate default request hook and default request client options
+- add warning when input swagger file does not have operation id for a uniq request
+
 ## 1.0.0
 
 ### **Breaking changes**
