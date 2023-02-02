@@ -904,7 +904,15 @@
         },
         "title": "ErrorInfo"
       },
-      "StatusFormData": { "type": "object", "properties": {} }
+      "StatusFormData": { "type": "object", "properties": {} },
+      "Fruit": {
+        "type": "string",
+        "enum": [
+          "Apple",
+          "Orange",
+          "Pear"
+        ]
+      }
     }
   }
 }

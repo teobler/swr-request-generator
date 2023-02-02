@@ -55,14 +55,17 @@ export class DefinitionsResolver {
     });
 
     forEach(schemas, (schema, schemaName) => {
-      return (results[schemaName] = SchemaResolver.of({
+      const result = SchemaResolver.of({
         results,
         schema: schema,
-        key: schemaName,
+        key: schema.enum ? '' : schemaName,
         parentKey: schemaName,
       })
         .resolve()
-        .getSchemaType());
+        .getSchemaType();
+      
+      if (!schema.enum) results[schemaName] = result;
+      return result;
     });
 
     this.resolvedDefinitions = results;
