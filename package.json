@@ -2,28 +2,21 @@
   "name": "@openapi-integration/swr-request-generator",
   "version": "1.1.0",
   "description": "A tool for generating TypeScript code and interface from swagger by using SWR and axios as client.",
-  "main": "lib/index.js",
-  "module": "module/index.js",
-  "types": "src/index.ts",
   "bin": {
     "ts-codegen": "bin/ts-codegen.js"
   },
   "files": [
     "dist",
     "bin",
-    "lib",
-    "module",
-    "src",
     "README.md"
   ],
   "scripts": {
-    "start": "ts-node src/index.ts",
+    "start": "ts-node src/codegen.ts",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:cov": "vitest run --coverage",
-    "build": "rm -rf dist && tsc",
-    "release": "rm -rf lib/ && rm -rf module/ && rollup -c rollup.config.js",
-    "prepare": "npm run build && npm run release && npm test"
+    "build": "rm -rf dist && tsc --project tsconfig.build.json",
+    "prepare": "npm run build && npm test"
   },
   "repository": {
     "type": "git",
@@ -45,22 +38,13 @@
   ],
   "homepage": "https://github.com/teobler/swr-request-generator#readme",
   "devDependencies": {
-    "@babel/core": "7.19.x",
-    "@babel/preset-env": "7.19.x",
-    "@babel/preset-typescript": "7.18.x",
-    "@rollup/plugin-babel": "^6.0.2",
-    "@rollup/plugin-typescript": "^9.0.2",
     "@ts-stack/openapi-spec": "^3.1.5",
     "@types/js-yaml": "^4.0.5",
     "@types/lodash": "4.14.x",
-    "@types/node": "18.11.x",
+    "@types/node": "^18.13.0",
     "@types/prettier": "2.7.x",
     "@vitest/coverage-c8": "^0.28.4",
-    "babel-core": "6.26.x",
-    "babel-plugin-pure-calls-annotation": "0.4.x",
-    "rollup": "3.2.x",
     "ts-node": "10.9.x",
-    "tslib": "2.4.x",
     "typescript": "4.8.x",
     "vitest": "^0.28.4"
   },
