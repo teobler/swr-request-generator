@@ -34,7 +34,7 @@ const expectedPathResolvedData = [
     TReqCookie: {},
     TReqPath: {},
     TReqQuery: {},
-    TResp: "IAttachmentBo",
+    TResp: "AttachmentBo",
     cookieParams: [],
     method: "post",
     operationId: "uploadAttachmentUsingPOST",
@@ -53,7 +53,7 @@ const expectedPathResolvedData = [
       id: "string",
     },
     TReqQuery: {},
-    TResp: "IResource",
+    TResp: "Resource",
     cookieParams: [],
     method: "get",
     operationId: "downloadUsingGET",
@@ -84,7 +84,7 @@ const expectedPathResolvedData = [
   {
     THeader: {},
     TReqBody: {
-      UpdateBookJourneyUsingPOSTRequest: "IStatusFormData",
+      UpdateBookJourneyUsingPOSTRequest: "StatusFormData",
     },
     TReqCookie: {},
     TReqPath: {
@@ -109,7 +109,7 @@ const expectedPathResolvedData = [
       id: "string",
     },
     TReqQuery: {},
-    TResp: "IBookDetailVo",
+    TResp: "BookDetailVo",
     cookieParams: [],
     method: "get",
     operationId: "findBookByIdUsingGET",
@@ -120,7 +120,7 @@ const expectedPathResolvedData = [
   {
     THeader: {},
     TReqBody: {
-      updateBookByIdUsingPUTRequest: "IUpdateBookRequest",
+      updateBookByIdUsingPUTRequest: "UpdateBookRequest",
     },
     TReqCookie: {},
     TReqPath: {
@@ -145,7 +145,7 @@ const expectedPathResolvedData = [
       "roleId?": "string",
       scheduleDate: "number",
     },
-    TResp: "IScheduleVo[]",
+    TResp: "ScheduleVo[]",
     cookieParams: [],
     method: "get",
     operationId: "getScheduleDetailsByDateUsingGET",
@@ -156,7 +156,7 @@ const expectedPathResolvedData = [
   {
     THeader: {},
     TReqBody: {
-      uploadDocumentUsingPOSTRequest: "IFileUploadReq",
+      uploadDocumentUsingPOSTRequest: "FileUploadReq",
     },
     TReqCookie: {},
     TReqPath: {},
@@ -180,7 +180,7 @@ const expectedPathResolvedData = [
     TReqQuery: {
       "from?": "FromFrom#EnumTypeSuffix",
     },
-    TResp: "IDocumentVo",
+    TResp: "DocumentVo",
     cookieParams: [],
     method: "get",
     operationId: "getDocumentByIdUsingGET",
@@ -191,7 +191,7 @@ const expectedPathResolvedData = [
   {
     THeader: {},
     TReqBody: {
-      updatePetsRequest: "ICat | IDog | null",
+      updatePetsRequest: "Cat | Dog | null",
     },
     TReqCookie: {},
     TReqPath: {},
@@ -208,23 +208,23 @@ const expectedPathResolvedData = [
 ];
 
 const expectedRequest = [
-  'export const useUpdateBookJourneyUsingPostRequest = ({journeyId,journeyType}:{\n        \'journeyId\': string;\n\'journeyType\': string;\n      }, mutationConfig?: SWRMutationConfig<IUpdateBookJourneyUsingPostRequest, AxiosResponse<{[key:string]:any}>, IResponseError>, axiosConfig?: AxiosRequestConfig) => \n        useMutationRequest<IUpdateBookJourneyUsingPostRequest, AxiosResponse<{[key:string]:any}>, IResponseError>({\n        url: `/book-journey/${journeyId}/${journeyType}`,\n        method: "post",headers: { "Content-Type": "application/json"},\n        mutationConfig,\n        axiosConfig});',
+  'export const useUpdateBookJourneyUsingPostRequest = ({journeyId,journeyType}:{\n        \'journeyId\': string;\n\'journeyType\': string;\n      }, mutationConfig?: SWRMutationConfig<UpdateBookJourneyUsingPostRequest, AxiosResponse<{[key:string]:any}>, IResponseError>, axiosConfig?: AxiosRequestConfig) => \n        useMutationRequest<UpdateBookJourneyUsingPostRequest, AxiosResponse<{[key:string]:any}>, IResponseError>({\n        url: `/book-journey/${journeyId}/${journeyType}`,\n        method: "post",headers: { "Content-Type": "application/json"},\n        mutationConfig,\n        axiosConfig});',
   "export const useDeleteAttachmentUsingDeleteRequest = ({id,authorities,userId,userName}:{\n        'authorities': string;\n'id': string;\n'userId': string;\n'userName': string;\n      }, mutationConfig?: SWRMutationConfig<undefined, AxiosResponse<undefined>, IResponseError>, axiosConfig?: AxiosRequestConfig) => \n        useMutationRequest<undefined, AxiosResponse<undefined>, IResponseError>({\n        url: `/${id}`,\n        method: \"delete\",headers: { \"Authorities\": authorities, \"User-Id\": userId, \"User-Name\": userName, },\n        mutationConfig,\n        axiosConfig});",
-  'export const useDownloadUsingGetRequest = ({id,accept}:{\n        \'accept\': string;\n\'id\': string;\n      }, SWRConfig?: ISWRConfig<IResource, IResponseError>, axiosConfig?: AxiosRequestConfig) => \n        useGetRequest<IResource, IResponseError>({\n        url: `/${id}`,\n        method: "get",headers: { "Accept": accept, },responseType: "blob",\n        ...axiosConfig}, SWRConfig);',
-  "export const useFindBookByIdUsingGetRequest = ({id}:{\n        'id': string;\n      }, SWRConfig?: ISWRConfig<IBookDetailVo, IResponseError>, axiosConfig?: AxiosRequestConfig) => \n        useGetRequest<IBookDetailVo, IResponseError>({\n        url: `/book/${id}`,\n        method: \"get\",headers: { },\n        ...axiosConfig}, SWRConfig);",
-  "export const useGetDocumentByIdUsingGetRequest = ({documentId,from}:{\n        'documentId': string;\n'from'?: FromFrom;\n      }, SWRConfig?: ISWRConfig<IDocumentVo, IResponseError>, axiosConfig?: AxiosRequestConfig) => \n        useGetRequest<IDocumentVo, IResponseError>({\n        url: `/documents/${documentId}/doc`,\n        method: \"get\",headers: { },\n        params: {\n    from\n    },...axiosConfig}, SWRConfig);",
-  "export const useGetScheduleDetailsByDateUsingGetRequest = ({scheduleDate,roleId}:{\n        'roleId'?: string;\n'scheduleDate': number;\n      }, SWRConfig?: ISWRConfig<IScheduleVo[], IResponseError>, axiosConfig?: AxiosRequestConfig) => \n        useGetRequest<IScheduleVo[], IResponseError>({\n        url: `/schedules`,\n        method: \"get\",headers: { },\n        params: {\n    scheduleDate,\nroleId\n    },...axiosConfig}, SWRConfig);",
-  'export const useUpdateBookByIdUsingPutRequest = ({id}:{\n        \'id\': string;\n      }, mutationConfig?: SWRMutationConfig<IUpdateBookByIdUsingPutRequest, AxiosResponse<undefined>, IResponseError>, axiosConfig?: AxiosRequestConfig) => \n        useMutationRequest<IUpdateBookByIdUsingPutRequest, AxiosResponse<undefined>, IResponseError>({\n        url: `/book/${id}`,\n        method: "put",headers: { "Content-Type": "application/json"},\n        mutationConfig,\n        axiosConfig});',
-  'export const useUpdatePetsRequest = (mutationConfig?: SWRMutationConfig<IUpdatePetsRequest, AxiosResponse<undefined>, IResponseError>, axiosConfig?: AxiosRequestConfig) => \n        useMutationRequest<IUpdatePetsRequest, AxiosResponse<undefined>, IResponseError>({\n        url: `/pets`,\n        method: "patch",headers: { "Content-Type": "application/json"},\n        mutationConfig,\n        axiosConfig});',
-  'export const useUploadAttachmentUsingPostRequest = ({authorities,userId,userName}:{\n        \'authorities\': string;\n\'userId\': string;\n\'userName\': string;\n      }, mutationConfig?: SWRMutationConfig<IUploadAttachmentUsingPostRequest, AxiosResponse<IAttachmentBo>, IResponseError>, axiosConfig?: AxiosRequestConfig) => \n        useMutationRequest<IUploadAttachmentUsingPostRequest, AxiosResponse<IAttachmentBo>, IResponseError>({\n        url: `/`,\n        method: "post",headers: { "Authorities": authorities, "User-Id": userId, "User-Name": userName, "Content-Type": "multipart/form-data"},\n        mutationConfig,\n        axiosConfig});',
-  'export const useUploadDocumentUsingPostRequest = (mutationConfig?: SWRMutationConfig<IUploadDocumentUsingPostRequest, AxiosResponse<undefined>, IResponseError>, axiosConfig?: AxiosRequestConfig) => \n        useMutationRequest<IUploadDocumentUsingPostRequest, AxiosResponse<undefined>, IResponseError>({\n        url: `/documents`,\n        method: "post",headers: { "Content-Type": "multipart/form-data"},\n        mutationConfig,\n        axiosConfig});',
-  "export interface IUpdateBookJourneyUsingPostRequest {\n        body: IStatusFormData;\n        \n      }",
-  "export interface IGetDocumentByIdUsingGetRequest {\n        \n        query: {\n        'from'?: FromFrom;\n      }\n      }",
-  "export interface IGetScheduleDetailsByDateUsingGetRequest {\n        \n        query: {\n        'roleId'?: string;\n'scheduleDate': number;\n      }\n      }",
-  "export interface IUpdateBookByIdUsingPutRequest {\n        body: IUpdateBookRequest;\n        \n      }",
-  "export interface IUpdatePetsRequest {\n        body: ICat | IDog | null;\n        \n      }",
-  "export interface IUploadAttachmentUsingPostRequest {\n        body: FormData;\n        \n      }",
-  "export interface IUploadDocumentUsingPostRequest {\n        body: IFileUploadReq;\n        \n      }",
+  'export const useDownloadUsingGetRequest = ({id,accept}:{\n        \'accept\': string;\n\'id\': string;\n      }, SWRConfig?: ISWRConfig<Resource, IResponseError>, axiosConfig?: AxiosRequestConfig) => \n        useGetRequest<Resource, IResponseError>({\n        url: `/${id}`,\n        method: "get",headers: { "Accept": accept, },responseType: "blob",\n        ...axiosConfig}, SWRConfig);',
+  "export const useFindBookByIdUsingGetRequest = ({id}:{\n        'id': string;\n      }, SWRConfig?: ISWRConfig<BookDetailVo, IResponseError>, axiosConfig?: AxiosRequestConfig) => \n        useGetRequest<BookDetailVo, IResponseError>({\n        url: `/book/${id}`,\n        method: \"get\",headers: { },\n        ...axiosConfig}, SWRConfig);",
+  "export const useGetDocumentByIdUsingGetRequest = ({documentId,from}:{\n        'documentId': string;\n'from'?: FromFrom;\n      }, SWRConfig?: ISWRConfig<DocumentVo, IResponseError>, axiosConfig?: AxiosRequestConfig) => \n        useGetRequest<DocumentVo, IResponseError>({\n        url: `/documents/${documentId}/doc`,\n        method: \"get\",headers: { },\n        params: {\n    from\n    },...axiosConfig}, SWRConfig);",
+  "export const useGetScheduleDetailsByDateUsingGetRequest = ({scheduleDate,roleId}:{\n        'roleId'?: string;\n'scheduleDate': number;\n      }, SWRConfig?: ISWRConfig<ScheduleVo[], IResponseError>, axiosConfig?: AxiosRequestConfig) => \n        useGetRequest<ScheduleVo[], IResponseError>({\n        url: `/schedules`,\n        method: \"get\",headers: { },\n        params: {\n    scheduleDate,\nroleId\n    },...axiosConfig}, SWRConfig);",
+  'export const useUpdateBookByIdUsingPutRequest = ({id}:{\n        \'id\': string;\n      }, mutationConfig?: SWRMutationConfig<UpdateBookByIdUsingPutRequest, AxiosResponse<undefined>, IResponseError>, axiosConfig?: AxiosRequestConfig) => \n        useMutationRequest<UpdateBookByIdUsingPutRequest, AxiosResponse<undefined>, IResponseError>({\n        url: `/book/${id}`,\n        method: "put",headers: { "Content-Type": "application/json"},\n        mutationConfig,\n        axiosConfig});',
+  'export const useUpdatePetsRequest = (mutationConfig?: SWRMutationConfig<UpdatePetsRequest, AxiosResponse<undefined>, IResponseError>, axiosConfig?: AxiosRequestConfig) => \n        useMutationRequest<UpdatePetsRequest, AxiosResponse<undefined>, IResponseError>({\n        url: `/pets`,\n        method: "patch",headers: { "Content-Type": "application/json"},\n        mutationConfig,\n        axiosConfig});',
+  'export const useUploadAttachmentUsingPostRequest = ({authorities,userId,userName}:{\n        \'authorities\': string;\n\'userId\': string;\n\'userName\': string;\n      }, mutationConfig?: SWRMutationConfig<UploadAttachmentUsingPostRequest, AxiosResponse<AttachmentBo>, IResponseError>, axiosConfig?: AxiosRequestConfig) => \n        useMutationRequest<UploadAttachmentUsingPostRequest, AxiosResponse<AttachmentBo>, IResponseError>({\n        url: `/`,\n        method: "post",headers: { "Authorities": authorities, "User-Id": userId, "User-Name": userName, "Content-Type": "multipart/form-data"},\n        mutationConfig,\n        axiosConfig});',
+  'export const useUploadDocumentUsingPostRequest = (mutationConfig?: SWRMutationConfig<UploadDocumentUsingPostRequest, AxiosResponse<undefined>, IResponseError>, axiosConfig?: AxiosRequestConfig) => \n        useMutationRequest<UploadDocumentUsingPostRequest, AxiosResponse<undefined>, IResponseError>({\n        url: `/documents`,\n        method: "post",headers: { "Content-Type": "multipart/form-data"},\n        mutationConfig,\n        axiosConfig});',
+  "export interface UpdateBookJourneyUsingPostRequest {\n        body: StatusFormData;\n        \n      }",
+  "export interface GetDocumentByIdUsingGetRequest {\n        \n        query: {\n        'from'?: FromFrom;\n      }\n      }",
+  "export interface GetScheduleDetailsByDateUsingGetRequest {\n        \n        query: {\n        'roleId'?: string;\n'scheduleDate': number;\n      }\n      }",
+  "export interface UpdateBookByIdUsingPutRequest {\n        body: UpdateBookRequest;\n        \n      }",
+  "export interface UpdatePetsRequest {\n        body: Cat | Dog | null;\n        \n      }",
+  "export interface UploadAttachmentUsingPostRequest {\n        body: FormData;\n        \n      }",
+  "export interface UploadDocumentUsingPostRequest {\n        body: FileUploadReq;\n        \n      }",
   'export enum FromFrom {"AAA"="AAA","BBB"="BBB"}',
 ];
 

@@ -50,7 +50,7 @@ describe("# SchemaResolver", () => {
         .resolve()
         .getSchemaType(),
     ).toEqual({
-      "attachment?": "IScheduleVo",
+      "attachment?": "ScheduleVo",
       "authorName?": "string",
       "createdDate?": "number",
       "fileName?": "string",
@@ -87,7 +87,7 @@ describe("# SchemaResolver", () => {
       })
         .resolve()
         .getSchemaType(),
-    ).toBe("IBookDetailVo");
+    ).toBe("BookDetailVo");
   });
 
   it("should return FormData when schema type is string and format is binary", () => {
@@ -133,10 +133,10 @@ describe("# SchemaResolver", () => {
   });
 
   it.each([
-    [{ $ref: "#/components/schemas/BookDetailVo", type: "array" }, "attachment", "IBookDetailVo[]"],
-    [{ $ref: "#/components/schemas/URLStreamHandler" }, "deserializedFields", "IUrlStreamHandler"],
-    [{ type: "array", items: { $ref: "#/components/schemas/ErrorInfo" } }, "errors", "IErrorInfo[]"],
-    [{ $ref: "#/components/schemas/BookDetailVo" }, undefined, "IBookDetailVo"],
+    [{ $ref: "#/components/schemas/BookDetailVo", type: "array" }, "attachment", "BookDetailVo[]"],
+    [{ $ref: "#/components/schemas/URLStreamHandler" }, "deserializedFields", "UrlStreamHandler"],
+    [{ type: "array", items: { $ref: "#/components/schemas/ErrorInfo" } }, "errors", "ErrorInfo[]"],
+    [{ $ref: "#/components/schemas/BookDetailVo" }, undefined, "BookDetailVo"],
   ])("should return interface name when schema has $ref", (schema: any, key: string | undefined, result: string) => {
     expect(
       SchemaResolver.of({
@@ -189,7 +189,7 @@ describe("# SchemaResolver", () => {
       })
         .resolve()
         .getSchemaType(),
-    ).toBe("ICat | IDog | null");
+    ).toBe("Cat | Dog | null");
   });
 
   it("should resolve mixed refs and string in oneOf with null", () => {
@@ -213,7 +213,7 @@ describe("# SchemaResolver", () => {
       })
         .resolve()
         .getSchemaType(),
-    ).toBe("ICat | string | null");
+    ).toBe("Cat | string | null");
   });
 
   it("should resolve mixed refs and object in oneOf with null", () => {
@@ -240,7 +240,7 @@ describe("# SchemaResolver", () => {
       })
         .resolve()
         .getSchemaType(),
-    ).toBe("ICat | {bark?:boolean,breed?:Breed} | null");
+    ).toBe("Cat | {bark?:boolean,breed?:Breed} | null");
   });
 
   it("should resolve all refs in anyOf with null", () => {
@@ -263,7 +263,7 @@ describe("# SchemaResolver", () => {
       })
         .resolve()
         .getSchemaType(),
-    ).toBe("ICat | IDog | null");
+    ).toBe("Cat | Dog | null");
   });
 
   it("should resolve all refs in allOf with null", () => {
@@ -286,7 +286,7 @@ describe("# SchemaResolver", () => {
       })
         .resolve()
         .getSchemaType(),
-    ).toBe("ICat & IDog | null");
+    ).toBe("Cat & Dog | null");
   });
 
   it("should resolve mixed refs and object in allOf with null", () => {
@@ -313,6 +313,6 @@ describe("# SchemaResolver", () => {
       })
         .resolve()
         .getSchemaType(),
-    ).toBe("ICat & {bark?:boolean,breed?:Breed} | null");
+    ).toBe("Cat & {bark?:boolean,breed?:Breed} | null");
   });
 });

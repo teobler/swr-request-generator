@@ -1,4 +1,4 @@
-import { addPrefixForInterface, arrayToObject, convertJsonStringToJson, toCapitalCase, toTypes } from "../formatters";
+import { arrayToObject, convertJsonStringToJson, toCapitalCase, toTypes } from "../formatters";
 
 describe("# formatters", () => {
   describe("#toCapitalCase", () => {
@@ -17,17 +17,6 @@ describe("# formatters", () => {
       [["a", "b"], { a: "a", b: "b" }],
     ])("should convert array to object", (input, result) => {
       expect(arrayToObject(input)).toEqual(result);
-    });
-  });
-
-  describe("#addPrefixForInterface", () => {
-    it.each([
-      ["xxx", "Ixxx"],
-      ["", "I"],
-      [undefined, "I"],
-      ["undefined", "Iundefined"],
-    ])("should add prefix I for interface", (input, result) => {
-      expect(addPrefixForInterface(input)).toEqual(result);
     });
   });
 

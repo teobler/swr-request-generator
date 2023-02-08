@@ -15,12 +15,6 @@ export const toCapitalCase = (str?: string): string => {
   return `${camelStr.charAt(0).toUpperCase()}${camelStr.slice(1)}`;
 };
 
-const addPrefix =
-  (prefix: string) =>
-  (str: string = "") =>
-    `${prefix}${str}`;
-export const addPrefixForInterface = addPrefix("I");
-
 export const arrayToObject = (arr: any[] = []) => {
   let obj: any = {};
 

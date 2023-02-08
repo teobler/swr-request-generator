@@ -2,7 +2,7 @@ import { camelCase, compact, get, isEmpty, reduce, replace, some } from "lodash"
 import { isNumber } from "./specifications";
 import { IResolvedPath, ReqBody } from "../types";
 import { ENUM_SUFFIX } from "../constants";
-import { addPrefixForInterface, arrayToObject, toCapitalCase, toTypes } from "./formatters";
+import { arrayToObject, toCapitalCase, toTypes } from "./formatters";
 import { RequestBodiesAndParams } from "src/resolvers/PathResolver";
 import { ResolvedDefinitions, ResolvedSchema } from "src/resolvers/DefinitionsResolver";
 
@@ -39,10 +39,7 @@ export const generateRequestBodyAndParams = (
     return [undefined, undefined];
   }
 
-  return [
-    `${addPrefixForInterface(toCapitalCase(operationId))}Request`,
-    { query: requestQueryType, body: requestBodyType },
-  ];
+  return [`${toCapitalCase(operationId)}Request`, { query: requestQueryType, body: requestBodyType }];
 };
 
 export const generateGetRequestArguments = (resolvedPath: IResolvedPath) => {

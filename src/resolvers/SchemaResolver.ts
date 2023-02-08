@@ -1,6 +1,6 @@
 import { get, indexOf, map, reduce } from "lodash";
 import { isArray, isObject } from "../utils/specifications";
-import { addPrefixForInterface, toCapitalCase } from "../utils/formatters";
+import { toCapitalCase } from "../utils/formatters";
 import { ISchemaResolverInputs, SchemaObjectWithNullable, TDictionary } from "../types";
 import { ENUM_SUFFIX } from "../constants";
 import { SchemaObject, SchemaObjectType } from "@ts-stack/openapi-spec";
@@ -103,7 +103,7 @@ export class SchemaResolver {
       return "";
     }
 
-    const refType = addPrefixForInterface(toCapitalCase(this.pickTypeByRef($ref)));
+    const refType = toCapitalCase(this.pickTypeByRef($ref));
     return type === "array" ? `${refType}[]` : refType;
   };
 
@@ -182,9 +182,7 @@ export class SchemaResolver {
 
     if (isArray(items)) {
       return map(items, (item) =>
-        SchemaResolver.of({ results: this.inputs.results, schema: item, key, parentKey })
-          .resolve()
-          .getSchemaType(),
+        SchemaResolver.of({ results: this.inputs.results, schema: item, key, parentKey }).resolve().getSchemaType(),
       );
     }
 

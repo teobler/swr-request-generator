@@ -2,7 +2,7 @@ import { compact, forEach, get, includes, isEmpty } from "lodash";
 import { SchemaResolver } from "./SchemaResolver";
 import { isRequestBody } from "../utils/specifications";
 import { generateEnums } from "../utils/generators";
-import { addPrefixForInterface, toCapitalCase, toTypes } from "../utils/formatters";
+import { toCapitalCase, toTypes } from "../utils/formatters";
 import { ENUM_SUFFIX } from "../constants";
 import { ComponentsObject } from "@ts-stack/openapi-spec";
 
@@ -82,11 +82,11 @@ export class DefinitionsResolver {
         }
 
         if (this.resolvedDefinitions[key] === "object" || isEmpty(this.resolvedDefinitions[key])) {
-          return `export interface ${addPrefixForInterface(toCapitalCase(key))} {[key:string]:any}`;
+          return `export interface ${toCapitalCase(key)} {[key:string]:any}`;
         }
         const val = toTypes(this.resolvedDefinitions[key], "interface");
         if (val) {
-          return `export interface ${addPrefixForInterface(toCapitalCase(key))} ${val}`;
+          return `export interface ${toCapitalCase(key)} ${val}`;
         }
       });
     return compact(arr);
