@@ -234,7 +234,9 @@ export class PathResolver {
         get(responses, "200.content.application/json.schema") ||
         get(responses, "200.content.*/*.schema") ||
         get(responses, "201.content.application/json.schema") ||
-        get(responses, "201.content.*/*.schema"),
+        get(responses, "201.content.*/*.schema") ||
+        get(responses, "default.content.application/json.schema") ||
+        get(responses, "default.content.application/json; charset=UTF-8.schema"),
     })
       .resolve()
       .getSchemaType();

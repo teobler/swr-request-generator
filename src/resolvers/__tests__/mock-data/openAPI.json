@@ -228,15 +228,44 @@
       "post": {
         "operationId": "UpdateBookJourneyUsingPOST",
         "parameters": [
-          { "name": "journeyId", "required": true, "in": "path", "schema": { "type": "string" } },
-          { "name": "journeyType", "required": true, "in": "path", "schema": { "type": "string" } }
+          {
+            "name": "journeyId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "journeyType",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "requestBody": {
           "required": true,
-          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/StatusFormData" } } }
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StatusFormData"
+              }
+            }
+          }
         },
         "responses": {
-          "201": { "description": "", "content": { "application/json": { "schema": { "type": "object" } } } }
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -351,6 +380,16 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "fruit",
+            "in": "query",
+            "description": "fruit",
+            "required": true,
+            "allowEmptyValue": false,
+            "schema": {
+              "$ref": "#/components/schemas/Fruit"
+            }
           }
         ],
         "responses": {
@@ -428,16 +467,6 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/DocumentVO"
-                }
-              }
-            }
-          },
           "401": {
             "description": "Unauthorized"
           },
@@ -446,6 +475,16 @@
           },
           "404": {
             "description": "Not Found"
+          },
+          "default": {
+            "description": "default",
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentVO"
+                }
+              }
+            }
           }
         },
         "deprecated": false
@@ -459,12 +498,23 @@
             "application/json": {
               "schema": {
                 "nullable": true,
-                "oneOf": [{ "$ref": "#/components/schemas/Cat" }, { "$ref": "#/components/schemas/Dog" }]
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/Cat"
+                  },
+                  {
+                    "$ref": "#/components/schemas/Dog"
+                  }
+                ]
               }
             }
           }
         },
-        "responses": { "200": { "description": "Updated" } }
+        "responses": {
+          "200": {
+            "description": "Updated"
+          }
+        }
       }
     }
   },
@@ -478,15 +528,24 @@
       "Dog": {
         "type": "object",
         "properties": {
-          "bark": { "type": "boolean" },
-          "breed": { "type": "string", "enum": ["Dingo", "Husky", "Retriever", "Shepherd"] }
+          "bark": {
+            "type": "boolean"
+          },
+          "breed": {
+            "type": "string",
+            "enum": ["Dingo", "Husky", "Retriever", "Shepherd"]
+          }
         }
       },
       "Cat": {
         "type": "object",
         "properties": {
-          "hunts": { "type": "boolean" },
-          "age": { "type": "integer" }
+          "hunts": {
+            "type": "boolean"
+          },
+          "age": {
+            "type": "integer"
+          }
         }
       },
       "BookDetailVo": {
@@ -513,7 +572,10 @@
             "type": "string",
             "example": ".png"
           },
-          "type": { "type": "string", "enum": ["INTERVENTION_RUN", "CASE_CREATION_DATE"] },
+          "type": {
+            "type": "string",
+            "enum": ["INTERVENTION_RUN", "CASE_CREATION_DATE"]
+          },
           "path": {
             "type": "string",
             "example": "/home"
@@ -904,14 +966,13 @@
         },
         "title": "ErrorInfo"
       },
-      "StatusFormData": { "type": "object", "properties": {} },
+      "StatusFormData": {
+        "type": "object",
+        "properties": {}
+      },
       "Fruit": {
-        "type": "string",
-        "enum": [
-          "Apple",
-          "Orange",
-          "Pear"
-        ]
+        "type": "string,",
+        "enum": ["Apple", "Orange", "Pear"]
       }
     }
   }
