@@ -58,12 +58,13 @@ export class DefinitionsResolver {
       const result = SchemaResolver.of({
         results,
         schema: schema,
-        key: schema.enum ? '' : schemaName,
-        parentKey: schemaName,
+        key: schemaName,
+        // enum is a top level data type, will not have children, parentKey should be empty
+        parentKey: schema.enum ? "" : schemaName,
       })
         .resolve()
         .getSchemaType();
-      
+
       if (!schema.enum) results[schemaName] = result;
       return result;
     });
