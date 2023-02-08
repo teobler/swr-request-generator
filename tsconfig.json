@@ -13,7 +13,8 @@
     "outDir": "dist",
     "baseUrl": ".",
     "rootDir": "src",
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "types": ["vitest/globals"]
   },
-  "exclude": ["node_modules", "example", "**/__tests__/**", "rollup.config.ts"]
+  "exclude": ["node_modules", "example", "rollup.config.ts", "vitest.config.ts"]
 }

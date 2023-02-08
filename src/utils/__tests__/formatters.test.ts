@@ -54,7 +54,7 @@ describe("# formatters", () => {
     });
 
     it("when inputs is an invalid json string, should print error message", () => {
-      const mockPrint = jest.fn();
+      const mockPrint = vitest.fn();
       convertJsonStringToJson("{a: 1}", "some error", mockPrint);
       expect(mockPrint).toHaveBeenCalledWith("some error");
     });
