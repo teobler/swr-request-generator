@@ -11,6 +11,7 @@ export default defineConfig({
       functions: 85,
       statements: 85,
     },
+    reporters: ["text", "html", "clover", "json", "json-summary"],
     include: [
       "src/**/__tests__/*.test.ts",
       "!src/__types__/**",

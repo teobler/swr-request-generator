@@ -1,3 +1,7 @@
+![](https://img.shields.io/github/actions/workflow/status/teobler/swr-request-generator/build.yaml)  
+![](https://img.shields.io/github/license/teobler/swr-request-generator)
+[![cov](https://teobler.github.io/swr-request-generator/badges/coverage.svg)](https://github.com/teobler/swr-request-generator/actions)
+
 # SWR request generator
 
 This tool can generate [SWR](https://swr.vercel.app/) request and related request params and response interface from swagger.

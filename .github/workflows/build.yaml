@@ -3,8 +3,8 @@ on:
   pull_request:
 
 jobs:
-  setup:
-    name: setup
+  build-and-test:
+    name: Build and Test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -35,3 +35,5 @@ jobs:
         run: pnpm run build
       - name: Test
         run: pnpm run test:cov
+      - name: Update Coverage Badge
+        uses: we-cli/coverage-badge-action@main
