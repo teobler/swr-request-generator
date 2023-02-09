@@ -5,6 +5,12 @@ import { defineConfig } from "vitest/config";
 export default defineConfig({
   test: {
     globals: true,
+    coverage: {
+      branches: 85,
+      lines: 85,
+      functions: 85,
+      statements: 85,
+    },
     include: [
       "src/**/__tests__/*.test.ts",
       "!src/__types__/**",
