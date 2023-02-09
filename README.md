@@ -1,6 +1,10 @@
-![](https://img.shields.io/github/actions/workflow/status/teobler/swr-request-generator/build.yaml)  
-![](https://img.shields.io/github/license/teobler/swr-request-generator)
-[![cov](https://teobler.github.io/swr-request-generator/badges/coverage.svg)](https://github.com/teobler/swr-request-generator/actions)
+<div align="center">
+
+<a href="https://github.com/teobler/swr-request-generator/actions">![build](https://img.shields.io/github/actions/workflow/status/teobler/swr-request-generator/build.yaml)</a>
+<a href="https://github.com/teobler/swr-request-generator/actions">![cov](https://teobler.github.io/swr-request-generator/badges/coverage.svg)</a>
+<a href="https://github.com/teobler/swr-request-generator/blob/main/LICENSE">![license](https://img.shields.io/github/license/teobler/swr-request-generator)</a>
+
+</div>
 
 # SWR request generator
 
