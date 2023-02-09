@@ -15,8 +15,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:cov": "vitest run --coverage",
-    "build": "rm -rf dist && tsc --project tsconfig.build.json",
-    "prepare": "npm run build && npm test"
+    "build": "rm -rf dist && tsc --project tsconfig.build.json"
   },
   "repository": {
     "type": "git",
