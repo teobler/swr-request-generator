@@ -1,0 +1,20 @@
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: install node v16
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16
+      - name: pnpm install
+        run: pnpm install
+      - name: build
+        run: pnpm run build
+      - name: test
+        run: pnpm run test:cov
