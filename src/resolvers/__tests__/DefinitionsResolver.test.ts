@@ -1,16 +1,17 @@
 import { DefinitionsResolver } from "../DefinitionsResolver";
 import openAPI from "./mock-data/openAPI.json";
+import { OasObject } from "@ts-stack/openapi-spec";
 
 describe("DefinitionsResolver", () => {
   it("should generate correct definitions", () => {
-    expect(DefinitionsResolver.of((openAPI as any).components).scanDefinitions().resolvedDefinitions).toEqual(
-      expectedDefinitions,
-    );
+    expect(
+      DefinitionsResolver.of((openAPI as unknown as OasObject).components).scanDefinitions().resolvedDefinitions,
+    ).toEqual(expectedDefinitions);
   });
 
   it("should generate correct declarations", () => {
     expect(
-      DefinitionsResolver.of((openAPI as any).components)
+      DefinitionsResolver.of((openAPI as unknown as OasObject).components)
         .scanDefinitions()
         .toDeclarations(),
     ).toEqual(expectedDeclarations);

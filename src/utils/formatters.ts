@@ -2,7 +2,7 @@ import { camelCase, forEach, indexOf, isEmpty, map, pickBy, replace, trimEnd } f
 import prettier from "prettier";
 import { isObject } from "./specifications";
 import { ENUM_SUFFIX, ERROR_MESSAGES } from "../constants";
-import { ReqBody } from "src/types";
+import { IReqBody } from "src/types";
 import { ResolvedSchema } from "src/resolvers/DefinitionsResolver";
 import { redConsole } from "../utils/console";
 
@@ -15,8 +15,8 @@ export const toCapitalCase = (str?: string): string => {
   return `${camelStr.charAt(0).toUpperCase()}${camelStr.slice(1)}`;
 };
 
-export const arrayToObject = (arr: any[] = []) => {
-  let obj: any = {};
+export const arrayToObject = (arr: [string | number] | [] = []) => {
+  const obj: Record<string, string | number> = {};
 
   forEach(arr, (item) => {
     obj[item] = item;
@@ -38,8 +38,7 @@ export const toTypes = (definitions: ResolvedSchema, category: "interface" | "re
     return;
   }
   const convertor = category === "interface" ? addQuoteForKey : convertKeyToCamelCaseAndAddQuote;
-
-  const fieldDefinitionList = map(definitions, (value: any, key: string) => {
+  const fieldDefinitionList = map(definitions, (value: Record<string, string>, key: string) => {
     if (isObject(value) && Object.keys(value).length === 1 && !isEmpty(pickBy(value, (type) => type === "FormData"))) {
       return `${convertor(key)}: FormData`;
     }
@@ -58,7 +57,7 @@ export const toTypes = (definitions: ResolvedSchema, category: "interface" | "re
 };
 
 export const toRequestTypes = (requestTypeObj: {
-  body: ReqBody | undefined;
+  body: IReqBody | undefined;
   query: Record<string, string> | undefined;
 }) => {
   const requestBodyFieldList = map(requestTypeObj.body, (value) => {

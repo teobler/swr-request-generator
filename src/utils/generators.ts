@@ -1,6 +1,6 @@
 import { camelCase, compact, get, isEmpty, reduce, replace, some } from "lodash";
 import { isNumber } from "./specifications";
-import { IResolvedPath, ReqBody } from "../types";
+import { IResolvedPath, IReqBody } from "../types";
 import { ENUM_SUFFIX } from "../constants";
 import { arrayToObject, toCapitalCase, toTypes } from "./formatters";
 import { RequestBodiesAndParams } from "src/resolvers/PathResolver";
@@ -31,9 +31,9 @@ export const generateMutationClientName = (responseType?: ResolvedSchema, reques
   }>, IResponseError>`;
 
 export const generateRequestBodyAndParams = (
-  requestBodyType?: ReqBody,
+  requestBodyType?: IReqBody,
   requestQueryType?: Record<string, string>,
-  operationId: string = "",
+  operationId = "",
 ): RequestBodiesAndParams => {
   if (isEmpty(requestBodyType) && isEmpty(requestQueryType)) {
     return [undefined, undefined];

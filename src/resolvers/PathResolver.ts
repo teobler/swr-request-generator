@@ -1,7 +1,7 @@
 import { SchemaResolver } from "./SchemaResolver";
 import { assign, camelCase, chain, filter, get, isEmpty, map, pick, reduce, sortBy } from "lodash";
 import { HTTP_METHODS, SLASH } from "../constants";
-import { IParameters, IResolvedPath, ReqBody } from "../types";
+import { IParameters, IResolvedPath, IReqBody } from "../types";
 import { isRequestBody, isSchema } from "../utils/specifications";
 import {
   generateEnums,
@@ -27,7 +27,7 @@ import {
 import { yellowConsole } from "../utils/console";
 
 export type RequestBodiesAndParams =
-  | [string, { body: ReqBody | undefined; query: Record<string, string> | undefined }]
+  | [string, { body: IReqBody | undefined; query: Record<string, string> | undefined }]
   | [undefined, undefined];
 
 type RequestTypeOfPathItemObject = Extract<

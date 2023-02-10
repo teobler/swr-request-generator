@@ -1,7 +1,7 @@
 import { get, indexOf, map, reduce } from "lodash";
 import { isArray, isObject } from "../utils/specifications";
 import { toCapitalCase } from "../utils/formatters";
-import { ISchemaResolverInputs, SchemaObjectWithNullable, TDictionary } from "../types";
+import { ISchemaObjectWithNullable, ISchemaResolverInputs } from "../types";
 import { ENUM_SUFFIX } from "../constants";
 import { SchemaObject, SchemaObjectType } from "@ts-stack/openapi-spec";
 import { ResolvedSchema } from "src/resolvers/DefinitionsResolver";
@@ -26,27 +26,32 @@ export class SchemaResolver {
     }
 
     if (schema.oneOf || schema.anyOf) {
-      this.schemaType = this.resolveOneOfAndAnyOf((schema.oneOf || schema.anyOf) as SchemaObjectWithNullable[]);
+      this.schemaType = this.resolveOneOfAndAnyOf((schema.oneOf || schema.anyOf) as ISchemaObjectWithNullable[]);
       this.schemaType = this.resolveNullable().getSchemaType();
       return this;
     }
 
     if (schema.allOf) {
-      this.schemaType = this.resolveAllOf(schema.allOf as SchemaObjectWithNullable[]);
+      this.schemaType = this.resolveAllOf(schema.allOf as ISchemaObjectWithNullable[]);
       this.schemaType = this.resolveNullable().getSchemaType();
       return this;
     }
 
     if (schema.items) {
-      this.schemaType = this.resolveItems(schema.items, schema.type as SchemaObjectType, key, parentKey);
+      this.schemaType = this.resolveItems(
+        schema.items,
+        schema.type as SchemaObjectType,
+        key,
+        parentKey,
+      ) as ResolvedSchema;
       this.schemaType = this.resolveNullable().getSchemaType();
       return this;
     }
 
     if (schema.enum) {
-      const enumKey = this.getEnumName(key!, parentKey);
+      const enumKey = this.getEnumName(key, parentKey);
       // Implicit operation!: Assign enum array definition to results
-      results[enumKey] = schema.enum;
+      results[enumKey] = schema.enum as [string | number];
 
       this.schemaType = enumKey;
       this.schemaType = this.resolveNullable().getSchemaType();
@@ -95,7 +100,7 @@ export class SchemaResolver {
     return this;
   };
 
-  private getEnumName = (propertyName: string, parentKey: string = "") =>
+  private getEnumName = (propertyName?: string, parentKey = "") =>
     `${toCapitalCase(parentKey)}${toCapitalCase(propertyName)}${ENUM_SUFFIX}`;
 
   private resolveRef = ($ref?: string, type?: string): string => {
@@ -107,7 +112,7 @@ export class SchemaResolver {
     return type === "array" ? `${refType}[]` : refType;
   };
 
-  private resolveOneOfAndAnyOf = (oneOfOrAnyOf: SchemaObjectWithNullable[]) => {
+  private resolveOneOfAndAnyOf = (oneOfOrAnyOf: ISchemaObjectWithNullable[]) => {
     return oneOfOrAnyOf
       .map((schema) => {
         const schemaType = SchemaResolver.of({ results: {}, schema })
@@ -121,7 +126,7 @@ export class SchemaResolver {
       .replace(/"/g, "");
   };
 
-  private resolveAllOf = (allOf: SchemaObjectWithNullable[]) => {
+  private resolveAllOf = (allOf: ISchemaObjectWithNullable[]) => {
     return allOf
       .map((schema) => {
         const schemaType = SchemaResolver.of({ results: {}, schema })
@@ -163,7 +168,7 @@ export class SchemaResolver {
     type?: SchemaObjectType,
     key?: string,
     parentKey?: string,
-  ): any => {
+  ): Record<string, never> | string | ResolvedSchema | ResolvedSchema[] => {
     if (!items) {
       return {};
     }
@@ -172,7 +177,7 @@ export class SchemaResolver {
 
     if (type === "array") {
       if (child) {
-        return `${this.resolveItems(child, (items as any).type, key, parentKey)}[]`;
+        return `${this.resolveItems(child, (items as SchemaObject).type as SchemaObjectType, key, parentKey)}[]`;
       }
 
       if (!get(items, "$ref")) {
@@ -197,7 +202,7 @@ export class SchemaResolver {
     } = {},
     required: string[] = [],
     parentKey?: string,
-  ): TDictionary<any> =>
+  ): Record<string, string> =>
     reduce(
       properties,
       (o, v, k) => ({
