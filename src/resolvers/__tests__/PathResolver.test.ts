@@ -18,7 +18,9 @@ describe("PathResolver", () => {
   });
 
   it("should get correct content type for different operation id", () => {
-    expect(PathResolver.of((openAPI as unknown as OasObject).paths!).resolve().contentType).toEqual(expectedContentType);
+    expect(PathResolver.of((openAPI as unknown as OasObject).paths!).resolve().contentType).toEqual(
+      expectedContentType,
+    );
   });
 });
 
