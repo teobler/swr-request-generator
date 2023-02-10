@@ -1,3 +1,3 @@
 #!/usr/bin/env node
 
-require("../dist/codegen");
+require("../dist/index");
