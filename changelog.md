@@ -1,5 +1,25 @@
 # changelog
 
+## 1.2.0
+
+### **Breaking changes**
+- remove useless prefix 'I' for generated interface [#10](https://github.com/teobler/swr-request-generator/issues/10)
+
+### Feature & Fix
+- fix creating excess definitions for top-level enum
+  schemas [#9](https://github.com/teobler/swr-request-generator/issues/9) [@lorissikora](https://github.com/lorissikora)
+- make console warning and error more focusable [#5](https://github.com/teobler/swr-request-generator/issues/5)
+- support `default` fields for response schema, and support `application/json; charset=UTF-8.schema` media query for it [#7](https://github.com/teobler/swr-request-generator/issues/7)
+
+### Source Code
+- add [GitHub actions](https://github.com/teobler/swr-request-generator/actions) for CI
+- migrate [jest](https://jestjs.io/) to [vitest](https://vitest.dev/)
+- remove [rollup](https://rollupjs.org/) and use [tsup](https://tsup.egoist.dev/) for building [#11](https://github.com/teobler/swr-request-generator/issues/11)
+- add [eslint](https://eslint.org/)
+- upgrade all dependencies to latest
+
+Thanks for [@lorissikora](https://github.com/lorissikora) help! 
+
 ## 1.1.0
 - add support for yaml file
 - add generate default request hook and default request client options
