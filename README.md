@@ -6,6 +6,19 @@
 
 </div>
 
+- [SWR request generator](#swr-request-generator)
+- [Dependencies](#dependencies)
+- [How to use](#how-to-use)
+    * [install](#install)
+    * [Configuration](#configuration)
+        + [script](#script)
+        + [config file](#config-file)
+        + [Run it!](#run-it-)
+    * [example](#example)
+        + [tip](#tip)
+    * [changelog](#changelog)
+- [Appreciation](#appreciation)
+
 # SWR request generator
 
 This tool can generate [SWR](https://swr.vercel.app/) request and related request params and response interface from swagger.
@@ -140,3 +153,7 @@ You can use your own wrapper functions and error types as well, just ensure your
 
 ## changelog
 [changelog](changelog.md)
+
+# Appreciation
+
+I would be very grateful if you could give this project a star!
