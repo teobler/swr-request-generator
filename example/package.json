@@ -19,7 +19,8 @@
     "web-vitals": "^2.1.4"
   },
   "devDependencies": {
-    "@openapi-integration/swr-request-generator": "1.1.0"
+    "@openapi-integration/swr-request-generator": "1.2.0",
+    "msw": "^1.0.1"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -45,5 +46,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "msw": {
+    "workerDirectory": "public"
   }
 }

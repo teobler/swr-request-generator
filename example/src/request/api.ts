@@ -19,13 +19,13 @@ export const useUpdateBookJourneyUsingPostRequest = (
     journeyType: string;
   },
   mutationConfig?: SWRMutationConfig<
-    IUpdateBookJourneyUsingPostRequest,
+    UpdateBookJourneyUsingPostRequest,
     AxiosResponse<{ [key: string]: any }>,
     IResponseError
   >,
   axiosConfig?: AxiosRequestConfig,
 ) =>
-  useMutationRequest<IUpdateBookJourneyUsingPostRequest, AxiosResponse<{ [key: string]: any }>, IResponseError>({
+  useMutationRequest<UpdateBookJourneyUsingPostRequest, AxiosResponse<{ [key: string]: any }>, IResponseError>({
     url: `/book-journey/${journeyId}/${journeyType}`,
     method: "post",
     headers: { "Content-Type": "application/json" },
@@ -64,10 +64,10 @@ export const useDownloadUsingGetRequest = (
     accept: string;
     id: string;
   },
-  SWRConfig?: ISWRConfig<IResource, IResponseError>,
+  SWRConfig?: ISWRConfig<Resource, IResponseError>,
   axiosConfig?: AxiosRequestConfig,
 ) =>
-  useGetRequest<IResource, IResponseError>(
+  useGetRequest<Resource, IResponseError>(
     {
       url: `/${id}`,
       method: "get",
@@ -84,10 +84,10 @@ export const useFindBookByIdUsingGetRequest = (
   }: {
     id: string;
   },
-  SWRConfig?: ISWRConfig<IBookDetailVo, IResponseError>,
+  SWRConfig?: ISWRConfig<BookDetailVo, IResponseError>,
   axiosConfig?: AxiosRequestConfig,
 ) =>
-  useGetRequest<IBookDetailVo, IResponseError>(
+  useGetRequest<BookDetailVo, IResponseError>(
     {
       url: `/book/${id}`,
       method: "get",
@@ -105,10 +105,10 @@ export const useGetDocumentByIdUsingGetRequest = (
     documentId: string;
     from?: FromFrom;
   },
-  SWRConfig?: ISWRConfig<IDocumentVo, IResponseError>,
+  SWRConfig?: ISWRConfig<DocumentVo, IResponseError>,
   axiosConfig?: AxiosRequestConfig,
 ) =>
-  useGetRequest<IDocumentVo, IResponseError>(
+  useGetRequest<DocumentVo, IResponseError>(
     {
       url: `/documents/${documentId}/doc`,
       method: "get",
@@ -125,14 +125,16 @@ export const useGetScheduleDetailsByDateUsingGetRequest = (
   {
     scheduleDate,
     roleId,
+    fruit,
   }: {
+    fruit: Fruit;
     roleId?: string;
     scheduleDate: number;
   },
-  SWRConfig?: ISWRConfig<IScheduleVo[], IResponseError>,
+  SWRConfig?: ISWRConfig<ScheduleVo[], IResponseError>,
   axiosConfig?: AxiosRequestConfig,
 ) =>
-  useGetRequest<IScheduleVo[], IResponseError>(
+  useGetRequest<ScheduleVo[], IResponseError>(
     {
       url: `/schedules`,
       method: "get",
@@ -140,6 +142,7 @@ export const useGetScheduleDetailsByDateUsingGetRequest = (
       params: {
         scheduleDate,
         roleId,
+        fruit,
       },
       ...axiosConfig,
     },
@@ -152,10 +155,10 @@ export const useUpdateBookByIdUsingPutRequest = (
   }: {
     id: string;
   },
-  mutationConfig?: SWRMutationConfig<IUpdateBookByIdUsingPutRequest, AxiosResponse<undefined>, IResponseError>,
+  mutationConfig?: SWRMutationConfig<UpdateBookByIdUsingPutRequest, AxiosResponse<undefined>, IResponseError>,
   axiosConfig?: AxiosRequestConfig,
 ) =>
-  useMutationRequest<IUpdateBookByIdUsingPutRequest, AxiosResponse<undefined>, IResponseError>({
+  useMutationRequest<UpdateBookByIdUsingPutRequest, AxiosResponse<undefined>, IResponseError>({
     url: `/book/${id}`,
     method: "put",
     headers: { "Content-Type": "application/json" },
@@ -164,10 +167,10 @@ export const useUpdateBookByIdUsingPutRequest = (
   });
 
 export const useUpdatePetsRequest = (
-  mutationConfig?: SWRMutationConfig<IUpdatePetsRequest, AxiosResponse<undefined>, IResponseError>,
+  mutationConfig?: SWRMutationConfig<UpdatePetsRequest, AxiosResponse<undefined>, IResponseError>,
   axiosConfig?: AxiosRequestConfig,
 ) =>
-  useMutationRequest<IUpdatePetsRequest, AxiosResponse<undefined>, IResponseError>({
+  useMutationRequest<UpdatePetsRequest, AxiosResponse<undefined>, IResponseError>({
     url: `/pets`,
     method: "patch",
     headers: { "Content-Type": "application/json" },
@@ -175,7 +178,19 @@ export const useUpdatePetsRequest = (
     axiosConfig,
   });
 
-export const useUploadAttachmentUsingPostRequest = (
+export const useUploadDocumentUsingPostRequest = (
+  mutationConfig?: SWRMutationConfig<UploadDocumentUsingPostRequest, AxiosResponse<undefined>, IResponseError>,
+  axiosConfig?: AxiosRequestConfig,
+) =>
+  useMutationRequest<UploadDocumentUsingPostRequest, AxiosResponse<undefined>, IResponseError>({
+    url: `/documents`,
+    method: "post",
+    headers: { "Content-Type": "multipart/form-data" },
+    mutationConfig,
+    axiosConfig,
+  });
+
+export const useRequest = (
   {
     authorities,
     userId,
@@ -185,65 +200,49 @@ export const useUploadAttachmentUsingPostRequest = (
     userId: string;
     userName: string;
   },
-  mutationConfig?: SWRMutationConfig<IUploadAttachmentUsingPostRequest, AxiosResponse<IAttachmentBo>, IResponseError>,
+  mutationConfig?: SWRMutationConfig<Request, AxiosResponse<AttachmentBo>, IResponseError>,
   axiosConfig?: AxiosRequestConfig,
 ) =>
-  useMutationRequest<IUploadAttachmentUsingPostRequest, AxiosResponse<IAttachmentBo>, IResponseError>({
+  useMutationRequest<Request, AxiosResponse<AttachmentBo>, IResponseError>({
     url: `/`,
     method: "post",
-    headers: {
-      Authorities: authorities,
-      "User-Id": userId,
-      "User-Name": userName,
-      "Content-Type": "multipart/form-data",
-    },
+    headers: { Authorities: authorities, "User-Id": userId, "User-Name": userName, "Content-Type": "application/json" },
     mutationConfig,
     axiosConfig,
   });
 
-export const useUploadDocumentUsingPostRequest = (
-  mutationConfig?: SWRMutationConfig<IUploadDocumentUsingPostRequest, AxiosResponse<undefined>, IResponseError>,
-  axiosConfig?: AxiosRequestConfig,
-) =>
-  useMutationRequest<IUploadDocumentUsingPostRequest, AxiosResponse<undefined>, IResponseError>({
-    url: `/documents`,
-    method: "post",
-    headers: { "Content-Type": "multipart/form-data" },
-    mutationConfig,
-    axiosConfig,
-  });
-
-export interface IUpdateBookJourneyUsingPostRequest {
-  body: IStatusFormData;
+export interface UpdateBookJourneyUsingPostRequest {
+  body: StatusFormData;
 }
 
-export interface IGetDocumentByIdUsingGetRequest {
+export interface GetDocumentByIdUsingGetRequest {
   query: {
     from?: FromFrom;
   };
 }
 
-export interface IGetScheduleDetailsByDateUsingGetRequest {
+export interface GetScheduleDetailsByDateUsingGetRequest {
   query: {
+    fruit: Fruit;
     roleId?: string;
     scheduleDate: number;
   };
 }
 
-export interface IUpdateBookByIdUsingPutRequest {
-  body: IUpdateBookRequest;
+export interface UpdateBookByIdUsingPutRequest {
+  body: UpdateBookRequest;
 }
 
-export interface IUpdatePetsRequest {
-  body: ICat | IDog | null;
+export interface UpdatePetsRequest {
+  body: Cat | Dog | null;
 }
 
-export interface IUploadAttachmentUsingPostRequest {
+export interface UploadDocumentUsingPostRequest {
+  body: FileUploadReq;
+}
+
+export interface Request {
   body: FormData;
-}
-
-export interface IUploadDocumentUsingPostRequest {
-  body: IFileUploadReq;
 }
 
 export enum FromFrom {
@@ -251,7 +250,7 @@ export enum FromFrom {
   "BBB" = "BBB",
 }
 
-export interface IAttachmentBo {
+export interface AttachmentBo {
   authorName?: string;
   createdDate?: number;
   fileName?: string;
@@ -260,9 +259,9 @@ export interface IAttachmentBo {
   path?: string;
 }
 
-export interface IBookDetailVo {
+export interface BookDetailVo {
   CreatedDate?: number;
-  attachment?: IScheduleVo;
+  attachment?: ScheduleVo;
   author_name?: string;
   filename?: string;
   id?: string;
@@ -276,23 +275,23 @@ export enum BookDetailVoType {
   "CASE_CREATION_DATE" = "CASE_CREATION_DATE",
 }
 
-export interface IBookVo {
+export interface BookVo {
   address?: string | null;
   price?: string;
 }
 
-export interface IBookingResponse {
-  data: IDocumentVo;
-  errors?: IErrorInfo[];
+export interface BookingResponse {
+  data: DocumentVo;
+  errors?: ErrorInfo[];
 }
 
-export interface ICat {
+export interface Cat {
   age?: number;
   hunts?: boolean;
 }
 
-export interface IDocumentVo {
-  attachment?: IBookDetailVo;
+export interface DocumentVo {
+  attachment?: BookDetailVo;
   authorName?: string;
   createdDate?: number;
   id?: string;
@@ -300,7 +299,7 @@ export interface IDocumentVo {
   title?: string;
 }
 
-export interface IDog {
+export interface Dog {
   bark?: boolean;
   breed?: DogBreed;
 }
@@ -312,15 +311,15 @@ export enum DogBreed {
   "Shepherd" = "Shepherd",
 }
 
-export interface IErrorInfo {
+export interface ErrorInfo {
   errorMessage?: string;
 }
 
-export interface IFile {
+export interface File {
   absolute?: boolean;
-  absoluteFile?: IFile;
+  absoluteFile?: File;
   absolutePath?: string;
-  canonicalFile?: IFile;
+  canonicalFile?: File;
   canonicalPath?: string;
   directory?: boolean;
   executable?: boolean;
@@ -330,7 +329,7 @@ export interface IFile {
   lastModified?: number;
   name?: string;
   parent?: string;
-  parentFile?: IFile;
+  parentFile?: File;
   path?: string;
   readable?: boolean;
   totalSpace?: number;
@@ -338,36 +337,42 @@ export interface IFile {
   writable?: boolean;
 }
 
-export interface IFileUploadReq {
+export interface FileUploadReq {
   file: FormData;
 }
 
-export interface IInputStream {
+export enum Fruit {
+  "Apple" = "Apple",
+  "Orange" = "Orange",
+  "Pear" = "Pear",
+}
+
+export interface InputStream {
   [key: string]: any;
 }
 
-export interface IResource {
+export interface Resource {
   description?: string;
-  file?: IFile;
+  file?: File;
   filename?: string;
-  inputStream?: IInputStream;
+  inputStream?: InputStream;
   open?: boolean;
   readable?: boolean;
-  uri?: IUri;
-  url?: IUrl;
+  uri?: Uri;
+  url?: Url;
 }
 
-export interface IScheduleVo {
-  schedules?: IBookVo[][] | null;
+export interface ScheduleVo {
+  schedules?: BookVo[][] | null;
   shiftId?: string;
   team?: string;
 }
 
-export interface IStatusFormData {
+export interface StatusFormData {
   [key: string]: any;
 }
 
-export interface IUri {
+export interface Uri {
   absolute?: boolean;
   authority?: string;
   fragment?: string;
@@ -387,11 +392,11 @@ export interface IUri {
   userInfo?: string;
 }
 
-export interface IUrl {
+export interface Url {
   authority?: string;
   content?: { [key: string]: any };
   defaultPort?: number;
-  deserializedFields?: IUrlStreamHandler;
+  deserializedFields?: UrlStreamHandler;
   file?: string;
   host?: string;
   path?: string;
@@ -403,11 +408,11 @@ export interface IUrl {
   userInfo?: string;
 }
 
-export interface IUrlStreamHandler {
+export interface UrlStreamHandler {
   [key: string]: any;
 }
 
-export interface IUpdateBookRequest {
+export interface UpdateBookRequest {
   birthCountry?: string;
   citizenship?: string;
   dateOfBirth?: number;

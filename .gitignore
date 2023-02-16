@@ -1,7 +1,6 @@
 node_modules/
 *.jsx
 *.js.map
-public/
 coverage/
 .tmp/
 
@@ -16,6 +15,4 @@ module/
 
 # example folder
 /example/node_modules/
-/example/public/
-/example/public/coverage/
 /example/.DS_Store

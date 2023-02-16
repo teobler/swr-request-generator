@@ -20,7 +20,6 @@ paths:
       tags:
         - mock-controller
       summary: uploadAttachment
-      operationId: uploadAttachmentUsingPOST
       parameters:
         - name: Authorities
           in: header
@@ -264,6 +263,13 @@ paths:
           example: '111111111'
           schema:
             type: string
+        - name: fruit
+          in: query
+          description: fruit
+          required: true
+          allowEmptyValue: false
+          schema:
+            "$ref": "#/components/schemas/Fruit"
       responses:
         '200':
           description: OK
@@ -316,10 +322,10 @@ paths:
           schema:
             type: string
       responses:
-        '200':
-          description: OK
+        default:
+          description: default
           content:
-            "*/*":
+            "application/json; charset=UTF-8":
               schema:
                 "$ref": "#/components/schemas/DocumentVO"
         '401':
@@ -665,3 +671,6 @@ components:
     StatusFormData:
       type: object
       properties: {}
+    Fruit:
+      type: string,
+      enum: ["Apple","Orange","Pear"]
