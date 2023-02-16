@@ -38,6 +38,12 @@ const expectedDefinitions = {
     "type?": "BookDetailVoType#EnumTypeSuffix",
   },
   "BookDetailVoType#EnumTypeSuffix": ["INTERVENTION_RUN", "CASE_CREATION_DATE"],
+  AuthenticationData: {
+    csrfToken: "string",
+    impersonationDetails: "Cat",
+    ssoUrl: "string",
+    user: "Dog",
+  },
   BookVO: {
     "address?": "string | null",
     "price?": "string",
@@ -159,6 +165,7 @@ const expectedDefinitions = {
 
 const expectedDeclarations = [
   "export interface AttachmentBo {\n        'authorName'?: string;\n'createdDate'?: number;\n'fileName'?: string;\n'id'?: string;\n'mimeType'?: string;\n'path'?: string;\n      }",
+  "export interface AuthenticationData {\n        'csrfToken': string;\n'impersonationDetails': Cat;\n'ssoUrl': string;\n'user': Dog;\n      }",
   "export interface BookDetailVo {\n        'CreatedDate'?: number;\n'attachment'?: ScheduleVo;\n'author_name'?: string;\n'filename'?: string;\n'id'?: string;\n'mimeType'?: string;\n'path'?: string;\n'type'?: BookDetailVoType;\n      }",
   'export enum BookDetailVoType {"INTERVENTION_RUN"="INTERVENTION_RUN","CASE_CREATION_DATE"="CASE_CREATION_DATE"}',
   "export interface BookVo {\n        'address'?: string | null;\n'price'?: string;\n      }",

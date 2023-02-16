@@ -118,3 +118,15 @@ export const convertJsonStringToJson = (
     return;
   }
 };
+
+export const convertResponseTypeObject = (responseType?: ResolvedSchema) => {
+  if (isObject(responseType)) {
+    return JSON.stringify(responseType).replace(/"/g, "");
+  }
+
+  if (responseType === "") {
+    return undefined;
+  }
+
+  return responseType;
+};

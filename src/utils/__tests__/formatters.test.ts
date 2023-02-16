@@ -1,4 +1,10 @@
-import { arrayToObject, convertJsonStringToJson, toCapitalCase, toTypes } from "../formatters";
+import {
+  arrayToObject,
+  convertJsonStringToJson,
+  convertResponseTypeObject,
+  toCapitalCase,
+  toTypes,
+} from "../formatters";
 
 describe("# formatters", () => {
   describe("#toCapitalCase", () => {
@@ -16,7 +22,7 @@ describe("# formatters", () => {
       [["a"], { a: "a" }],
       [["a", "b"], { a: "a", b: "b" }],
     ])("should convert array to object", (input, result) => {
-      expect(arrayToObject(input)).toEqual(result);
+      expect(arrayToObject(input as any)).toEqual(result);
     });
   });
 
@@ -57,6 +63,16 @@ describe("# formatters", () => {
       const mockPrint = vitest.fn();
       convertJsonStringToJson("{a: 1}", "some error", mockPrint);
       expect(mockPrint).toHaveBeenCalledWith("some error");
+    });
+  });
+
+  describe("# convertResponseTypeObject", () => {
+    it.each([
+      ["", undefined],
+      [undefined, undefined],
+      [{ "data?": "SomeOtherSchema[]", key: "value" }, "{data?:SomeOtherSchema[],key:value}"],
+    ])("should convert resolved responseType to ts format string", (responseType, result) => {
+      expect(convertResponseTypeObject(responseType)).toEqual(result);
     });
   });
 });

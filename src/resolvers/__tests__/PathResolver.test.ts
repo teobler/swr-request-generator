@@ -26,6 +26,23 @@ describe("PathResolver", () => {
 
 const expectedPathResolvedData = [
   {
+    THeader: {},
+    TReqBody: {},
+    TReqCookie: {},
+    TReqPath: {},
+    TReqQuery: {},
+    TResp: {
+      "data?": "AuthenticationData[]",
+      "others?": "string",
+    },
+    cookieParams: [],
+    method: "get",
+    operationId: "userProfileInformation",
+    pathParams: [],
+    queryParams: [],
+    url: "/user/profile-information",
+  },
+  {
     THeader: {
       Authorities: "string",
       "User-Id": "string",
@@ -224,6 +241,11 @@ const expectedRequest = [
   'export const useUpdatePetsRequest = (mutationConfig?: SWRMutationConfig<UpdatePetsRequest, AxiosResponse<undefined>, IResponseError>, axiosConfig?: AxiosRequestConfig) => \n        useMutationRequest<UpdatePetsRequest, AxiosResponse<undefined>, IResponseError>({\n        url: `/pets`,\n        method: "patch",headers: { "Content-Type": "application/json"},\n        mutationConfig,\n        axiosConfig});',
   'export const useUploadAttachmentUsingPostRequest = ({authorities,userId,userName}:{\n        \'authorities\': string;\n\'userId\': string;\n\'userName\': string;\n      }, mutationConfig?: SWRMutationConfig<UploadAttachmentUsingPostRequest, AxiosResponse<AttachmentBo>, IResponseError>, axiosConfig?: AxiosRequestConfig) => \n        useMutationRequest<UploadAttachmentUsingPostRequest, AxiosResponse<AttachmentBo>, IResponseError>({\n        url: `/`,\n        method: "post",headers: { "Authorities": authorities, "User-Id": userId, "User-Name": userName, "Content-Type": "multipart/form-data"},\n        mutationConfig,\n        axiosConfig});',
   'export const useUploadDocumentUsingPostRequest = (mutationConfig?: SWRMutationConfig<UploadDocumentUsingPostRequest, AxiosResponse<undefined>, IResponseError>, axiosConfig?: AxiosRequestConfig) => \n        useMutationRequest<UploadDocumentUsingPostRequest, AxiosResponse<undefined>, IResponseError>({\n        url: `/documents`,\n        method: "post",headers: { "Content-Type": "multipart/form-data"},\n        mutationConfig,\n        axiosConfig});',
+  `export const useUserProfileInformationRequest = (SWRConfig?: ISWRConfig<{data?:AuthenticationData[],others?:string}, IResponseError>, axiosConfig?: AxiosRequestConfig) => 
+        useGetRequest<{data?:AuthenticationData[],others?:string}, IResponseError>({
+        url: \`/user/profile-information\`,
+        method: "get",headers: { },
+        ...axiosConfig}, SWRConfig);`,
   "export interface UpdateBookJourneyUsingPostRequest {\n        body: StatusFormData;\n        \n      }",
   "export interface GetDocumentByIdUsingGetRequest {\n        \n        query: {\n        'from'?: FromFrom;\n      }\n      }",
   "export interface GetScheduleDetailsByDateUsingGetRequest {\n        \n        query: {\n        'fruit': Fruit;\n'roleId'?: string;\n'scheduleDate': number;\n      }\n      }",

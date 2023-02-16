@@ -22,6 +22,36 @@
     }
   ],
   "paths": {
+    "/user/profile-information": {
+      "get": {
+        "tags": ["user"],
+        "summary": "Returns information about the current authentication status and user",
+        "operationId": "userProfileInformation",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/AuthenticationData"
+                      }
+                    },
+                    "others": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/": {
       "post": {
         "tags": ["mock-controller"],
@@ -525,6 +555,24 @@
   ],
   "components": {
     "schemas": {
+      "AuthenticationData": {
+        "type": "object",
+        "properties": {
+          "csrfToken": {
+            "type": "string"
+          },
+          "user": {
+            "$ref": "#/components/schemas/Dog"
+          },
+          "ssoUrl": {
+            "type": "string"
+          },
+          "impersonationDetails": {
+            "$ref": "#/components/schemas/Cat"
+          }
+        },
+        "required": ["csrfToken", "user", "ssoUrl", "impersonationDetails"]
+      },
       "Dog": {
         "type": "object",
         "properties": {
