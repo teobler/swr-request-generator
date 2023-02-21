@@ -1,5 +1,15 @@
 # changelog
 
+## 1.2.1
+### fixes
+- generate nested response type error #14
+
+### example
+- add full example #13
+
+### chore
+- add toc for readme
+
 ## 1.2.0
 
 ### **Breaking changes**
