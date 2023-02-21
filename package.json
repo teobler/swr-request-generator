@@ -1,6 +1,6 @@
 {
   "name": "@openapi-integration/swr-request-generator",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "A tool for generating TypeScript code and interface from swagger by using SWR and axios as client.",
   "bin": {
     "ts-codegen": "bin/ts-codegen.js"
@@ -16,7 +16,9 @@
     "test:watch": "vitest",
     "test:cov": "vitest run --coverage",
     "lint": "eslint src",
-    "build": "tsup"
+    "build": "tsup",
+    "preversion": "pnpm run test && pnpm run lint && pnpm run build",
+    "release": "bumpp && pnpm publish"
   },
   "repository": {
     "type": "git",
@@ -46,6 +48,7 @@
     "@typescript-eslint/eslint-plugin": "^5.51.0",
     "@typescript-eslint/parser": "^5.51.0",
     "@vitest/coverage-c8": "^0.28.4",
+    "bumpp": "^8.2.1",
     "eslint": "^8.33.0",
     "eslint-config-prettier": "^8.6.0",
     "eslint-plugin-prettier": "^4.2.1",
