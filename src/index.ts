@@ -8,7 +8,7 @@ import { map } from "lodash";
 import { ERROR_MESSAGES, FILE_TIP, LOG_MESSAGE } from "./constants";
 import { program } from "commander";
 import { convertJsonStringToJson, prettifyCode } from "./utils/formatters";
-import { ICodegenConfig } from "./types";
+import { CodegenConfig } from "./types";
 import { OasObject, PathsObject } from "@ts-stack/openapi-spec";
 import { useGetRequest } from "./template/useGetRequest";
 import { useMutationRequest } from "./template/useMutationRequest";
@@ -19,7 +19,7 @@ program.option("-a, --authorization <value>", "authorization header value").pars
 
 const codegenConfigPath = path.resolve("ts-codegen.config.json");
 
-const getCodegenConfig = (): ICodegenConfig =>
+const getCodegenConfig = (): CodegenConfig =>
   fs.existsSync(codegenConfigPath)
     ? require(codegenConfigPath)
     : {

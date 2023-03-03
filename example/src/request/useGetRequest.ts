@@ -5,21 +5,21 @@ import { SWRConfiguration } from "swr/_internal";
 import { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 import { client } from "./client";
 
-export interface IReturn<Data, Error>
+export interface Return<Data, Error>
   extends Pick<SWRResponse<AxiosResponse<Data>, AxiosError<Error>>, "isValidating" | "error" | "mutate" | "isLoading"> {
   data: Data | undefined;
   response: AxiosResponse<Data> | undefined;
 }
 
-export interface ISWRConfig<Data = unknown, Error = unknown>
+export interface SWRConfig<Data = unknown, Error = unknown>
   extends Omit<SWRConfiguration<AxiosResponse<Data>, AxiosError<Error>>, "onSuccess"> {
   onSuccess?: (response: AxiosResponse<Data>, key: string) => void;
   shouldFetch?: boolean;
 }
 
 export const generateSwrConfigWithShouldFetchProperty = <Data, Error>(
-  SWRConfig?: ISWRConfig<Data, Error>,
-): ISWRConfig<Data, Error> =>
+  SWRConfig?: SWRConfig<Data, Error>,
+): SWRConfig<Data, Error> =>
   SWRConfig
     ? !SWRConfig.shouldFetch
       ? SWRConfig
@@ -31,8 +31,8 @@ export const generateSwrConfigWithShouldFetchProperty = <Data, Error>(
 
 export const useGetRequest = <Data = unknown, Error = unknown>(
   axiosConfig: AxiosRequestConfig,
-  SWRConfig?: ISWRConfig<Data, Error>,
-): IReturn<Data, Error> => {
+  SWRConfig?: SWRConfig<Data, Error>,
+): Return<Data, Error> => {
   const swrConfig = generateSwrConfigWithShouldFetchProperty(SWRConfig);
   const shouldFetch = swrConfig.shouldFetch;
   delete swrConfig.shouldFetch;

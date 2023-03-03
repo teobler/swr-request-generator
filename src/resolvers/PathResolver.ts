@@ -1,7 +1,7 @@
 import { SchemaResolver } from "./SchemaResolver";
 import { assign, camelCase, chain, filter, get, isEmpty, map, pick, reduce, sortBy } from "lodash";
 import { HTTP_METHODS, SLASH } from "../constants";
-import { IParameters, IResolvedPath, IReqBody } from "../types";
+import { Parameters, ResolvedPath, ReqBody } from "../types";
 import { isRequestBody, isSchema } from "../utils/specifications";
 import {
   generateEnums,
@@ -27,7 +27,7 @@ import {
 import { yellowConsole } from "../utils/console";
 
 export type RequestBodiesAndParams =
-  | [string, { body: IReqBody | undefined; query: Record<string, string> | undefined }]
+  | [string, { body: ReqBody | undefined; query: Record<string, string> | undefined }]
   | [undefined, undefined];
 
 type RequestTypeOfPathItemObject = Extract<
@@ -36,7 +36,7 @@ type RequestTypeOfPathItemObject = Extract<
 >;
 
 export class PathResolver {
-  resolvedPaths: IResolvedPath[] = [];
+  resolvedPaths: ResolvedPath[] = [];
   extraDefinitions = {};
   contentType: { [operationId: string]: string } = {};
 
@@ -49,7 +49,7 @@ export class PathResolver {
   resolve = () => {
     this.resolvedPaths = reduce(
       this.paths,
-      (results: IResolvedPath[], path: PathItemObject, pathName: string) => [
+      (results: ResolvedPath[], path: PathItemObject, pathName: string) => [
         ...results,
         ...this.resolvePath(path, pathName),
       ],
@@ -61,7 +61,7 @@ export class PathResolver {
   toRequest = (): string[] => {
     const data = sortBy(this.resolvedPaths, (o) => o.operationId);
     const requestBodiesAndParams: RequestBodiesAndParams[] = [];
-    const requestHooks = data.map((resolvedPath: IResolvedPath) => {
+    const requestHooks = data.map((resolvedPath: ResolvedPath) => {
       const headerType = get(resolvedPath, "THeader");
       const cookie = get(resolvedPath.cookieParams, "[0]");
       const requestBody = get(resolvedPath, "requestBody");
@@ -170,7 +170,7 @@ export class PathResolver {
     };
   };
 
-  private getParamsNames = (params: IParameters) => {
+  private getParamsNames = (params: Parameters) => {
     const getNames = (list: ParameterObject[]) => (isEmpty(list) ? [] : map(list, (item) => item.name));
     return {
       pathParams: getNames(params.pathParams),

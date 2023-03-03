@@ -1,4 +1,4 @@
-import { IResolvedPath } from "../../types";
+import { ResolvedPath } from "../../types";
 import {
   generateEnums,
   generateFunctionName,
@@ -21,18 +21,18 @@ describe("# generators", () => {
       queryParams: [""],
       cookieParams: [""],
       method: "get",
-      TResp: "IResponse",
+      TResp: "Response",
       TReqQuery: {},
       TReqPath: {},
       TReqCookie: {},
       TReqBody: {},
       THeader: {},
-    } as IResolvedPath;
+    } as ResolvedPath;
 
     describe("#get method", () => {
       it("should return axios config only when request argument is empty", () => {
         expect(generateGetRequestArguments(resolvedPath)).toBe(
-          "SWRConfig?: ISWRConfig<IResponse, IResponseError>, axiosConfig?: AxiosRequestConfig",
+          "SWRConfig?: SWRConfig<Response, ResponseError>, axiosConfig?: AxiosRequestConfig",
         );
       });
 
@@ -41,7 +41,7 @@ describe("# generators", () => {
           removeSpaces(
             generateGetRequestArguments({ ...resolvedPath, pathParams: ["id"], TReqQuery: { id: "string" } }),
           ),
-        ).toBe("{id}:{'id':string;},SWRConfig?:ISWRConfig<IResponse,IResponseError>,axiosConfig?:AxiosRequestConfig");
+        ).toBe("{id}:{'id':string;},SWRConfig?:SWRConfig<Response,ResponseError>,axiosConfig?:AxiosRequestConfig");
       });
 
       it("should return arg and it's corresponding type with camelCase when request only one argument presents", () => {
@@ -52,7 +52,7 @@ describe("# generators", () => {
               TReqQuery: { BookController_createBookRequest: "ICreateBookRequest" },
             }),
           ),
-        ).toBe("SWRConfig?:ISWRConfig<IResponse,IResponseError>,axiosConfig?:AxiosRequestConfig");
+        ).toBe("SWRConfig?:SWRConfig<Response,ResponseError>,axiosConfig?:AxiosRequestConfig");
       });
 
       it("should return args and it's corresponding types when multiple arguments present", () => {
@@ -67,7 +67,7 @@ describe("# generators", () => {
             }),
           ),
         ).toBe(
-          "{id,name}:{'id':string;'name':string;},SWRConfig?:ISWRConfig<IResponse,IResponseError>,axiosConfig?:AxiosRequestConfig",
+          "{id,name}:{'id':string;'name':string;},SWRConfig?:SWRConfig<Response,ResponseError>,axiosConfig?:AxiosRequestConfig",
         );
       });
 
@@ -83,7 +83,7 @@ describe("# generators", () => {
             }),
           ),
         ).toBe(
-          "{id,name}:{'id':string;'name':string;},SWRConfig?:ISWRConfig<IResponse,IResponseError>,axiosConfig?:AxiosRequestConfig",
+          "{id,name}:{'id':string;'name':string;},SWRConfig?:SWRConfig<Response,ResponseError>,axiosConfig?:AxiosRequestConfig",
         );
       });
 
@@ -100,7 +100,7 @@ describe("# generators", () => {
             }),
           ),
         ).toBe(
-          "{id,name,customHeader,custom}:{'custom':number;'customHeader':string;'id':string;'name':string;},SWRConfig?:ISWRConfig<IResponse,IResponseError>,axiosConfig?:AxiosRequestConfig",
+          "{id,name,customHeader,custom}:{'custom':number;'customHeader':string;'id':string;'name':string;},SWRConfig?:SWRConfig<Response,ResponseError>,axiosConfig?:AxiosRequestConfig",
         );
       });
     });
@@ -108,7 +108,7 @@ describe("# generators", () => {
     describe("#others methods", () => {
       it("should return axios config when request argument is empty for POST method", () => {
         expect(generateMutationRequestArguments({ ...resolvedPath, method: "post" })).toBe(
-          "mutationConfig?: SWRMutationConfig<undefined, AxiosResponse<IResponse>, IResponseError>, axiosConfig?: AxiosRequestConfig",
+          "mutationConfig?: SWRMutationConfig<undefined, AxiosResponse<Response>, ResponseError>, axiosConfig?: AxiosRequestConfig",
         );
       });
 
@@ -123,7 +123,7 @@ describe("# generators", () => {
             }),
           ),
         ).toBe(
-          "{id}:{'id':string;},mutationConfig?:SWRMutationConfig<undefined,AxiosResponse<IResponse>,IResponseError>,axiosConfig?:AxiosRequestConfig",
+          "{id}:{'id':string;},mutationConfig?:SWRMutationConfig<undefined,AxiosResponse<Response>,ResponseError>,axiosConfig?:AxiosRequestConfig",
         );
       });
 
@@ -137,7 +137,7 @@ describe("# generators", () => {
             }),
           ),
         ).toBe(
-          "mutationConfig?:SWRMutationConfig<undefined,AxiosResponse<IResponse>,IResponseError>,axiosConfig?:AxiosRequestConfig",
+          "mutationConfig?:SWRMutationConfig<undefined,AxiosResponse<Response>,ResponseError>,axiosConfig?:AxiosRequestConfig",
         );
       });
 
@@ -154,7 +154,7 @@ describe("# generators", () => {
             }),
           ),
         ).toBe(
-          "{id}:{'id':string;},mutationConfig?:SWRMutationConfig<undefined,AxiosResponse<IResponse>,IResponseError>,axiosConfig?:AxiosRequestConfig",
+          "{id}:{'id':string;},mutationConfig?:SWRMutationConfig<undefined,AxiosResponse<Response>,ResponseError>,axiosConfig?:AxiosRequestConfig",
         );
       });
 
@@ -171,7 +171,7 @@ describe("# generators", () => {
             }),
           ),
         ).toBe(
-          "{id}:{'id':string;},mutationConfig?:SWRMutationConfig<undefined,AxiosResponse<IResponse>,IResponseError>,axiosConfig?:AxiosRequestConfig",
+          "{id}:{'id':string;},mutationConfig?:SWRMutationConfig<undefined,AxiosResponse<Response>,ResponseError>,axiosConfig?:AxiosRequestConfig",
         );
       });
 
@@ -189,7 +189,7 @@ describe("# generators", () => {
             }),
           ),
         ).toBe(
-          "{id,customHeader,custom}:{'custom':number;'customHeader':string;'id':string;},mutationConfig?:SWRMutationConfig<undefined,AxiosResponse<IResponse>,IResponseError>,axiosConfig?:AxiosRequestConfig",
+          "{id,customHeader,custom}:{'custom':number;'customHeader':string;'id':string;},mutationConfig?:SWRMutationConfig<undefined,AxiosResponse<Response>,ResponseError>,axiosConfig?:AxiosRequestConfig",
         );
       });
     });
@@ -209,12 +209,12 @@ describe("# generators", () => {
   describe("## generateClientName", () => {
     it.each([
       [
-        "IResponse",
+        "Response",
         "IUpdateBookByIdUsingPutRequest",
-        "useMutationRequest<IUpdateBookByIdUsingPutRequest, AxiosResponse<IResponse>, IResponseError>",
+        "useMutationRequest<IUpdateBookByIdUsingPutRequest, AxiosResponse<Response>, ResponseError>",
       ],
-      ["IResponse", "undefined", "useMutationRequest<undefined, AxiosResponse<IResponse>, IResponseError>"],
-      ["IResponse", undefined, "useMutationRequest<undefined, AxiosResponse<IResponse>, IResponseError>"],
+      ["Response", "undefined", "useMutationRequest<undefined, AxiosResponse<Response>, ResponseError>"],
+      ["Response", undefined, "useMutationRequest<undefined, AxiosResponse<Response>, ResponseError>"],
     ])("should return different client given different request method", (responseType, responseBodyType, result) => {
       expect(generateMutationClientName(responseType, responseBodyType)).toBe(result);
     });
@@ -222,7 +222,7 @@ describe("# generators", () => {
 
   describe("## generateGetClientName", () => {
     it("should return different client given different request method", () => {
-      expect(generateGetClientName("IResponse")).toBe("useGetRequest<IResponse, IResponseError>");
+      expect(generateGetClientName("Response")).toBe("useGetRequest<Response, ResponseError>");
     });
   });
 

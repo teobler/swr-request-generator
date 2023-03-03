@@ -1,6 +1,6 @@
 import { camelCase, compact, get, isEmpty, reduce, replace, some } from "lodash";
 import { isNumber } from "./specifications";
-import { IReqBody, IResolvedPath } from "../types";
+import { ReqBody, ResolvedPath } from "../types";
 import { ENUM_SUFFIX } from "../constants";
 import { arrayToObject, convertResponseTypeObject, toCapitalCase, toTypes } from "./formatters";
 import { RequestBodiesAndParams } from "src/resolvers/PathResolver";
@@ -23,13 +23,13 @@ export const generateEnums = (definitions: ResolvedDefinitions, key: string) => 
 export const generateFunctionName = (operationId?: string) => `use${toCapitalCase(camelCase(operationId))}Request`;
 
 export const generateGetClientName = (responseType?: ResolvedSchema) =>
-  `useGetRequest<${convertResponseTypeObject(responseType)}, IResponseError>`;
+  `useGetRequest<${convertResponseTypeObject(responseType)}, ResponseError>`;
 
 export const generateMutationClientName = (responseType?: ResolvedSchema, requestBodyTypes?: string) =>
-  `useMutationRequest<${requestBodyTypes}, AxiosResponse<${convertResponseTypeObject(responseType)}>, IResponseError>`;
+  `useMutationRequest<${requestBodyTypes}, AxiosResponse<${convertResponseTypeObject(responseType)}>, ResponseError>`;
 
 export const generateRequestBodyAndParams = (
-  requestBodyType?: IReqBody,
+  requestBodyType?: ReqBody,
   requestQueryType?: Record<string, string>,
   operationId = "",
 ): RequestBodiesAndParams => {
@@ -40,7 +40,7 @@ export const generateRequestBodyAndParams = (
   return [`${toCapitalCase(operationId)}Request`, { query: requestQueryType, body: requestBodyType }];
 };
 
-export const generateGetRequestArguments = (resolvedPath: IResolvedPath) => {
+export const generateGetRequestArguments = (resolvedPath: ResolvedPath) => {
   const requestType = {
     ...resolvedPath.TReqQuery,
     ...resolvedPath.TReqPath,
@@ -54,12 +54,12 @@ export const generateGetRequestArguments = (resolvedPath: IResolvedPath) => {
   ]).map((param) => camelCase(param));
   const requestParams = requestParamList.length === 0 ? "" : `{${requestParamList.join(",")}}:${argumentTypes}`;
 
-  return `${requestParams ? requestParams + ", " : ""}SWRConfig?: ISWRConfig<${convertResponseTypeObject(
+  return `${requestParams ? requestParams + ", " : ""}SWRConfig?: SWRConfig<${convertResponseTypeObject(
     resolvedPath.TResp,
-  )}, IResponseError>, axiosConfig?: AxiosRequestConfig`;
+  )}, ResponseError>, axiosConfig?: AxiosRequestConfig`;
 };
 
-export const generateMutationRequestArguments = (resolvedPath: IResolvedPath, requestBodyTypes?: string) => {
+export const generateMutationRequestArguments = (resolvedPath: ResolvedPath, requestBodyTypes?: string) => {
   const requestType = {
     ...resolvedPath.TReqPath,
     ...resolvedPath.THeader,
@@ -75,7 +75,7 @@ export const generateMutationRequestArguments = (resolvedPath: IResolvedPath, re
     requestParams ? requestParams + ", " : ""
   }mutationConfig?: SWRMutationConfig<${requestBodyTypes}, AxiosResponse<${convertResponseTypeObject(
     resolvedPath.TResp,
-  )}>, IResponseError>, axiosConfig?: AxiosRequestConfig`;
+  )}>, ResponseError>, axiosConfig?: AxiosRequestConfig`;
 };
 
 export const generateHeader = (

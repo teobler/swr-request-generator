@@ -1,8 +1,8 @@
-export interface IResponseError {
-  error: IError;
+export interface ResponseError {
+  error: Error;
 }
 
-interface IError {
+interface Error {
   errorMessage: string;
   errorCode: number;
 }

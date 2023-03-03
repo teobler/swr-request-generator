@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ISWRConfig, useGetRequest } from "./useGetRequest";
-import { IResponseError } from "../types";
+import { SWRConfig, useGetRequest } from "./useGetRequest";
+import { ResponseError } from "../types";
 import { AxiosRequestConfig, AxiosResponse } from "axios";
 import { SWRMutationConfig, useMutationRequest } from "src/request/useMutationRequest";
 
@@ -21,11 +21,11 @@ export const useUpdateBookJourneyUsingPostRequest = (
   mutationConfig?: SWRMutationConfig<
     UpdateBookJourneyUsingPostRequest,
     AxiosResponse<{ [key: string]: any }>,
-    IResponseError
+    ResponseError
   >,
   axiosConfig?: AxiosRequestConfig,
 ) =>
-  useMutationRequest<UpdateBookJourneyUsingPostRequest, AxiosResponse<{ [key: string]: any }>, IResponseError>({
+  useMutationRequest<UpdateBookJourneyUsingPostRequest, AxiosResponse<{ [key: string]: any }>, ResponseError>({
     url: `/book-journey/${journeyId}/${journeyType}`,
     method: "post",
     headers: { "Content-Type": "application/json" },
@@ -45,10 +45,10 @@ export const useDeleteAttachmentUsingDeleteRequest = (
     userId: string;
     userName: string;
   },
-  mutationConfig?: SWRMutationConfig<undefined, AxiosResponse<undefined>, IResponseError>,
+  mutationConfig?: SWRMutationConfig<undefined, AxiosResponse<undefined>, ResponseError>,
   axiosConfig?: AxiosRequestConfig,
 ) =>
-  useMutationRequest<undefined, AxiosResponse<undefined>, IResponseError>({
+  useMutationRequest<undefined, AxiosResponse<undefined>, ResponseError>({
     url: `/${id}`,
     method: "delete",
     headers: { Authorities: authorities, "User-Id": userId, "User-Name": userName },
@@ -64,10 +64,10 @@ export const useDownloadUsingGetRequest = (
     accept: string;
     id: string;
   },
-  SWRConfig?: ISWRConfig<Resource, IResponseError>,
+  SWRConfig?: SWRConfig<Resource, ResponseError>,
   axiosConfig?: AxiosRequestConfig,
 ) =>
-  useGetRequest<Resource, IResponseError>(
+  useGetRequest<Resource, ResponseError>(
     {
       url: `/${id}`,
       method: "get",
@@ -84,10 +84,10 @@ export const useFindBookByIdUsingGetRequest = (
   }: {
     id: string;
   },
-  SWRConfig?: ISWRConfig<BookDetailVo, IResponseError>,
+  SWRConfig?: SWRConfig<BookDetailVo, ResponseError>,
   axiosConfig?: AxiosRequestConfig,
 ) =>
-  useGetRequest<BookDetailVo, IResponseError>(
+  useGetRequest<BookDetailVo, ResponseError>(
     {
       url: `/book/${id}`,
       method: "get",
@@ -105,10 +105,10 @@ export const useGetDocumentByIdUsingGetRequest = (
     documentId: string;
     from?: FromFrom;
   },
-  SWRConfig?: ISWRConfig<DocumentVo, IResponseError>,
+  SWRConfig?: SWRConfig<DocumentVo, ResponseError>,
   axiosConfig?: AxiosRequestConfig,
 ) =>
-  useGetRequest<DocumentVo, IResponseError>(
+  useGetRequest<DocumentVo, ResponseError>(
     {
       url: `/documents/${documentId}/doc`,
       method: "get",
@@ -131,10 +131,10 @@ export const useGetScheduleDetailsByDateUsingGetRequest = (
     roleId?: string;
     scheduleDate: number;
   },
-  SWRConfig?: ISWRConfig<ScheduleVo[], IResponseError>,
+  SWRConfig?: SWRConfig<ScheduleVo[], ResponseError>,
   axiosConfig?: AxiosRequestConfig,
 ) =>
-  useGetRequest<ScheduleVo[], IResponseError>(
+  useGetRequest<ScheduleVo[], ResponseError>(
     {
       url: `/schedules`,
       method: "get",
@@ -155,10 +155,10 @@ export const useUpdateBookByIdUsingPutRequest = (
   }: {
     id: string;
   },
-  mutationConfig?: SWRMutationConfig<UpdateBookByIdUsingPutRequest, AxiosResponse<undefined>, IResponseError>,
+  mutationConfig?: SWRMutationConfig<UpdateBookByIdUsingPutRequest, AxiosResponse<undefined>, ResponseError>,
   axiosConfig?: AxiosRequestConfig,
 ) =>
-  useMutationRequest<UpdateBookByIdUsingPutRequest, AxiosResponse<undefined>, IResponseError>({
+  useMutationRequest<UpdateBookByIdUsingPutRequest, AxiosResponse<undefined>, ResponseError>({
     url: `/book/${id}`,
     method: "put",
     headers: { "Content-Type": "application/json" },
@@ -167,10 +167,10 @@ export const useUpdateBookByIdUsingPutRequest = (
   });
 
 export const useUpdatePetsRequest = (
-  mutationConfig?: SWRMutationConfig<UpdatePetsRequest, AxiosResponse<undefined>, IResponseError>,
+  mutationConfig?: SWRMutationConfig<UpdatePetsRequest, AxiosResponse<undefined>, ResponseError>,
   axiosConfig?: AxiosRequestConfig,
 ) =>
-  useMutationRequest<UpdatePetsRequest, AxiosResponse<undefined>, IResponseError>({
+  useMutationRequest<UpdatePetsRequest, AxiosResponse<undefined>, ResponseError>({
     url: `/pets`,
     method: "patch",
     headers: { "Content-Type": "application/json" },
@@ -179,10 +179,10 @@ export const useUpdatePetsRequest = (
   });
 
 export const useUploadDocumentUsingPostRequest = (
-  mutationConfig?: SWRMutationConfig<UploadDocumentUsingPostRequest, AxiosResponse<undefined>, IResponseError>,
+  mutationConfig?: SWRMutationConfig<UploadDocumentUsingPostRequest, AxiosResponse<undefined>, ResponseError>,
   axiosConfig?: AxiosRequestConfig,
 ) =>
-  useMutationRequest<UploadDocumentUsingPostRequest, AxiosResponse<undefined>, IResponseError>({
+  useMutationRequest<UploadDocumentUsingPostRequest, AxiosResponse<undefined>, ResponseError>({
     url: `/documents`,
     method: "post",
     headers: { "Content-Type": "multipart/form-data" },
@@ -200,10 +200,10 @@ export const useRequest = (
     userId: string;
     userName: string;
   },
-  mutationConfig?: SWRMutationConfig<Request, AxiosResponse<AttachmentBo>, IResponseError>,
+  mutationConfig?: SWRMutationConfig<Request, AxiosResponse<AttachmentBo>, ResponseError>,
   axiosConfig?: AxiosRequestConfig,
 ) =>
-  useMutationRequest<Request, AxiosResponse<AttachmentBo>, IResponseError>({
+  useMutationRequest<Request, AxiosResponse<AttachmentBo>, ResponseError>({
     url: `/`,
     method: "post",
     headers: { Authorities: authorities, "User-Id": userId, "User-Name": userName, "Content-Type": "application/json" },

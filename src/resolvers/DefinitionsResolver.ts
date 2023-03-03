@@ -6,7 +6,7 @@ import { toCapitalCase, toTypes } from "../utils/formatters";
 import { ENUM_SUFFIX } from "../constants";
 import { ComponentsObject } from "@ts-stack/openapi-spec";
 
-export interface IRequestBodyOrResponseBody {
+export interface RequestBodyOrResponseBody {
   [key: string]: string;
 }
 
@@ -14,7 +14,7 @@ export interface IRequestBodyOrResponseBody {
 // [string | number] for enums
 // string for interface name
 // empty string for no response
-export type ResolvedSchema = IRequestBodyOrResponseBody | [string | number] | string;
+export type ResolvedSchema = RequestBodyOrResponseBody | [string | number] | string;
 
 export type ResolvedDefinitions = { [requestOrResponseOrEnum: string]: ResolvedSchema };
 

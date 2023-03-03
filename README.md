@@ -93,8 +93,8 @@ create a new json file named `ts-codegen.config.json` in your project root direc
   "fileHeaders": [
     "/* eslint-disable @typescript-eslint/explicit-module-boundary-types */",
     "/* eslint-disable @typescript-eslint/no-explicit-any */",
-    "import { ISWRConfig, useGetRequest } from \"./useGetRequest\"",
-    "import { IResponseError } from \"../types\"",
+    "import { SWRConfig, useGetRequest } from \"./useGetRequest\"",
+    "import { ResponseError } from \"../types\"",
     "import { AxiosRequestConfig, AxiosResponse } from \"axios\"",
     "import { SWRMutationConfig, useMutationRequest } from \"src/request/useMutationRequest\";"
   ],

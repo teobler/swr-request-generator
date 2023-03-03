@@ -2,7 +2,7 @@ import { camelCase, forEach, indexOf, isEmpty, map, pickBy, replace, trimEnd } f
 import prettier from "prettier";
 import { isObject } from "./specifications";
 import { ENUM_SUFFIX, ERROR_MESSAGES } from "../constants";
-import { IReqBody } from "src/types";
+import { ReqBody } from "src/types";
 import { ResolvedSchema } from "src/resolvers/DefinitionsResolver";
 import { redConsole } from "../utils/console";
 
@@ -57,7 +57,7 @@ export const toTypes = (definitions: ResolvedSchema, category: "interface" | "re
 };
 
 export const toRequestTypes = (requestTypeObj: {
-  body: IReqBody | undefined;
+  body: ReqBody | undefined;
   query: Record<string, string> | undefined;
 }) => {
   const requestBodyFieldList = map(requestTypeObj.body, (value) => {

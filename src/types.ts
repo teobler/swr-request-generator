@@ -1,18 +1,18 @@
 import { ParameterObject, SchemaObject } from "@ts-stack/openapi-spec";
 import { ResolvedSchema } from "src/resolvers/DefinitionsResolver";
 
-export interface IReqBody {
+export interface ReqBody {
   [bodyName: string]: string | Record<string, string>;
 }
 
-export interface IResolvedPath {
+export interface ResolvedPath {
   url: string;
   method: string;
   TResp: ResolvedSchema;
   TReqQuery: { [queryName: string]: string } | Record<string, never>;
   TReqPath: { [pathName: string]: string } | Record<string, never>;
   TReqCookie?: { [cookieName: string]: string } | Record<string, never>;
-  TReqBody: IReqBody | Record<string, never>;
+  TReqBody: ReqBody | Record<string, never>;
   THeader: { [headerName: string]: string } | Record<string, never>;
   requestBody?: string;
   operationId?: string;
@@ -21,13 +21,13 @@ export interface IResolvedPath {
   cookieParams: string[] | [];
 }
 
-export interface IParameters {
+export interface Parameters {
   pathParams: ParameterObject[];
   queryParams: ParameterObject[];
   cookieParams: ParameterObject[];
 }
 
-export interface ICodegenConfig {
+export interface CodegenConfig {
   output?: string;
   fileHeaders?: string[];
   timeout?: number;
@@ -38,13 +38,13 @@ export interface ICodegenConfig {
   needClient?: boolean;
 }
 
-export interface ISchemaObjectWithNullable extends SchemaObject {
+export interface SchemaObjectWithNullable extends SchemaObject {
   nullable?: boolean;
 }
 
-export interface ISchemaResolverInputs {
+export interface SchemaResolverInputs {
   results: Record<string, ResolvedSchema>;
-  schema?: ISchemaObjectWithNullable;
+  schema?: SchemaObjectWithNullable;
   key?: string;
   parentKey?: string;
 }

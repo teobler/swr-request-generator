@@ -1,7 +1,7 @@
 import { get, indexOf, map, reduce } from "lodash";
 import { isArray, isObject } from "../utils/specifications";
 import { toCapitalCase } from "../utils/formatters";
-import { ISchemaObjectWithNullable, ISchemaResolverInputs } from "../types";
+import { SchemaObjectWithNullable, SchemaResolverInputs } from "../types";
 import { ENUM_SUFFIX } from "../constants";
 import { SchemaObject, SchemaObjectType } from "@ts-stack/openapi-spec";
 import { ResolvedSchema } from "src/resolvers/DefinitionsResolver";
@@ -9,11 +9,11 @@ import { ResolvedSchema } from "src/resolvers/DefinitionsResolver";
 export class SchemaResolver {
   private schemaType: ResolvedSchema = {};
 
-  static of(inputs: ISchemaResolverInputs) {
+  static of(inputs: SchemaResolverInputs) {
     return new SchemaResolver(inputs);
   }
 
-  constructor(private inputs: ISchemaResolverInputs) {}
+  constructor(private inputs: SchemaResolverInputs) {}
 
   getSchemaType = () => this.schemaType;
 
@@ -26,13 +26,13 @@ export class SchemaResolver {
     }
 
     if (schema.oneOf || schema.anyOf) {
-      this.schemaType = this.resolveOneOfAndAnyOf((schema.oneOf || schema.anyOf) as ISchemaObjectWithNullable[]);
+      this.schemaType = this.resolveOneOfAndAnyOf((schema.oneOf || schema.anyOf) as SchemaObjectWithNullable[]);
       this.schemaType = this.resolveNullable().getSchemaType();
       return this;
     }
 
     if (schema.allOf) {
-      this.schemaType = this.resolveAllOf(schema.allOf as ISchemaObjectWithNullable[]);
+      this.schemaType = this.resolveAllOf(schema.allOf as SchemaObjectWithNullable[]);
       this.schemaType = this.resolveNullable().getSchemaType();
       return this;
     }
@@ -112,7 +112,7 @@ export class SchemaResolver {
     return type === "array" ? `${refType}[]` : refType;
   };
 
-  private resolveOneOfAndAnyOf = (oneOfOrAnyOf: ISchemaObjectWithNullable[]) => {
+  private resolveOneOfAndAnyOf = (oneOfOrAnyOf: SchemaObjectWithNullable[]) => {
     return oneOfOrAnyOf
       .map((schema) => {
         const schemaType = SchemaResolver.of({ results: {}, schema })
@@ -126,7 +126,7 @@ export class SchemaResolver {
       .replace(/"/g, "");
   };
 
-  private resolveAllOf = (allOf: ISchemaObjectWithNullable[]) => {
+  private resolveAllOf = (allOf: SchemaObjectWithNullable[]) => {
     return allOf
       .map((schema) => {
         const schemaType = SchemaResolver.of({ results: {}, schema })
