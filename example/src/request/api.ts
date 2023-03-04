@@ -36,11 +36,11 @@ export const useUpdateBookJourneyUsingPostRequest = (
 export const useDeleteAttachmentUsingDeleteRequest = (
   {
     id,
-    authorities,
+    Authorities,
     userId,
     userName,
   }: {
-    authorities: string;
+    Authorities: string;
     id: string;
     userId: string;
     userName: string;
@@ -51,7 +51,7 @@ export const useDeleteAttachmentUsingDeleteRequest = (
   useMutationRequest<undefined, AxiosResponse<undefined>, ResponseError>({
     url: `/${id}`,
     method: "delete",
-    headers: { Authorities: authorities, "User-Id": userId, "User-Name": userName },
+    headers: { Authorities: Authorities, "User-Id": userId, "User-Name": userName },
     mutationConfig,
     axiosConfig,
   });
@@ -59,9 +59,9 @@ export const useDeleteAttachmentUsingDeleteRequest = (
 export const useDownloadUsingGetRequest = (
   {
     id,
-    accept,
+    Accept,
   }: {
-    accept: string;
+    Accept: string;
     id: string;
   },
   SWRConfig?: SWRConfig<Resource, ResponseError>,
@@ -71,7 +71,7 @@ export const useDownloadUsingGetRequest = (
     {
       url: `/${id}`,
       method: "get",
-      headers: { Accept: accept },
+      headers: { Accept: Accept },
       responseType: "blob",
       ...axiosConfig,
     },
@@ -123,13 +123,13 @@ export const useGetDocumentByIdUsingGetRequest = (
 
 export const useGetScheduleDetailsByDateUsingGetRequest = (
   {
-    scheduleDate,
-    roleId,
+    schedule_date,
+    role_id,
     fruit,
   }: {
     fruit: Fruit;
-    roleId?: string;
-    scheduleDate: number;
+    role_id?: string;
+    schedule_date: number;
   },
   SWRConfig?: SWRConfig<ScheduleVo[], ResponseError>,
   axiosConfig?: AxiosRequestConfig,
@@ -140,8 +140,8 @@ export const useGetScheduleDetailsByDateUsingGetRequest = (
       method: "get",
       headers: {},
       params: {
-        scheduleDate,
-        roleId,
+        schedule_date,
+        role_id,
         fruit,
       },
       ...axiosConfig,
@@ -178,6 +178,32 @@ export const useUpdatePetsRequest = (
     axiosConfig,
   });
 
+export const useUploadAttachmentUsingPostRequest = (
+  {
+    Authorities,
+    userId,
+    userName,
+  }: {
+    Authorities: string;
+    userId: string;
+    userName: string;
+  },
+  mutationConfig?: SWRMutationConfig<UploadAttachmentUsingPostRequest, AxiosResponse<AttachmentBo>, ResponseError>,
+  axiosConfig?: AxiosRequestConfig,
+) =>
+  useMutationRequest<UploadAttachmentUsingPostRequest, AxiosResponse<AttachmentBo>, ResponseError>({
+    url: `/`,
+    method: "post",
+    headers: {
+      Authorities: Authorities,
+      "User-Id": userId,
+      "User-Name": userName,
+      "Content-Type": "multipart/form-data",
+    },
+    mutationConfig,
+    axiosConfig,
+  });
+
 export const useUploadDocumentUsingPostRequest = (
   mutationConfig?: SWRMutationConfig<UploadDocumentUsingPostRequest, AxiosResponse<undefined>, ResponseError>,
   axiosConfig?: AxiosRequestConfig,
@@ -190,26 +216,19 @@ export const useUploadDocumentUsingPostRequest = (
     axiosConfig,
   });
 
-export const useRequest = (
-  {
-    authorities,
-    userId,
-    userName,
-  }: {
-    authorities: string;
-    userId: string;
-    userName: string;
-  },
-  mutationConfig?: SWRMutationConfig<Request, AxiosResponse<AttachmentBo>, ResponseError>,
+export const useUserProfileInformationRequest = (
+  SWRConfig?: SWRConfig<{ data?: AuthenticationData[]; others?: string }, ResponseError>,
   axiosConfig?: AxiosRequestConfig,
 ) =>
-  useMutationRequest<Request, AxiosResponse<AttachmentBo>, ResponseError>({
-    url: `/`,
-    method: "post",
-    headers: { Authorities: authorities, "User-Id": userId, "User-Name": userName, "Content-Type": "application/json" },
-    mutationConfig,
-    axiosConfig,
-  });
+  useGetRequest<{ data?: AuthenticationData[]; others?: string }, ResponseError>(
+    {
+      url: `/user/profile-information`,
+      method: "get",
+      headers: {},
+      ...axiosConfig,
+    },
+    SWRConfig,
+  );
 
 export interface UpdateBookJourneyUsingPostRequest {
   body: StatusFormData;
@@ -224,8 +243,8 @@ export interface GetDocumentByIdUsingGetRequest {
 export interface GetScheduleDetailsByDateUsingGetRequest {
   query: {
     fruit: Fruit;
-    roleId?: string;
-    scheduleDate: number;
+    role_id?: string;
+    schedule_date: number;
   };
 }
 
@@ -237,12 +256,12 @@ export interface UpdatePetsRequest {
   body: Cat | Dog | null;
 }
 
-export interface UploadDocumentUsingPostRequest {
-  body: FileUploadReq;
+export interface UploadAttachmentUsingPostRequest {
+  body: FormData;
 }
 
-export interface Request {
-  body: FormData;
+export interface UploadDocumentUsingPostRequest {
+  body: FileUploadReq;
 }
 
 export enum FromFrom {
@@ -257,6 +276,13 @@ export interface AttachmentBo {
   id?: string;
   mimeType?: string;
   path?: string;
+}
+
+export interface AuthenticationData {
+  csrfToken: string;
+  impersonationDetails: Cat;
+  ssoUrl: string;
+  user: Dog;
 }
 
 export interface BookDetailVo {
@@ -342,8 +368,9 @@ export interface FileUploadReq {
 }
 
 export enum Fruit {
-  "Apple" = "Apple",
-  "Orange" = "Orange",
+  "Apple_a" = "Apple_a",
+  "Apple_b" = "Apple_b",
+  "invalid-Orange" = "invalid-Orange",
   "Pear" = "Pear",
 }
 

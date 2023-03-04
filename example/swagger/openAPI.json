@@ -22,6 +22,36 @@
     }
   ],
   "paths": {
+    "/user/profile-information": {
+      "get": {
+        "tags": ["user"],
+        "summary": "Returns information about the current authentication status and user",
+        "operationId": "userProfileInformation",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/AuthenticationData"
+                      }
+                    },
+                    "others": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/": {
       "post": {
         "tags": ["mock-controller"],
@@ -360,7 +390,7 @@
         "operationId": "getScheduleDetailsByDateUsingGET",
         "parameters": [
           {
-            "name": "scheduleDate",
+            "name": "schedule_date",
             "in": "query",
             "description": "scheduleDate",
             "required": true,
@@ -370,7 +400,7 @@
             }
           },
           {
-            "name": "roleId",
+            "name": "role_id",
             "in": "query",
             "description": "roleId",
             "required": false,
@@ -524,6 +554,24 @@
   ],
   "components": {
     "schemas": {
+      "AuthenticationData": {
+        "type": "object",
+        "properties": {
+          "csrfToken": {
+            "type": "string"
+          },
+          "user": {
+            "$ref": "#/components/schemas/Dog"
+          },
+          "ssoUrl": {
+            "type": "string"
+          },
+          "impersonationDetails": {
+            "$ref": "#/components/schemas/Cat"
+          }
+        },
+        "required": ["csrfToken", "user", "ssoUrl", "impersonationDetails"]
+      },
       "Dog": {
         "type": "object",
         "properties": {
@@ -971,7 +1019,7 @@
       },
       "Fruit": {
         "type": "string,",
-        "enum": ["Apple", "Orange", "Pear"]
+        "enum": ["Apple_a","Apple_b","invalid-Orange","Pear"]
       }
     }
   }

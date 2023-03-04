@@ -15,6 +15,26 @@ tags:
   - name: attachment-controller-2
     description: Test Controller 2
 paths:
+  "/user/profile-information":
+    get:
+      tags:
+        - user
+      summary: Returns information about the current authentication status and user
+      operationId: userProfileInformation
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/AuthenticationData"
+                  others:
+                    type: string
   "/":
     post:
       tags:
@@ -248,14 +268,14 @@ paths:
       summary: getScheduleDetailsByDate
       operationId: getScheduleDetailsByDateUsingGET
       parameters:
-        - name: scheduleDate
+        - name: schedule_date
           in: query
           description: scheduleDate
           required: true
           schema:
             type: integer
             format: int64
-        - name: roleId
+        - name: role_id
           in: query
           description: roleId
           required: false
@@ -322,18 +342,18 @@ paths:
           schema:
             type: string
       responses:
-        default:
-          description: default
-          content:
-            "application/json; charset=UTF-8":
-              schema:
-                "$ref": "#/components/schemas/DocumentVO"
         '401':
           description: Unauthorized
         '403':
           description: Forbidden
         '404':
           description: Not Found
+        default:
+          description: default
+          content:
+            application/json; charset=UTF-8:
+              schema:
+                "$ref": "#/components/schemas/DocumentVO"
       deprecated: false
   "/pets":
     patch:
@@ -353,6 +373,22 @@ servers:
   - url: "//0.0.0.0:8080/api/test"
 components:
   schemas:
+    AuthenticationData:
+      type: object
+      properties:
+        csrfToken:
+          type: string
+        user:
+          "$ref": "#/components/schemas/Dog"
+        ssoUrl:
+          type: string
+        impersonationDetails:
+          "$ref": "#/components/schemas/Cat"
+      required:
+        - csrfToken
+        - user
+        - ssoUrl
+        - impersonationDetails
     Dog:
       type: object
       properties:
@@ -673,4 +709,8 @@ components:
       properties: {}
     Fruit:
       type: string,
-      enum: ["Apple","Orange","Pear"]
+      enum:
+        - Apple_a
+        - Apple_b
+        - invalid-Orange
+        - Pear
