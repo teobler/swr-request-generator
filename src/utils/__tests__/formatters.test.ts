@@ -28,21 +28,18 @@ describe("# formatters", () => {
 
   describe("#toTypes", () => {
     it.each([
-      [{}, "request", undefined],
-      [{ "a ": "a" }, "request", "{\n" + "        'a': a;\n" + "      }"],
-      [{ "a_b?": "a" }, "request", "{\n" + "        'ab'?: a;\n" + "      }"],
-      [{ "a_b?": "a" }, "interface", "{\n" + "        'a_b'?: a;\n" + "      }"],
-      [{ AddBcd: "a" }, "request", "{\n" + "        'addBcd': a;\n" + "      }"],
-      [{ AddBcd: "a" }, "interface", "{\n" + "        'AddBcd': a;\n" + "      }"],
-      [{ filename: "a" }, "request", "{\n" + "        'filename': a;\n" + "      }"],
-      [{ a: { b: "b" } }, "request", "{\n" + "        'a': {b:b};\n" + "      }"],
+      [{}, undefined],
+      [{ "a ": "a" }, "{\n" + "        'a': a;\n" + "      }"],
+      [{ "a_b?": "a" }, "{\n" + "        'a_b'?: a;\n" + "      }"],
+      [{ AddBcd: "a" }, "{\n" + "        'AddBcd': a;\n" + "      }"],
+      [{ filename: "a" }, "{\n" + "        'filename': a;\n" + "      }"],
+      [{ a: { b: "b" } }, "{\n" + "        'a': {b:b};\n" + "      }"],
       [
         { uploadDocumentRequest: { file: "FormData" } },
-        "request",
         "{\n" + "        'uploadDocumentRequest': FormData\n" + "      }",
       ],
-    ])("should return type definition for TypeScript code", (definitions: any, category: any, result) => {
-      expect(toTypes(definitions, category)).toBe(result);
+    ])("should return type definition for TypeScript code", (definitions: any, result) => {
+      expect(toTypes(definitions)).toBe(result);
     });
   });
 

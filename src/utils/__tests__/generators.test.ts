@@ -100,7 +100,7 @@ describe("# generators", () => {
             }),
           ),
         ).toBe(
-          "{id,name,customHeader,custom}:{'custom':number;'customHeader':string;'id':string;'name':string;},SWRConfig?:SWRConfig<Response,ResponseError>,axiosConfig?:AxiosRequestConfig",
+          "{id,name,customHeader,Custom}:{'Custom':number;'customHeader':string;'id':string;'name':string;},SWRConfig?:SWRConfig<Response,ResponseError>,axiosConfig?:AxiosRequestConfig",
         );
       });
     });
@@ -189,7 +189,7 @@ describe("# generators", () => {
             }),
           ),
         ).toBe(
-          "{id,customHeader,custom}:{'custom':number;'customHeader':string;'id':string;},mutationConfig?:SWRMutationConfig<undefined,AxiosResponse<Response>,ResponseError>,axiosConfig?:AxiosRequestConfig",
+          "{id,customHeader,Custom}:{'Custom':number;'customHeader':string;'id':string;},mutationConfig?:SWRMutationConfig<undefined,AxiosResponse<Response>,ResponseError>,axiosConfig?:AxiosRequestConfig",
         );
       });
     });
@@ -247,7 +247,7 @@ describe("# generators", () => {
           Accept: "string",
           "Custom-Header": "string",
         }),
-      ).toBe('headers: { "Accept": accept, "Custom-Header": customHeader, },');
+      ).toBe('headers: { "Accept": Accept, "Custom-Header": customHeader, },');
     });
 
     it.each([
@@ -276,7 +276,7 @@ describe("# generators", () => {
           Accept: "string",
           "Custom-Header": "string",
         }),
-      ).toBe('headers: { "Accept": accept, "Custom-Header": customHeader, "Content-Type": "application/pdf"},');
+      ).toBe('headers: { "Accept": Accept, "Custom-Header": customHeader, "Content-Type": "application/pdf"},');
     });
   });
 

@@ -84,7 +84,7 @@ export class DefinitionsResolver {
         if (this.resolvedDefinitions[key] === "object" || isEmpty(this.resolvedDefinitions[key])) {
           return `export interface ${toCapitalCase(key)} {[key:string]:any}`;
         }
-        const val = toTypes(this.resolvedDefinitions[key], "interface");
+        const val = toTypes(this.resolvedDefinitions[key]);
         if (val) {
           return `export interface ${toCapitalCase(key)} ${val}`;
         }

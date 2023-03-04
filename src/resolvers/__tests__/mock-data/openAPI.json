@@ -391,7 +391,7 @@
         "operationId": "getScheduleDetailsByDateUsingGET",
         "parameters": [
           {
-            "name": "scheduleDate",
+            "name": "schedule_date",
             "in": "query",
             "description": "scheduleDate",
             "required": true,
@@ -401,7 +401,7 @@
             }
           },
           {
-            "name": "roleId",
+            "name": "role_id",
             "in": "query",
             "description": "roleId",
             "required": false,

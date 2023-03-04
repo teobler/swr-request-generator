@@ -1,6 +1,6 @@
 import { camelCase, forEach, indexOf, isEmpty, map, pickBy, replace, trimEnd } from "lodash";
 import prettier from "prettier";
-import { isObject } from "./specifications";
+import { isObject, isValidVariableName } from "./specifications";
 import { ENUM_SUFFIX, ERROR_MESSAGES } from "../constants";
 import { ReqBody } from "src/types";
 import { ResolvedSchema } from "src/resolvers/DefinitionsResolver";
@@ -33,19 +33,19 @@ export const prettifyCode = (code: string) =>
     parser: "typescript",
   });
 
-export const toTypes = (definitions: ResolvedSchema, category: "interface" | "request") => {
+export const toTypes = (definitions: ResolvedSchema) => {
   if (isEmpty(definitions)) {
     return;
   }
-  const convertor = category === "interface" ? addQuoteForKey : convertKeyToCamelCaseAndAddQuote;
+
   const fieldDefinitionList = map(definitions, (value: Record<string, string>, key: string) => {
     if (isObject(value) && Object.keys(value).length === 1 && !isEmpty(pickBy(value, (type) => type === "FormData"))) {
-      return `${convertor(key)}: FormData`;
+      return `${convertKeyAndAddQuote(key)}: FormData`;
     }
 
     return isObject(value)
-      ? `${convertor(key)}: ${JSON.stringify(value).replace(/"/g, "")};`
-      : `${convertor(key)}: ${replace(value, ENUM_SUFFIX, "")};`;
+      ? `${convertKeyAndAddQuote(key)}: ${JSON.stringify(value).replace(/"/g, "")};`
+      : `${convertKeyAndAddQuote(key)}: ${replace(value, ENUM_SUFFIX, "")};`;
   });
 
   return (
@@ -70,7 +70,7 @@ export const toRequestTypes = (requestTypeObj: {
   const requestBodyDefinition = isEmpty(requestBodyFieldList) ? "" : `body: ${requestBodyFieldList.sort().join("\n")}`;
 
   if (requestTypeObj.query && Object.keys(requestTypeObj.query).length > 0) {
-    const requestQueryDefinition = `query: ${toTypes(requestTypeObj.query, "interface")}`;
+    const requestQueryDefinition = `query: ${toTypes(requestTypeObj.query)}`;
     return `{
         ${requestBodyDefinition}
         ${requestQueryDefinition}
@@ -90,16 +90,12 @@ export const toRequestTypes = (requestTypeObj: {
       }`;
 };
 
-const convertKeyToCamelCaseAndAddQuote = (key: string) => {
-  const isOptional = indexOf(key, "?") > -1;
-  return `'${camelCase(toCapitalCase(trimEnd(key, "?")))}'${isOptional ? "?" : ""}`;
-};
-
-const addQuoteForKey = (key: string) => {
+const convertKeyAndAddQuote = (key: string) => {
   const isOptional = indexOf(key, "?") > -1;
   const trimmedKey = trimEnd(key, "?");
+  const newKey = isValidVariableName(trimmedKey) ? trimmedKey : camelCase(toCapitalCase(trimmedKey));
 
-  return `'${trimmedKey}'${isOptional ? "?" : ""}`;
+  return `'${newKey}'${isOptional ? "?" : ""}`;
 };
 
 export const convertJsonStringToJson = (

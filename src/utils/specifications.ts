@@ -7,3 +7,4 @@ export const isNumber = (data: unknown): data is number => typeof data === "numb
 export const isSchema = (schema?: SchemaObject | ReferenceObject): schema is SchemaObject => !has(schema, "$ref");
 export const isRequestBody = (requestBody?: RequestBodyObject | ReferenceObject): requestBody is RequestBodyObject =>
   !has(requestBody, "$ref");
+export const isValidVariableName = (variableName: string) => /^[a-zA-Z_$][0-9a-zA-Z_$]*$/.test(variableName);

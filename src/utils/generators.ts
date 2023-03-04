@@ -1,5 +1,5 @@
 import { camelCase, compact, get, isEmpty, reduce, replace, some } from "lodash";
-import { isNumber } from "./specifications";
+import { isNumber, isValidVariableName } from "./specifications";
 import { ReqBody, ResolvedPath } from "../types";
 import { ENUM_SUFFIX } from "../constants";
 import { arrayToObject, convertResponseTypeObject, toCapitalCase, toTypes } from "./formatters";
@@ -46,12 +46,12 @@ export const generateGetRequestArguments = (resolvedPath: ResolvedPath) => {
     ...resolvedPath.TReqPath,
     ...resolvedPath.THeader,
   };
-  const argumentTypes = !isEmpty(requestType) ? toTypes(requestType, "request") : undefined;
+  const argumentTypes = !isEmpty(requestType) ? toTypes(requestType) : undefined;
   const requestParamList = compact([
     ...(resolvedPath.pathParams ?? []),
     ...(resolvedPath.queryParams ?? []),
     ...Object.keys(resolvedPath.THeader ?? {}),
-  ]).map((param) => camelCase(param));
+  ]).map((param) => (isValidVariableName(param) ? param : camelCase(param)));
   const requestParams = requestParamList.length === 0 ? "" : `{${requestParamList.join(",")}}:${argumentTypes}`;
 
   return `${requestParams ? requestParams + ", " : ""}SWRConfig?: SWRConfig<${convertResponseTypeObject(
@@ -64,11 +64,11 @@ export const generateMutationRequestArguments = (resolvedPath: ResolvedPath, req
     ...resolvedPath.TReqPath,
     ...resolvedPath.THeader,
   };
-  const argumentTypes = !isEmpty(requestType) ? toTypes(requestType, "request") : undefined;
+  const argumentTypes = !isEmpty(requestType) ? toTypes(requestType) : undefined;
   const requestParamList = compact([
     ...(resolvedPath.pathParams ?? []),
     ...Object.keys(resolvedPath.THeader ?? {}),
-  ]).map((param) => camelCase(param));
+  ]).map((param) => (isValidVariableName(param) ? param : camelCase(param)));
   const requestParams = requestParamList.length === 0 ? "" : `{${requestParamList.join(",")}}:${argumentTypes}`;
 
   return `${
@@ -84,7 +84,14 @@ export const generateHeader = (
   operationId?: string,
   header?: Record<string, string>,
 ) => {
-  const result = reduce(header, (result, _, key) => result + `"${key}": ` + camelCase(key) + ", ", "");
+  const result = reduce(
+    header,
+    (result, _, typeKey) => {
+      const typeValue = isValidVariableName(typeKey) ? typeKey : camelCase(typeKey);
+      return result + `"${typeKey}": ` + typeValue + ", ";
+    },
+    "",
+  );
   const contentType = hasBody ? `"Content-Type": "${get(contentTypes, operationId ?? "", "application/json")}"` : "";
 
   return `headers: { ${result}${contentType}},`;
