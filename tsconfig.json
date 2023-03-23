@@ -16,5 +16,8 @@
     "resolveJsonModule": true,
     "types": ["vitest/globals"]
   },
+  "ts-node": {
+    "esm": true,
+  },
   "include": ["src/"]
 }

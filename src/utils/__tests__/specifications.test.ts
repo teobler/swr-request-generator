@@ -1,5 +1,5 @@
 import { expect } from "vitest";
-import { isValidVariableName } from "src/utils/specifications";
+import { isValidVariableName } from "../specifications.js";
 
 describe("# specifications", () => {
   it.each`

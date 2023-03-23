@@ -1,10 +1,11 @@
-import { camelCase, forEach, indexOf, isEmpty, map, pickBy, replace, trimEnd } from "lodash";
+import { camelCase, isEmpty } from "moderndash";
 import prettier from "prettier";
-import { isObject, isValidVariableName } from "./specifications";
-import { ENUM_SUFFIX, ERROR_MESSAGES } from "../constants";
-import { ReqBody } from "src/types";
-import { ResolvedSchema } from "src/resolvers/DefinitionsResolver";
-import { redConsole } from "../utils/console";
+import { isObject, isValidVariableName } from "./specifications.js";
+import { ENUM_SUFFIX, ERROR_MESSAGES } from "../constants.js";
+import { ReqBody } from "src/types.js";
+import { ResolvedSchema } from "src/resolvers/DefinitionsResolver.js";
+import { redConsole } from "../utils/console.js";
+import { pickBy, trimEnd } from "./lodash.js";
 
 export const toCapitalCase = (str?: string): string => {
   if (!str) {
@@ -18,7 +19,7 @@ export const toCapitalCase = (str?: string): string => {
 export const arrayToObject = (arr: [string | number] | [] = []) => {
   const obj: Record<string, string | number> = {};
 
-  forEach(arr, (item) => {
+  arr.forEach((item) => {
     obj[item] = item;
   });
 
@@ -38,14 +39,14 @@ export const toTypes = (definitions: ResolvedSchema) => {
     return;
   }
 
-  const fieldDefinitionList = map(definitions, (value: Record<string, string>, key: string) => {
+  const fieldDefinitionList = Object.entries(definitions).map(([key, value]) => {
     if (isObject(value) && Object.keys(value).length === 1 && !isEmpty(pickBy(value, (type) => type === "FormData"))) {
       return `${convertKeyAndAddQuote(key)}: FormData`;
     }
 
     return isObject(value)
       ? `${convertKeyAndAddQuote(key)}: ${JSON.stringify(value).replace(/"/g, "")};`
-      : `${convertKeyAndAddQuote(key)}: ${replace(value, ENUM_SUFFIX, "")};`;
+      : `${convertKeyAndAddQuote(key)}: ${(value as string).replace(ENUM_SUFFIX, "")};`;
   });
 
   return (
@@ -60,12 +61,14 @@ export const toRequestTypes = (requestTypeObj: {
   body: ReqBody | undefined;
   query: Record<string, string> | undefined;
 }) => {
-  const requestBodyFieldList = map(requestTypeObj.body, (value) => {
+  const requestBodyFieldList = Object.entries(requestTypeObj.body ?? {}).map(([_, value]) => {
     if (isObject(value) && Object.keys(value).length === 1 && !isEmpty(pickBy(value, (type) => type === "FormData"))) {
       return `FormData;`;
     }
 
-    return isObject(value) ? `${JSON.stringify(value).replace(/"/g, "")};` : `${replace(value, ENUM_SUFFIX, "")};`;
+    return isObject(value)
+      ? `${JSON.stringify(value).replace(/"/g, "")};`
+      : `${(value as string).replace(ENUM_SUFFIX, "")};`;
   });
   const requestBodyDefinition = isEmpty(requestBodyFieldList) ? "" : `body: ${requestBodyFieldList.sort().join("\n")}`;
 
@@ -77,8 +80,10 @@ export const toRequestTypes = (requestTypeObj: {
       }`;
   }
 
-  const requestQueryFieldList = map(requestTypeObj.query, (value) => {
-    return isObject(value) ? `${JSON.stringify(value).replace(/"/g, "")};` : `${replace(value, ENUM_SUFFIX, "")};`;
+  const requestQueryFieldList = Object.entries(requestTypeObj.query || {}).map(([_, value]) => {
+    return isObject(value)
+      ? `${JSON.stringify(value).replace(/"/g, "")};`
+      : `${(value as string).replace(ENUM_SUFFIX, "")};`;
   });
   const requestQueryDefinition = isEmpty(requestQueryFieldList)
     ? ""
@@ -91,7 +96,7 @@ export const toRequestTypes = (requestTypeObj: {
 };
 
 const convertKeyAndAddQuote = (key: string) => {
-  const isOptional = indexOf(key, "?") > -1;
+  const isOptional = key.includes("?");
   const trimmedKey = trimEnd(key, "?");
   const newKey = isValidVariableName(trimmedKey) ? trimmedKey : camelCase(toCapitalCase(trimmedKey));
 

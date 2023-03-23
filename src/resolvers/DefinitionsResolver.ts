@@ -1,10 +1,14 @@
-import { compact, forEach, get, includes, isEmpty } from "lodash";
-import { SchemaResolver } from "./SchemaResolver";
-import { isRequestBody } from "../utils/specifications";
-import { generateEnums } from "../utils/generators";
-import { toCapitalCase, toTypes } from "../utils/formatters";
-import { ENUM_SUFFIX } from "../constants";
+import { isEmpty } from "moderndash";
+import { SchemaResolver } from "./SchemaResolver.js";
+import { isRequestBody } from "../utils/specifications.js";
+import { generateEnums } from "../utils/generators.js";
+import { toCapitalCase, toTypes } from "../utils/formatters.js";
+import { ENUM_SUFFIX } from "../constants.js";
 import { ComponentsObject } from "@ts-stack/openapi-spec";
+import { get } from "../utils/lodash.js";
+import { RequestBodyObject } from "@ts-stack/openapi-spec/src/origin/request-body-object.js";
+import { ReferenceObject } from "@ts-stack/openapi-spec/src/origin/reference-object.js";
+import { SchemaObject } from "@ts-stack/openapi-spec/dist/origin/schema-object.js";
 
 export interface RequestBodyOrResponseBody {
   [key: string]: string;
@@ -29,10 +33,14 @@ export class DefinitionsResolver {
 
   scanDefinitions = () => {
     const results: ResolvedDefinitions = {};
-    const requestBodies = get(this.components, "requestBodies");
-    const schemas = get(this.components, "schemas");
+    const requestBodies: { [requestBodyName: string]: RequestBodyObject | ReferenceObject } = get(
+      this.components,
+      "requestBodies",
+      {},
+    );
+    const schemas: { [schemaName: string]: SchemaObject } = get(this.components, "schemas", {});
 
-    forEach(requestBodies, (requestBody, requestBodyName: string) => {
+    Object.entries(requestBodies).forEach(([requestBodyName, requestBody]) => {
       if (isRequestBody(requestBody)) {
         return (results[requestBodyName] = SchemaResolver.of({
           results,
@@ -54,7 +62,7 @@ export class DefinitionsResolver {
         .getSchemaType());
     });
 
-    forEach(schemas, (schema, schemaName) => {
+    Object.entries(schemas).forEach(([schemaName, schema]) => {
       const result = SchemaResolver.of({
         results,
         schema: schema,
@@ -74,10 +82,10 @@ export class DefinitionsResolver {
   };
 
   toDeclarations = (): string[] => {
-    const arr = Object.keys(this.resolvedDefinitions)
+    return Object.keys(this.resolvedDefinitions)
       .sort()
       .map((key) => {
-        if (includes(key, ENUM_SUFFIX)) {
+        if (key.includes(ENUM_SUFFIX)) {
           return generateEnums(this.resolvedDefinitions, key);
         }
 
@@ -88,7 +96,7 @@ export class DefinitionsResolver {
         if (val) {
           return `export interface ${toCapitalCase(key)} ${val}`;
         }
-      });
-    return compact(arr);
+      })
+      .filter((x) => !!x) as string[];
   };
 }

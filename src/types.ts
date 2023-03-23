@@ -1,5 +1,5 @@
 import { ParameterObject, SchemaObject } from "@ts-stack/openapi-spec";
-import { ResolvedSchema } from "src/resolvers/DefinitionsResolver";
+import { ResolvedSchema } from "src/resolvers/DefinitionsResolver.js";
 
 export interface ReqBody {
   [bodyName: string]: string | Record<string, string>;
@@ -22,9 +22,9 @@ export interface ResolvedPath {
 }
 
 export interface Parameters {
-  pathParams: ParameterObject[];
-  queryParams: ParameterObject[];
-  cookieParams: ParameterObject[];
+  pathParams?: ParameterObject[];
+  queryParams?: ParameterObject[];
+  cookieParams?: ParameterObject[];
 }
 
 export interface CodegenConfig {

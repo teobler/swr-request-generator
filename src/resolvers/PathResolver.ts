@@ -1,8 +1,8 @@
-import { SchemaResolver } from "./SchemaResolver";
-import { assign, camelCase, chain, filter, get, isEmpty, map, pick, reduce, sortBy } from "lodash";
-import { HTTP_METHODS, SLASH } from "../constants";
-import { Parameters, ResolvedPath, ReqBody } from "../types";
-import { isRequestBody, isSchema } from "../utils/specifications";
+import { SchemaResolver } from "./SchemaResolver.js";
+import { camelCase, isEmpty } from "moderndash";
+import { HTTP_METHODS, SLASH } from "../constants.js";
+import { Parameters, ReqBody, ResolvedPath } from "../types.js";
+import { isRequestBody, isSchema } from "../utils/specifications.js";
 import {
   generateEnums,
   generateFunctionName,
@@ -13,8 +13,8 @@ import {
   generateMutationRequestArguments,
   generateRequestBodyAndParams,
   generateResponseType,
-} from "../utils/generators";
-import { toCapitalCase, toRequestTypes } from "../utils/formatters";
+} from "../utils/generators.js";
+import { toCapitalCase, toRequestTypes } from "../utils/formatters.js";
 import {
   OperationObject,
   ParameterObject,
@@ -24,7 +24,10 @@ import {
   RequestBodyObject,
   ResponsesObject,
 } from "@ts-stack/openapi-spec";
-import { yellowConsole } from "../utils/console";
+import { yellowConsole } from "../utils/console.js";
+import { get, pick, sortBy } from "../utils/lodash.js";
+import { RequestBodyOrResponseBody } from "src/resolvers/DefinitionsResolver.js";
+import { MediaTypeObject } from "@ts-stack/openapi-spec/src/origin/media-type-object.js";
 
 export type RequestBodiesAndParams =
   | [string, { body: ReqBody | undefined; query: Record<string, string> | undefined }]
@@ -47,19 +50,16 @@ export class PathResolver {
   constructor(private paths: PathsObject) {}
 
   resolve = () => {
-    this.resolvedPaths = reduce(
-      this.paths,
-      (results: ResolvedPath[], path: PathItemObject, pathName: string) => [
-        ...results,
-        ...this.resolvePath(path, pathName),
-      ],
-      [],
+    this.resolvedPaths = Object.entries(this.paths).reduce<ResolvedPath[]>(
+      (results, [pathName, path]) => [...results, ...this.resolvePath(path, pathName)],
+      [] as ResolvedPath[],
     );
+
     return this;
   };
 
   toRequest = (): string[] => {
-    const data = sortBy(this.resolvedPaths, (o) => o.operationId);
+    const data = this.resolvedPaths.sort(sortBy("operationId"));
     const requestBodiesAndParams: RequestBodiesAndParams[] = [];
     const requestHooks = data.map((resolvedPath: ResolvedPath) => {
       const headerType = get(resolvedPath, "THeader");
@@ -123,21 +123,20 @@ export class PathResolver {
       : undefined;
 
   private resolvePath(path: PathItemObject, pathName: string) {
-    const operations = pick(path, HTTP_METHODS);
+    const operations: { [operation: string]: OperationObject } = pick(path, HTTP_METHODS);
 
     return Object.keys(operations).map((httpMethod) => ({
       url: this.getRequestURL(pathName),
       method: httpMethod,
       ...this.resolveOperation(operations[httpMethod as RequestTypeOfPathItemObject] as OperationObject),
-    }));
+    })) as ResolvedPath[];
   }
 
   private getRequestURL = (pathName: string) => {
-    return chain(pathName)
+    return pathName
       .split(SLASH)
       .map((p) => (this.isPathParam(p) ? `$${p}` : p))
-      .join(SLASH)
-      .value();
+      .join(SLASH);
   };
 
   private isPathParam = (str: string) => str.startsWith("{");
@@ -171,7 +170,7 @@ export class PathResolver {
   };
 
   private getParamsNames = (params: Parameters) => {
-    const getNames = (list: ParameterObject[]) => (isEmpty(list) ? [] : map(list, (item) => item.name));
+    const getNames = (list?: ParameterObject[]) => (isEmpty(list) ? [] : list?.map((item) => item.name));
     return {
       pathParams: getNames(params.pathParams),
       queryParams: getNames(params.queryParams),
@@ -179,8 +178,8 @@ export class PathResolver {
     };
   };
 
-  private getPathParamsTypes = (pathParams: ParameterObject[]) =>
-    pathParams.reduce((results, param) => {
+  private getPathParamsTypes = (pathParams?: ParameterObject[]) =>
+    pathParams?.reduce((results, param) => {
       const schema = get(param, "schema");
 
       if (isSchema(schema)) {
@@ -193,10 +192,10 @@ export class PathResolver {
       return {
         ...results,
       };
-    }, {});
+    }, {}) ?? {};
 
-  private getQueryParamsTypes = (queryParams: ParameterObject[]) =>
-    queryParams.reduce(
+  private getQueryParamsTypes = (queryParams?: ParameterObject[]) =>
+    queryParams?.reduce(
       (results, param) => ({
         ...results,
         [`${param.name}${param.required ? "" : "?"}`]: SchemaResolver.of({
@@ -209,11 +208,11 @@ export class PathResolver {
           .getSchemaType(),
       }),
       {},
-    );
+    ) ?? {};
 
-  private getCookieParamsTypes = (formDataParams?: ParameterObject[]) => {
-    return formDataParams?.reduce((results, param) => {
-      return {
+  private getCookieParamsTypes = (formDataParams?: ParameterObject[]) =>
+    formDataParams?.reduce(
+      (results, param) => ({
         ...results,
         [`${param.name}${param.required ? "" : "?"}`]: SchemaResolver.of({
           results: this.extraDefinitions,
@@ -223,9 +222,9 @@ export class PathResolver {
         })
           .resolve()
           .getSchemaType(),
-      };
-    }, {});
-  };
+      }),
+      {},
+    ) ?? {};
 
   private getResponseTypes = (responses?: ResponsesObject) =>
     SchemaResolver.of({
@@ -242,34 +241,31 @@ export class PathResolver {
       .getSchemaType();
 
   private pickParams = (parameters?: ParameterObject[]) => (type: "query" | "header" | "path" | "cookie") =>
-    filter(parameters, (param) => param.in === type);
+    parameters?.filter((param) => param.in === type);
 
   private getContentType(key: string, operationId?: string) {
     // in openAPI spec, the key of content in requestBody field is content type
-    operationId && assign(this.contentType, { [operationId]: key });
+    operationId && Object.assign(this.contentType, { [operationId]: key });
   }
 
   private getRequestBodyTypes(operationId?: string, requestBody?: RequestBodyObject | ReferenceObject) {
     if (isRequestBody(requestBody)) {
-      return reduce(
-        get(requestBody, "content"),
-        (results, content, key) => {
-          this.getContentType(key, operationId);
+      const content: { [mediaTypeName: string]: MediaTypeObject } = get(requestBody, "content", {});
+      return Object.entries(content).reduce<RequestBodyOrResponseBody>((results, [key, content]) => {
+        this.getContentType(key, operationId);
 
-          return {
-            ...results,
-            [`${operationId}Request`]: SchemaResolver.of({
-              results: this.extraDefinitions,
-              schema: content.schema,
-              key: `${operationId}Request`,
-              parentKey: `${operationId}Request`,
-            })
-              .resolve()
-              .getSchemaType(),
-          };
-        },
-        {},
-      );
+        return {
+          ...results,
+          [`${operationId}Request`]: SchemaResolver.of({
+            results: this.extraDefinitions,
+            schema: content.schema,
+            key: `${operationId}Request`,
+            parentKey: `${operationId}Request`,
+          })
+            .resolve()
+            .getSchemaType(),
+        } as RequestBodyOrResponseBody;
+      }, {});
     }
 
     return {

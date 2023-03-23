@@ -1,4 +1,4 @@
-import { SchemaResolver } from "../SchemaResolver";
+import { SchemaResolver } from "../SchemaResolver.js";
 
 describe("# SchemaResolver", () => {
   it("should return any object definition given schema type is object without title and properties", () => {

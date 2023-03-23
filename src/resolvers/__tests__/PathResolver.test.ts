@@ -1,4 +1,4 @@
-import { PathResolver } from "../PathResolver";
+import { PathResolver } from "../PathResolver.js";
 import openAPI from "./mock-data/openAPI.json";
 import { OasObject } from "@ts-stack/openapi-spec";
 

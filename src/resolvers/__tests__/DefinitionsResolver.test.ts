@@ -1,4 +1,4 @@
-import { DefinitionsResolver } from "../DefinitionsResolver";
+import { DefinitionsResolver } from "../DefinitionsResolver.js";
 import openAPI from "./mock-data/openAPI.json";
 import { OasObject } from "@ts-stack/openapi-spec";
 

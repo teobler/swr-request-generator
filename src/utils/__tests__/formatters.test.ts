@@ -4,7 +4,7 @@ import {
   convertResponseTypeObject,
   toCapitalCase,
   toTypes,
-} from "../formatters";
+} from "../formatters.js";
 
 describe("# formatters", () => {
   describe("#toCapitalCase", () => {

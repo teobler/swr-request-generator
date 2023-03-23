@@ -1,5 +1,5 @@
-import { has } from "lodash";
 import { ReferenceObject, RequestBodyObject, SchemaObject } from "@ts-stack/openapi-spec";
+import { has } from "./lodash.js";
 
 export const isArray = (data: unknown): data is Array<unknown> => Array.isArray(data);
 export const isObject = (data: unknown): data is object => Object.prototype.toString.call(data) === "[object Object]";

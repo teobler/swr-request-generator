@@ -1,10 +1,10 @@
-import { get, indexOf, map, reduce } from "lodash";
-import { isArray, isObject } from "../utils/specifications";
-import { toCapitalCase } from "../utils/formatters";
-import { SchemaObjectWithNullable, SchemaResolverInputs } from "../types";
-import { ENUM_SUFFIX } from "../constants";
+import { isArray, isObject } from "../utils/specifications.js";
+import { toCapitalCase } from "../utils/formatters.js";
+import { SchemaObjectWithNullable, SchemaResolverInputs } from "../types.js";
+import { ENUM_SUFFIX } from "../constants.js";
 import { SchemaObject, SchemaObjectType } from "@ts-stack/openapi-spec";
-import { ResolvedSchema } from "src/resolvers/DefinitionsResolver";
+import { ResolvedSchema } from "../resolvers/DefinitionsResolver.js";
+import { get } from "../utils/lodash.js";
 
 export class SchemaResolver {
   private schemaType: ResolvedSchema = {};
@@ -186,7 +186,7 @@ export class SchemaResolver {
     }
 
     if (isArray(items)) {
-      return map(items, (item) =>
+      return items.map((item) =>
         SchemaResolver.of({ results: this.inputs.results, schema: item, key, parentKey }).resolve().getSchemaType(),
       );
     }
@@ -203,14 +203,13 @@ export class SchemaResolver {
     required: string[] = [],
     parentKey?: string,
   ): Record<string, string> =>
-    reduce(
-      properties,
-      (o, v, k) => ({
+    Object.entries(properties).reduce(
+      (o, [key, value]) => ({
         ...o,
-        [`${k}${indexOf(required, k) > -1 ? "" : "?"}`]: SchemaResolver.of({
+        [`${key}${required.indexOf(key) > -1 ? "" : "?"}`]: SchemaResolver.of({
           results: this.inputs.results,
-          schema: v,
-          key: k,
+          schema: value,
+          key,
           parentKey,
         })
           .resolve()

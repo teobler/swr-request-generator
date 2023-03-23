@@ -1,4 +1,4 @@
-import { ResolvedPath } from "../../types";
+import { ResolvedPath } from "../../types.js";
 import {
   generateEnums,
   generateFunctionName,
@@ -8,8 +8,8 @@ import {
   generateMutationClientName,
   generateMutationRequestArguments,
   generateResponseType,
-} from "../generators";
-import { ResolvedDefinitions } from "src/resolvers/DefinitionsResolver";
+} from "../generators.js";
+import { ResolvedDefinitions } from "src/resolvers/DefinitionsResolver.js";
 
 describe("# generators", () => {
   describe("## generateRequestArguments", () => {
