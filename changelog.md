@@ -1,5 +1,12 @@
 # changelog
 
+## 1.2.2
+### fixes
+- should only update variable from openAPI when it is an invalid variable name #16
+
+### chore
+- make project esm
+
 ## 1.2.1
 ### fixes
 - generate nested response type error #14
