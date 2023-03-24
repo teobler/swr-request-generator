@@ -61,7 +61,7 @@ export const toRequestTypes = (requestTypeObj: {
   body: ReqBody | undefined;
   query: Record<string, string> | undefined;
 }) => {
-  const requestBodyFieldList = Object.entries(requestTypeObj.body ?? {}).map(([_, value]) => {
+  const requestBodyFieldList = Object.entries(requestTypeObj.body ?? {}).map(([, value]) => {
     if (isObject(value) && Object.keys(value).length === 1 && !isEmpty(pickBy(value, (type) => type === "FormData"))) {
       return `FormData;`;
     }
@@ -80,7 +80,7 @@ export const toRequestTypes = (requestTypeObj: {
       }`;
   }
 
-  const requestQueryFieldList = Object.entries(requestTypeObj.query || {}).map(([_, value]) => {
+  const requestQueryFieldList = Object.entries(requestTypeObj.query || {}).map(([, value]) => {
     return isObject(value)
       ? `${JSON.stringify(value).replace(/"/g, "")};`
       : `${(value as string).replace(ENUM_SUFFIX, "")};`;
