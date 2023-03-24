@@ -4,15 +4,20 @@ node_modules/
 coverage/
 .tmp/
 
+# mac
 .DS_Store
+
+# editor
 .idea/
 .code/
 wsEndpoint
-.output/
+
+# build
 dist/
-lib/
-module/
 
 # example folder
 /example/node_modules/
 /example/.DS_Store
+
+# local dev config
+ts-codegen.config.json

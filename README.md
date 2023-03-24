@@ -1,25 +1,12 @@
 <div align="center">
 
+<h1 align="center">SWR Request Generator</h1>
+
 <a href="https://github.com/teobler/swr-request-generator/actions">![build](https://img.shields.io/github/actions/workflow/status/teobler/swr-request-generator/build.yaml)</a>
 <a href="https://github.com/teobler/swr-request-generator/actions">![cov](https://teobler.github.io/swr-request-generator/badges/coverage.svg)</a>
 <a href="https://github.com/teobler/swr-request-generator/blob/main/LICENSE">![license](https://img.shields.io/github/license/teobler/swr-request-generator)</a>
 
 </div>
-
-- [SWR request generator](#swr-request-generator)
-- [Dependencies](#dependencies)
-- [How to use](#how-to-use)
-    * [install](#install)
-    * [Configuration](#configuration)
-        + [script](#script)
-        + [config file](#config-file)
-        + [Run it!](#run-it-)
-    * [example](#example)
-        + [tip](#tip)
-    * [changelog](#changelog)
-- [Appreciation](#appreciation)
-
-# SWR request generator
 
 This tool can generate [SWR](https://swr.vercel.app/) request and related request params and response interface from swagger.
 
@@ -29,7 +16,7 @@ Then SWR request generator will generate these requests through SWR as well sinc
 
 You can get more info about the change between 0.x and 1.0 via [changelog](changelog.md).
 
-# Dependencies
+## ❗ Dependencies
 
 if you want to use this tool, your project should be:
 
@@ -37,7 +24,7 @@ if you want to use this tool, your project should be:
 2. your front end client should be [axios](https://github.com/axios/axios)
 3. use SWR as data fetching lib for your front end web app
 
-## You are using SWR already, why still with axios?
+## ❓ You Are Using SWR Already, Why Still With Axios?
 
 Personally I think axios is a good request client library which can provide better development experience.
 
@@ -47,12 +34,12 @@ And SWR mutation request need a `fetcher` to be request client, I think axios co
 
 But on the other side, axios do increase the size of the packaged code, this could be a cons for using axios.
 
-If enough developers like this in the future, and you need a `fetch` version, maybe I can make a new one for `fetch` API.
+If many requirements in the future for a `fetch` version, maybe I can extend it with any client.
 
-And if anyone want to make it happen, it should be super cool!
+And if anyone want to make it happen, it should be super cool 🥳
 
-# How to use
-## install
+## 🧰 How to Use
+### 🛠 Install
 
 ```bash
 pnpm install -D @openapi-integration/swr-request-generator
@@ -70,8 +57,8 @@ or
 npm install -D @openapi-integration/swr-request-generator
 ```
 
-## Configuration
-### script
+### 🔧 Configuration
+#### ☄️ Script
 
 add a npm script to your package.json file:
 
@@ -83,7 +70,7 @@ add a npm script to your package.json file:
 }
 ```
 
-### config file
+#### 📁 Config File
 
 create a new json file named `ts-codegen.config.json` in your project root directory like this
 
@@ -115,7 +102,7 @@ fields meaning:
  - needRequestHook(boolean): if need to generate default request hook(useGetRequest and useMutationRequest)
  - needClient(boolean): if need to generate default request axios client
 
-### Run it!
+#### 🤩 Run It!
 
 1. Find an address where you can get your back-end API swagger json file (either online or local), it should be an url can get swagger json response
 2. Fill this address into the `clients array` of the above configuration file. If you have multiple addresses, fill in multiple string addresses.
@@ -124,7 +111,7 @@ fields meaning:
 
 > if your swagger url need basic auth, just run `npm run codegen -- -a "Basic #basicAuthHeader"`
 
-## example
+### 👀 Example
 
 all the details can be found in example folder.
 
@@ -146,14 +133,42 @@ and it's source is `swagger/opanAPI.json`, you can find more info in `ts-codegen
 
 how to use this file can be found in `src/APP.tsx`.
 
-### tip
+### 💁‍ Tip
 Wrapper functions in example folder like `useGetRequest` and `useMutationRequest` just one of the implementation.
 
 You can use your own wrapper functions and error types as well, just ensure your function name and error type are aligned with demo, since generated function will use these names.
 
-## changelog
+## 💻 Local Development
+
+Clone this repo, run `pnpm install` to install all dependencies.
+
+Copy this config file to your root dir:
+```json
+{
+  "output": "example/src/request",
+  "fileHeaders": [
+    "/* eslint-disable @typescript-eslint/explicit-module-boundary-types */",
+    "/* eslint-disable @typescript-eslint/no-explicit-any */",
+    "import { SWRConfig, useGetRequest } from \"./useGetRequest\"",
+    "import { ResponseError } from \"../types\"",
+    "import { AxiosRequestConfig, AxiosResponse } from \"axios\"",
+    "import { SWRMutationConfig, useMutationRequest } from \"src/request/useMutationRequest\";"
+  ],
+  "clients": [],
+  "data": ["./example/swagger/openAPI.yaml"],
+  "fileName": "api",
+  "needRequestHook": true,
+  "needClient": true
+}
+```
+
+Then run `pnpm run start` to generate request file to example folder, modify code you want and see the results.
+
+And there are some test cases in `__tests__` folder, you can run `pnpm run test` to see the results and help you modify the code.
+
+## 🗂 Changelog
 [changelog](changelog.md)
 
-# Appreciation
+## 🤗 Appreciation
 
 I would be very grateful if you could give this project a star!
