@@ -10,6 +10,41 @@ import { SWRMutationConfig, useMutationRequest } from "src/request/useMutationRe
  *  please do not modify it manually.
  */
 
+export const useUserProfileInformationRequest = (
+  SWRConfig?: SWRConfig<{ data?: AuthenticationData[]; others?: string }, ResponseError>,
+  axiosConfig?: AxiosRequestConfig,
+) =>
+  useGetRequest<{ data?: AuthenticationData[]; others?: string }, ResponseError>(
+    {
+      url: `/user/profile-information`,
+      method: "get",
+      headers: {},
+      ...axiosConfig,
+    },
+    SWRConfig,
+  );
+
+export const useRequest = (
+  {
+    Authorities,
+    userId,
+    userName,
+  }: {
+    Authorities: string;
+    userId: string;
+    userName: string;
+  },
+  mutationConfig?: SWRMutationConfig<Request, AxiosResponse<AttachmentBo>, ResponseError>,
+  axiosConfig?: AxiosRequestConfig,
+) =>
+  useMutationRequest<Request, AxiosResponse<AttachmentBo>, ResponseError>({
+    url: `/`,
+    method: "post",
+    headers: { Authorities: Authorities, "User-Id": userId, "User-Name": userName, "Content-Type": "application/json" },
+    mutationConfig,
+    axiosConfig,
+  });
+
 export const useUpdateBookJourneyUsingPostRequest = (
   {
     journeyId,
@@ -178,32 +213,6 @@ export const useUpdatePetsRequest = (
     axiosConfig,
   });
 
-export const useUploadAttachmentUsingPostRequest = (
-  {
-    Authorities,
-    userId,
-    userName,
-  }: {
-    Authorities: string;
-    userId: string;
-    userName: string;
-  },
-  mutationConfig?: SWRMutationConfig<UploadAttachmentUsingPostRequest, AxiosResponse<AttachmentBo>, ResponseError>,
-  axiosConfig?: AxiosRequestConfig,
-) =>
-  useMutationRequest<UploadAttachmentUsingPostRequest, AxiosResponse<AttachmentBo>, ResponseError>({
-    url: `/`,
-    method: "post",
-    headers: {
-      Authorities: Authorities,
-      "User-Id": userId,
-      "User-Name": userName,
-      "Content-Type": "multipart/form-data",
-    },
-    mutationConfig,
-    axiosConfig,
-  });
-
 export const useUploadDocumentUsingPostRequest = (
   mutationConfig?: SWRMutationConfig<UploadDocumentUsingPostRequest, AxiosResponse<undefined>, ResponseError>,
   axiosConfig?: AxiosRequestConfig,
@@ -216,19 +225,9 @@ export const useUploadDocumentUsingPostRequest = (
     axiosConfig,
   });
 
-export const useUserProfileInformationRequest = (
-  SWRConfig?: SWRConfig<{ data?: AuthenticationData[]; others?: string }, ResponseError>,
-  axiosConfig?: AxiosRequestConfig,
-) =>
-  useGetRequest<{ data?: AuthenticationData[]; others?: string }, ResponseError>(
-    {
-      url: `/user/profile-information`,
-      method: "get",
-      headers: {},
-      ...axiosConfig,
-    },
-    SWRConfig,
-  );
+export interface Request {
+  body: FormData;
+}
 
 export interface UpdateBookJourneyUsingPostRequest {
   body: StatusFormData;
@@ -254,10 +253,6 @@ export interface UpdateBookByIdUsingPutRequest {
 
 export interface UpdatePetsRequest {
   body: Cat | Dog | null;
-}
-
-export interface UploadAttachmentUsingPostRequest {
-  body: FormData;
 }
 
 export interface UploadDocumentUsingPostRequest {
