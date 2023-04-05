@@ -1,4 +1,4 @@
-import fs from "node:fs";
+import fs, { WriteStream } from "node:fs";
 import * as yaml from "js-yaml";
 import { DefinitionsResolver } from "./resolvers/DefinitionsResolver.js";
 import path from "node:path";
@@ -27,33 +27,49 @@ const getCodegenConfig = async (): Promise<CodegenConfig> =>
         clients: [],
       };
 
+const codegen = (schema: OasObject | string, writeStream: WriteStream, isMultiFile: boolean, fileIndex: number) => {
+  if (typeof schema === "string") {
+    throw Error(ERROR_MESSAGES.INVALID_JSON_FILE_ERROR);
+  }
+
+  const fileStr =
+    (isMultiFile ? `// * No${fileIndex + 1} Request File Content *\n` : "") +
+    [
+      ...PathResolver.of(schema.paths as PathsObject)
+        .resolve()
+        .toRequest(),
+      ...DefinitionsResolver.of(schema.components).scanDefinitions().toDeclarations(),
+    ].join("\n\n");
+
+  writeStream.write(prettifyCode(fileStr), "utf-8");
+};
+
 getCodegenConfig().then(
   ({ output = ".output", fileHeaders, timeout, data, clients, fileName, needRequestHook, needClient }) => {
-    const codegen = (schema: OasObject | string) => {
-      if (typeof schema === "string") {
-        redConsole(ERROR_MESSAGES.INVALID_JSON_FILE_ERROR);
-        return;
-      }
+    if (!fs.existsSync(output)) {
+      fs.mkdirSync(output);
+    }
 
-      if (!fs.existsSync(output)) {
-        fs.mkdirSync(output);
-      }
+    const requestFilePath = path.resolve(output, `./${fileName || "request"}.ts`);
 
-      const fileStr =
-        (fileHeaders ? fileHeaders.join("\n") : "") +
-        "\n\n" +
-        FILE_TIP +
-        [
-          ...PathResolver.of(schema.paths as PathsObject)
-            .resolve()
-            .toRequest(),
-          ...DefinitionsResolver.of(schema.components).scanDefinitions().toDeclarations(),
-        ].join("\n\n");
+    if (fs.existsSync(path.resolve(output, `./${fileName || "request"}.ts`))) {
+      fs.unlinkSync(requestFilePath);
+    }
 
-      fs.writeFileSync(path.resolve(output, `./${fileName || "request"}.ts`), prettifyCode(fileStr), "utf-8");
-    };
+    const requestWriteStream = fs.createWriteStream(requestFilePath);
+    const isMultiFile = (data?.length ?? 0) + (clients?.length ?? 0) > 1;
 
-    (data || []).map((file: string) => {
+    requestWriteStream.on("error", (err) => {
+      redConsole(err.message);
+    });
+
+    requestWriteStream.on("finish", () => {
+      greenConsole(LOG_MESSAGE.SUCCESSFUL + "\n");
+    });
+
+    requestWriteStream.write(prettifyCode((fileHeaders ? fileHeaders.join("\n") : "") + "\n\n" + FILE_TIP), "utf-8");
+
+    (data || []).map((file: string, index: number) => {
       if (!file.endsWith("json") && !file.endsWith("yml") && !file.endsWith("yaml")) {
         redConsole(ERROR_MESSAGES.INVALID_FILE_FORMAT);
         return;
@@ -66,8 +82,7 @@ getCodegenConfig().then(
 
       if (schema) {
         console.log(LOG_MESSAGE.GENERATING + "\n");
-        codegen(schema);
-        greenConsole(LOG_MESSAGE.SUCCESSFUL + "\n");
+        codegen(schema, requestWriteStream, isMultiFile, index);
       }
     });
 
@@ -89,14 +104,15 @@ getCodegenConfig().then(
           .get(client)
           .then((response) => {
             console.log(LOG_MESSAGE.GENERATING + "\n");
-            codegen(response.data);
-            greenConsole(LOG_MESSAGE.SUCCESSFUL + "\n");
+            codegen(response.data, requestWriteStream, isMultiFile, index + (data?.length ?? 0));
           })
           .catch((error) => {
             redConsole(`${error.code}: ${ERROR_MESSAGES.FETCH_CLIENT_FAILED_ERROR}`);
           });
       });
     }
+
+    requestWriteStream.end();
 
     if (needRequestHook) {
       fs.writeFileSync(path.resolve(output, "./useGetRequest.ts"), prettifyCode(useGetRequest), "utf-8");
