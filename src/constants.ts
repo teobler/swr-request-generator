@@ -2,6 +2,7 @@ export const ERROR_MESSAGES = {
   INVALID_JSON_FILE_ERROR: "Your json file is invalid, please check it!\n",
   INVALID_FILE_FORMAT: "Your input file is invalid, please check if it json or yaml!\n",
   FETCH_CLIENT_FAILED_ERROR: "Fetch client failed! Please check your network or ts-codegen.config.ts file.\n",
+  NO_CLIENTS_OR_DATA: "You should provide at least one client or data file!\n",
 };
 export const LOG_MESSAGE = {
   GENERATING: "generating...",
@@ -16,4 +17,5 @@ export const FILE_TIP = `\n/*
     *  please do not modify it manually.
     */\n
   `;
+export const getSplittingMessage = (fileIndex: number) => `// * No${fileIndex + 1} Request File Content *\n`;
 export const ENUM_SUFFIX = `#EnumTypeSuffix`;

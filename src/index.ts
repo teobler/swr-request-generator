@@ -4,7 +4,7 @@ import { DefinitionsResolver } from "./resolvers/DefinitionsResolver.js";
 import path from "node:path";
 import { PathResolver } from "./resolvers/PathResolver.js";
 import axios from "axios";
-import { ERROR_MESSAGES, FILE_TIP, LOG_MESSAGE } from "./constants.js";
+import { ERROR_MESSAGES, FILE_TIP, getSplittingMessage, LOG_MESSAGE } from "./constants.js";
 import { program } from "commander";
 import { convertJsonStringToJson, prettifyCode } from "./utils/formatters.js";
 import { CodegenConfig } from "./types.js";
@@ -33,7 +33,7 @@ const codegen = (schema: OasObject | string, writeStream: WriteStream, isMultiFi
   }
 
   const fileStr =
-    (isMultiFile ? `// * No${fileIndex + 1} Request File Content *\n` : "") +
+    (isMultiFile ? getSplittingMessage(fileIndex) : "") +
     [
       ...PathResolver.of(schema.paths as PathsObject)
         .resolve()
@@ -44,75 +44,99 @@ const codegen = (schema: OasObject | string, writeStream: WriteStream, isMultiFi
   writeStream.write(prettifyCode(fileStr), "utf-8");
 };
 
+const generateFromFiles = (data: string[] = [], requestWriteStream: WriteStream, isMultiFile: boolean) => {
+  data.map((file: string, index: number) => {
+    if (!file.endsWith("json") && !file.endsWith("yml") && !file.endsWith("yaml")) {
+      redConsole(ERROR_MESSAGES.INVALID_FILE_FORMAT);
+      return;
+    }
+
+    console.log(LOG_MESSAGE.READING);
+
+    const schemaStr = fs.readFileSync(file, "utf8");
+    const schema = file.endsWith("json") ? convertJsonStringToJson(schemaStr) : yaml.load(schemaStr);
+
+    if (schema) {
+      console.log(LOG_MESSAGE.GENERATING + "\n");
+      codegen(schema, requestWriteStream, isMultiFile, index);
+    }
+  });
+};
+
+const generateFromClients = (
+  clients: string[] = [],
+  requestWriteStream: WriteStream,
+  isMultiFile: boolean,
+  timeout?: number,
+  data?: string[],
+) => {
+  if (clients) {
+    const options = program.opts();
+
+    const instance = axios.create({
+      timeout: timeout || 10 * 1000,
+      headers: options.authorization
+        ? {
+            Authorization: options.authorization,
+          }
+        : undefined,
+    });
+
+    clients.map((client, index) => {
+      console.log(LOG_MESSAGE.GETTING_FROM_REMOTE(index));
+      instance
+        .get(client)
+        .then((response) => {
+          console.log(LOG_MESSAGE.GENERATING + "\n");
+          codegen(response.data, requestWriteStream, isMultiFile, index + (data?.length ?? 0));
+        })
+        .catch((error) => {
+          redConsole(`${error.code}: ${ERROR_MESSAGES.FETCH_CLIENT_FAILED_ERROR}`);
+        });
+    });
+  }
+};
+
+const setupDirAndCreateWriteStream = (output: string, fileName = "request", fileHeaders?: string[]) => {
+  if (!fs.existsSync(output)) {
+    fs.mkdirSync(output);
+  }
+
+  const requestFilePath = path.resolve(output, `./${fileName}.ts`);
+
+  if (fs.existsSync(path.resolve(output, `./${fileName || "request"}.ts`))) {
+    fs.unlinkSync(requestFilePath);
+  }
+
+  const requestFileWriteStream = fs.createWriteStream(requestFilePath);
+
+  requestFileWriteStream.on("error", (err) => {
+    redConsole(err.message);
+  });
+
+  requestFileWriteStream.on("finish", () => {
+    greenConsole(LOG_MESSAGE.SUCCESSFUL + "\n");
+  });
+
+  requestFileWriteStream.write(prettifyCode((fileHeaders ? fileHeaders.join("\n") : "") + "\n\n" + FILE_TIP), "utf-8");
+
+  return { requestFileWriteStream };
+};
+
 getCodegenConfig().then(
   ({ output = ".output", fileHeaders, timeout, data, clients, fileName, needRequestHook, needClient }) => {
-    if (!fs.existsSync(output)) {
-      fs.mkdirSync(output);
+    if (!data && !clients) {
+      redConsole(ERROR_MESSAGES.NO_CLIENTS_OR_DATA);
+      return;
     }
 
-    const requestFilePath = path.resolve(output, `./${fileName || "request"}.ts`);
-
-    if (fs.existsSync(path.resolve(output, `./${fileName || "request"}.ts`))) {
-      fs.unlinkSync(requestFilePath);
-    }
-
-    const requestWriteStream = fs.createWriteStream(requestFilePath);
     const isMultiFile = (data?.length ?? 0) + (clients?.length ?? 0) > 1;
+    const { requestFileWriteStream } = setupDirAndCreateWriteStream(output, fileName, fileHeaders);
 
-    requestWriteStream.on("error", (err) => {
-      redConsole(err.message);
-    });
+    generateFromFiles(data, requestFileWriteStream, isMultiFile);
+    generateFromClients(clients, requestFileWriteStream, isMultiFile, timeout, data);
 
-    requestWriteStream.on("finish", () => {
-      greenConsole(LOG_MESSAGE.SUCCESSFUL + "\n");
-    });
-
-    requestWriteStream.write(prettifyCode((fileHeaders ? fileHeaders.join("\n") : "") + "\n\n" + FILE_TIP), "utf-8");
-
-    (data || []).map((file: string, index: number) => {
-      if (!file.endsWith("json") && !file.endsWith("yml") && !file.endsWith("yaml")) {
-        redConsole(ERROR_MESSAGES.INVALID_FILE_FORMAT);
-        return;
-      }
-
-      console.log(LOG_MESSAGE.READING);
-
-      const schemaStr = fs.readFileSync(file, "utf8");
-      const schema = file.endsWith("json") ? convertJsonStringToJson(schemaStr) : yaml.load(schemaStr);
-
-      if (schema) {
-        console.log(LOG_MESSAGE.GENERATING + "\n");
-        codegen(schema, requestWriteStream, isMultiFile, index);
-      }
-    });
-
-    if (clients) {
-      const options = program.opts();
-
-      const instance = axios.create({
-        timeout: timeout || 10 * 1000,
-        headers: options.authorization
-          ? {
-              Authorization: options.authorization,
-            }
-          : undefined,
-      });
-
-      clients.map((client, index) => {
-        console.log(LOG_MESSAGE.GETTING_FROM_REMOTE(index));
-        instance
-          .get(client)
-          .then((response) => {
-            console.log(LOG_MESSAGE.GENERATING + "\n");
-            codegen(response.data, requestWriteStream, isMultiFile, index + (data?.length ?? 0));
-          })
-          .catch((error) => {
-            redConsole(`${error.code}: ${ERROR_MESSAGES.FETCH_CLIENT_FAILED_ERROR}`);
-          });
-      });
-    }
-
-    requestWriteStream.end();
+    requestFileWriteStream.end();
 
     if (needRequestHook) {
       fs.writeFileSync(path.resolve(output, "./useGetRequest.ts"), prettifyCode(useGetRequest), "utf-8");
