@@ -51,14 +51,15 @@ const generateFromFiles = (data: string[] = [], requestWriteStream: WriteStream,
       return;
     }
 
-    console.log(LOG_MESSAGE.READING);
+    console.log(LOG_MESSAGE.READING_FROM_LOCAL(index));
 
     const schemaStr = fs.readFileSync(file, "utf8");
     const schema = file.endsWith("json") ? convertJsonStringToJson(schemaStr) : yaml.load(schemaStr);
 
     if (schema) {
-      console.log(LOG_MESSAGE.GENERATING + "\n");
+      console.log(LOG_MESSAGE.GENERATING);
       codegen(schema, requestWriteStream, isMultiFile, index);
+      greenConsole(LOG_MESSAGE.LOCAL_SUCCESSFUL(index));
     }
   });
 };
@@ -87,8 +88,9 @@ const generateFromClients = (
       instance
         .get(client)
         .then((response) => {
-          console.log(LOG_MESSAGE.GENERATING + "\n");
+          console.log(LOG_MESSAGE.GENERATING);
           codegen(response.data, requestWriteStream, isMultiFile, index + (data?.length ?? 0));
+          greenConsole(LOG_MESSAGE.REMOTE_SUCCESSFUL(index));
         })
         .catch((error) => {
           redConsole(`${error.code}: ${ERROR_MESSAGES.FETCH_CLIENT_FAILED_ERROR}`);
@@ -115,7 +117,7 @@ const setupDirAndCreateWriteStream = (output: string, fileName = "request", file
   });
 
   requestFileWriteStream.on("finish", () => {
-    greenConsole(LOG_MESSAGE.SUCCESSFUL + "\n");
+    greenConsole(LOG_MESSAGE.SUCCESSFUL);
   });
 
   requestFileWriteStream.write(prettifyCode((fileHeaders ? fileHeaders.join("\n") : "") + "\n\n" + FILE_TIP), "utf-8");

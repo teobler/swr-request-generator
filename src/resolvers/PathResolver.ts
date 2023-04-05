@@ -1,6 +1,6 @@
 import { SchemaResolver } from "./SchemaResolver.js";
 import { camelCase, isEmpty } from "moderndash";
-import { HTTP_METHODS, SLASH } from "../constants.js";
+import { HTTP_METHODS, LOG_MESSAGE, SLASH } from "../constants.js";
 import { Parameters, ReqBody, ResolvedPath } from "../types.js";
 import { isRequestBody, isSchema } from "../utils/specifications.js";
 import {
@@ -143,7 +143,7 @@ export class PathResolver {
 
   private resolveOperation = (operation: OperationObject) => {
     if (!operation.operationId) {
-      yellowConsole("your request does not have an operation id, generated request method will not has uniq name!\n");
+      yellowConsole(LOG_MESSAGE.MISSING_OPERATION_ID);
     }
 
     const pickParamsByType = this.pickParams(operation.parameters as ParameterObject[] | undefined);

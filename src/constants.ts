@@ -5,10 +5,14 @@ export const ERROR_MESSAGES = {
   NO_CLIENTS_OR_DATA: "You should provide at least one client or data file!\n",
 };
 export const LOG_MESSAGE = {
-  GENERATING: "generating...",
-  SUCCESSFUL: "successful!!!",
-  READING: "reading swagger schema from local file...\n",
-  GETTING_FROM_REMOTE: (index: number) => `getting swagger schema from client ${index + 1}...\n`,
+  GENERATING: "☄️ Generating...",
+  SUCCESSFUL: "🥳 All request data generated successful!!!\n",
+  LOCAL_SUCCESSFUL: (fileIndex: number) => `✅  Request data generated successful from file${fileIndex + 1}!!!\n`,
+  READING_FROM_LOCAL: (fileIndex: number) => `👓 Reading swagger schema from local file${fileIndex + 1}...`,
+  GETTING_FROM_REMOTE: (index: number) => `🛜 Getting swagger schema from client ${index + 1}...`,
+  REMOTE_SUCCESSFUL: (index: number) => `✅  Request data generated successful from client${index + 1}!!!\n`,
+  MISSING_OPERATION_ID:
+    "⚠️ Some of your request does not have an operation id, generated request method will not has an uniq name!",
 };
 export const HTTP_METHODS = ["get", "post", "put", "delete", "patch", "options", "head"];
 export const SLASH = "/";
